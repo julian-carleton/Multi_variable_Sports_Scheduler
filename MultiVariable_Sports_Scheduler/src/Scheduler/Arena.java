@@ -1,5 +1,5 @@
 package Scheduler;
 
-public class Tiers {
+public class Arena {
 
 }
