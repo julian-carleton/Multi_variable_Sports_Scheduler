@@ -15,4 +15,11 @@ public class Round {
 		this.matchups.add(game);
 	}
 	
+	public Object getGame(int index) {
+		return this.matchups.get(index);
+	}
+	
+	public Object getMatchups() {
+		return this.matchups;
+	}
 }

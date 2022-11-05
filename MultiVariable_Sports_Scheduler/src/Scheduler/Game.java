@@ -5,9 +5,13 @@ public class Game {
 	Object awayTeam;
 	Object timeSlot;
 	
-	public Game(Object teamHome, Object teamAway) {
-		this.homeTeam = teamHome;
-		this.awayTeam = teamAway;
+	public Game() {
+		
+	}
+	
+	public Game(Object homeTeam, Object awayTeam) {
+		this.homeTeam = homeTeam;
+		this.awayTeam = awayTeam;
 	}
 	
 	public Object getHomeTeam() {
@@ -16,5 +20,13 @@ public class Game {
 	
 	public Object getAwayTeam() {
 		return this.awayTeam;
+	}
+	
+	public void setHomeTeam(Object homeTeam) {
+		this.homeTeam = homeTeam;
+	}
+	
+	public void setAwayTeam(Object awayTeam) {
+		this.awayTeam = awayTeam;
 	}
 }
