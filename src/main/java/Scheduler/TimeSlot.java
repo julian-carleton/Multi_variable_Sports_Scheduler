@@ -1,4 +1,4 @@
-package Scheduler;
+package main.java.Scheduler;
 import java.time.LocalDateTime;
 
 public class TimeSlot {
