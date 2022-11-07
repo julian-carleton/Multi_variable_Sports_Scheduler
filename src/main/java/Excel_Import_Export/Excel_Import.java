@@ -4,11 +4,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.ResourceLoader;
+import org.apache.xmlgraphics.io.Resource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,15 +21,14 @@ public class Excel_Import {
     ArrayList<String> division;
     ArrayList<String> tier;
 
-    public static final String EXCEL_INPUTS = "Input_Proposal.xlsx";
-
     /**
      * Constructor for Excel_Import class
      */
     public Excel_Import() {
+
     }
 
-    public void importData() {
+    public void importData() throws IOException {
         // Initialize Arrays
         headers = new ArrayList<>();
         league = new ArrayList<>();
@@ -39,12 +37,10 @@ public class Excel_Import {
         division = new ArrayList<>();
         tier = new ArrayList<>();
 
-        File file = new File("./Resources/Input_Proposal.xlsx");
-
         // Extract Excel File Data
         try {
             // InputStream
-            FileInputStream schedulingData = new FileInputStream(file);
+            InputStream schedulingData = Excel_Import.class.getResourceAsStream("/Input_Proposal.xlsx");
 
             // Input_Proposal Workbook
             XSSFWorkbook wb = new XSSFWorkbook(schedulingData);
@@ -53,11 +49,10 @@ public class Excel_Import {
             XSSFSheet teamsSheet = wb.getSheetAt(0);
             XSSFSheet timeExceptionsSheet = wb.getSheetAt(1);
             XSSFSheet dataExceptionsSheet = wb.getSheetAt(2);
-            XSSFSheet dateExceptionsSheet = wb.getSheetAt(3);
-            XSSFSheet arenasSheet = wb.getSheetAt(4);
-            XSSFSheet timeSlotsSheet = wb.getSheetAt(5);
-            XSSFSheet homeArenasSheet = wb.getSheetAt(6);
-            //XSSFSheet otherSheet = wb.getSheetAt(7);
+            XSSFSheet arenasSheet = wb.getSheetAt(3);
+            XSSFSheet timeSlotsSheet = wb.getSheetAt(4);
+            XSSFSheet homeArenasSheet = wb.getSheetAt(5);
+            XSSFSheet otherSheet = wb.getSheetAt(6);
 
             // Iterators (just iterating the first sheet for now)
             Iterator<Row> rowIterator1 = teamsSheet.rowIterator();
@@ -85,7 +80,7 @@ public class Excel_Import {
                         } else if (cell.getColumnIndex() == 3) {
                             division.add(cell.getStringCellValue());
                         } else if (cell.getColumnIndex() == 4) {
-                            tier.add(cell.getStringCellValue());
+                            tier.add(String.valueOf(cell.getNumericCellValue()));
                         }
                     }
                 }
@@ -96,8 +91,39 @@ public class Excel_Import {
 
         // Print team names
         for (int i = 0; i < name.size(); i++) {
-            System.out.println("Team: " + i + name.get(i));
+            System.out.println("Team " + i + ": " + name.get(i));
         }
+    }
+
+    /**
+     *
+     */
+    public void importTeams() {
+
+    }
+
+    public void importTimeExceptions() {
+
+    }
+
+    public void importDateExceptions() {
+
+    }
+
+    public void importArenas() {
+
+    }
+
+    public void importTimeSlots() {
+
+    }
+
+    public void importHomeArenas() {
+
+    }
+
+    public void importOtherData() {
+
     }
 
     /**
@@ -119,9 +145,9 @@ public class Excel_Import {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        // Create test run
         Excel_Import test = new Excel_Import();
-
         test.importData();
     }
 }
