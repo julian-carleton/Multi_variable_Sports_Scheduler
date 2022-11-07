@@ -40,6 +40,14 @@ public class League {
 	public ArrayList<Division> getDivisions() {
 		return divisions;
 	}
+	
+	/**
+	 * 
+	 * @param divisions
+	 */
+	public void setDivisions(ArrayList<Division> divisions) {
+		this.divisions = divisions;
+	}
 
 	
 	

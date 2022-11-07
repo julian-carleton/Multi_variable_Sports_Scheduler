@@ -10,9 +10,8 @@ public class Division {
 	/**
 	 * Default Constructor
 	 */
-	public Division(String name, int age) {
+	public Division(String name) {
 		this.name = name;
-		this.age = age;
 	}
 	
 
