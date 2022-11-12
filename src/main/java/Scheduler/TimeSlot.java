@@ -5,13 +5,11 @@ public class TimeSlot {
 	private LocalDateTime StartDateTime;
 	private Arena arena;
 	private Division division;
-	private Tier tier;
 	
-	public TimeSlot(LocalDateTime start, Arena arena, Division division, Tier tier) {
+	public TimeSlot(LocalDateTime start, Arena arena, Division division) {
 		this.arena = arena;
 		this.division = division;
 		this.StartDateTime = start;
-		this.tier = tier;
 		
 	}
 
@@ -36,13 +34,6 @@ public class TimeSlot {
 	 */
 	public Division getDivision() {
 		return division;
-	}
-
-	/**
-	 * @return the tier
-	 */
-	public Tier getTier() {
-		return tier;
 	}
 	
 	
