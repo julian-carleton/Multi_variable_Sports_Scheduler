@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 package main.java.Excel_Import_Export;
-=======
-package Excel_Import_Export;
->>>>>>> Stashed changes
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 package main.java.Scheduler;
-=======
-package Scheduler;
->>>>>>> Stashed changes
 
 public enum Tier {
 	ZERO, ONE, TWO, THREE, FOUR;

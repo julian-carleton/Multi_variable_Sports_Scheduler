@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 package main.java.Scheduler;
-=======
-package Scheduler;
->>>>>>> Stashed changes
 
 public class Arena {
 	private String name;

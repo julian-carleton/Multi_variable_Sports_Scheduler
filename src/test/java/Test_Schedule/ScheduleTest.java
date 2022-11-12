@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream:src/test/java/Test_Schedule/ScheduleTest.java
 package test.java.Test_Schedule;
-=======
-package Test_Schedule;
->>>>>>> Stashed changes:MultiVariable_Sports_Scheduler/src/Scheduler/ScheduleTest.java
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,11 +7,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-<<<<<<< Updated upstream:src/test/java/Test_Schedule/ScheduleTest.java
 import main.java.Scheduler.*;
-=======
-import Scheduler.*;
->>>>>>> Stashed changes:MultiVariable_Sports_Scheduler/src/Scheduler/ScheduleTest.java
 
 class ScheduleTest {
 
