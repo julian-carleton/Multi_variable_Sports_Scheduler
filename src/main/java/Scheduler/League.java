@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 package main.java.Scheduler;
+=======
+package Scheduler;
+>>>>>>> Stashed changes
 
 import java.util.ArrayList;
 
