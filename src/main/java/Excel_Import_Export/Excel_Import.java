@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.ResourceLoader;
-//import org.apache.xmlgraphics.io.Resource;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -16,8 +15,6 @@ import java.util.Scanner;
 
 import main.java.Scheduler.Team;
 import main.java.Scheduler.Exception;
-
-//import static org.apache.batik.svggen.SVGStylingAttributes.set;
 
 /**
  * 
@@ -75,75 +72,6 @@ public class Excel_Import {
             e.printStackTrace();
         }
     }
-
-    /**
-    public void importData() throws IOException {
-        // Initialize Arrays
-        headers = new ArrayList<>();
-        league = new ArrayList<>();
-        name = new ArrayList<>();
-        org = new ArrayList<>();
-        division = new ArrayList<>();
-        tier = new ArrayList<>();
-
-        // Extract Excel File Data
-        try {
-            // InputStream
-            InputStream schedulingData = Excel_Import.class.getResourceAsStream("/Input_Proposal.xlsx");
-
-            // Input_Proposal Workbook
-            XSSFWorkbook wb = new XSSFWorkbook(schedulingData);
-
-            // Sheets
-            XSSFSheet teamsSheet = wb.getSheetAt(0);
-            XSSFSheet timeExceptionsSheet = wb.getSheetAt(1);
-            XSSFSheet dataExceptionsSheet = wb.getSheetAt(2);
-            XSSFSheet arenasSheet = wb.getSheetAt(3);
-            XSSFSheet timeSlotsSheet = wb.getSheetAt(4);
-            XSSFSheet homeArenasSheet = wb.getSheetAt(5);
-            XSSFSheet otherSheet = wb.getSheetAt(6);
-
-            // Iterators (just iterating the first sheet for now)
-            Iterator<Row> rowIterator1 = teamsSheet.rowIterator();
-
-            while (rowIterator1.hasNext()) {
-                // Next row
-                Row row = rowIterator1.next();
-
-                // Iterate over cells in row
-                Iterator<Cell> cellIterator = row.cellIterator();
-
-                while (cellIterator.hasNext()) {
-                    // Next cell
-                    Cell cell = cellIterator.next();
-
-                    if (row.getRowNum() == 0) {
-                        headers.add(cell.getStringCellValue());
-                    } else {
-                        if (cell.getColumnIndex() == 0) {
-                            league.add(cell.getStringCellValue());
-                        } else if (cell.getColumnIndex() == 1) {
-                            name.add(cell.getStringCellValue());
-                        } else if (cell.getColumnIndex() == 2) {
-                            org.add(cell.getStringCellValue());
-                        } else if (cell.getColumnIndex() == 3) {
-                            division.add(cell.getStringCellValue());
-                        } else if (cell.getColumnIndex() == 4) {
-                            tier.add(String.valueOf(cell.getNumericCellValue()));
-                        }
-                    }
-                }
-            }
-        } catch (Exception ioe) {
-            ioe.printStackTrace();
-        }
-
-        // Print team names
-        for (int i = 0; i < name.size(); i++) {
-            System.out.println("Team " + i + ": " + name.get(i));
-        }
-    }
-     **/
 
     /**
      * Import data from sheet 0
