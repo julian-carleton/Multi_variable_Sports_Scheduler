@@ -2,7 +2,7 @@ package Scheduler;
 
 import java.time.LocalDateTime;
 
-public class Exception {
+public class Exception extends Throwable {
 	public LocalDateTime start;
 	public LocalDateTime end;
 	
