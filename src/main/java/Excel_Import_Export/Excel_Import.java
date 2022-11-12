@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.ResourceLoader;
-import org.apache.xmlgraphics.io.Resource;
+//import org.apache.xmlgraphics.io.Resource;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +17,7 @@ import java.util.Scanner;
 import main.java.Scheduler.Team;
 import main.java.Scheduler.Exception;
 
-import static org.apache.batik.svggen.SVGStylingAttributes.set;
+//import static org.apache.batik.svggen.SVGStylingAttributes.set;
 
 /**
  * 

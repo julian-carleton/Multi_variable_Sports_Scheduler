@@ -1,0 +1,40 @@
+<component name="libraryTable">
+  <library name="commons-collections4-4.4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/commons-collections4-4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/slf4j-api-1.7.36.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-ooxml-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-excelant-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/log4j-api-2.18.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-ooxml-full-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/commons-io-2.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/curvesapi-1.07.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/commons-compress-1.21.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/commons-codec-1.15.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-scratchpad-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/jakarta.xml.bind-api-3.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-ooxml-lite-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/commons-logging-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/commons-math3-3.6.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/jakarta.activation-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-examples-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/xmlbeans-5.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/SparseBitSet-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-examples-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-excelant-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-ooxml-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-ooxml-full-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-ooxml-lite-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-scratchpad-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/slf4j-simple-2.0.3.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/log4j-core-2.19.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/External_Libraries/External Jars/poi-javadoc-5.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/External_Libraries/poi-javadoc-5.2.3.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
