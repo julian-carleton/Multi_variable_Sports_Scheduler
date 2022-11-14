@@ -1,4 +1,4 @@
-package main.java.Scheduler;
+package Scheduler;
 
 public class Game {
 	Object homeTeam;
