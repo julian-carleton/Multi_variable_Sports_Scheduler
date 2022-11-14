@@ -1,4 +1,4 @@
-package test.java.Test_Schedule;
+package java.Test_Schedule;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import main.java.Scheduler.*;
+import main.java.Scheduler.Round;
+import main.java.Scheduler.Game;
 
 class ScheduleTest {
 

@@ -1,7 +1,6 @@
-package Scheduler;
+package main.java.Scheduler;
 
 import java.util.ArrayList;
-import Scheduler.Game;
 
 public class Round {
 
