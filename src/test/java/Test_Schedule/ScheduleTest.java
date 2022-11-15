@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import main.java.Scheduler.*;
+import main.java.Scheduler.Round;
+import main.java.Scheduler.Game;
 
 class ScheduleTest {
 
