@@ -15,6 +15,7 @@ public class CreateDataStrucs {
 	
 	
 	/**
+	 * @author Faris Abo-Mazeed & Quinn Sondermeyer
 	 * Constructor to convert ArrayList<ArrayList<Object>> list from excel file to their respective Data Types
 	 * @param teamsstr
 	 * @param Time_Exceptions
@@ -22,14 +23,12 @@ public class CreateDataStrucs {
 	 * @param arenasStr
 	 * @param timeSlotsStr
 	 */
-	public CreateDataStrucs(ArrayList<ArrayList<Object>> teamsstr, ArrayList<ArrayList<Object>> Time_Exceptions, ArrayList<ArrayList<Object>> Date_Exceptions, 
-							ArrayList<ArrayList<Object>> arenasStr, ArrayList<ArrayList<Object>> timeSlotsStr) {
+	public CreateDataStrucs(ArrayList<ArrayList<String>> teamsstr, ArrayList<ArrayList<String>> Time_Exceptions, ArrayList<ArrayList<String>> Date_Exceptions, 
+							ArrayList<ArrayList<String>> arenasStr, ArrayList<ArrayList<String>> timeSlotsStr) {
 		createDivLegueTeams(teamsstr);
 		createExceptions(Time_Exceptions,Date_Exceptions);
 		createArenas(arenasStr);
 		createTimeSlots(timeSlotsStr);
-		
-		
 	}
 
 	/**
@@ -37,7 +36,7 @@ public class CreateDataStrucs {
 	 * Creates list of teams, division, league types 
 	 * @param teams
 	 */
-	public void createDivLegueTeams(ArrayList<ArrayList<Object>> teamsstr) {
+	public void createDivLegueTeams(ArrayList<ArrayList<String>> teamsstr) {
 		
 		leagues = new ArrayList<League>();
 		divisions = new ArrayList<Division>();
@@ -63,27 +62,27 @@ public class CreateDataStrucs {
 				divisions.add(tempdiv);
 			}
 			
-			contains = false;
-			League tempLeague = null; // same as div
-			for (int y = 0 ; y < leagues.size() ; y ++) {
-				if (leagues.get(y).getName().equals((String) teamsstr.get(x).get(6))) {
-					contains = true;
-					tempLeague = leagues.get(y);
-					if (!tempLeague.getDivisions().contains(tempdiv)) {
-						leagues.get(y).addDivision(tempdiv);
-					}
-				}
-			}
-			if (!contains) {
-				ArrayList<Division> d = new ArrayList<Division>();
-				d.add(tempdiv);
-				tempLeague = new League((String) teamsstr.get(x).get(3),d);
-				leagues.add(tempLeague);
-			}
+//			contains = false;
+//			League tempLeague = null; // same as div
+//			for (int y = 0 ; y < leagues.size() ; y ++) {
+//				if (leagues.get(y).getName().equals((String) teamsstr.get(x).get(6))) {
+//					contains = true;
+//					tempLeague = leagues.get(y);
+//					if (!tempLeague.getDivisions().contains(tempdiv)) {
+//						leagues.get(y).addDivision(tempdiv);
+//					}
+//				}
+//			}
+//			if (!contains) {
+//				ArrayList<Division> d = new ArrayList<Division>();
+//				d.add(tempdiv);
+//				tempLeague = new League((String) teamsstr.get(x).get(3),d);
+//				leagues.add(tempLeague);
+//			}
 			
 			
 			Tier tier = Tier.fromInteger(Integer.parseInt((String) teamsstr.get(x).get(4)));
-			Team temp = new Team( name, longitude, latitude, tempdiv, tier, tempLeague);
+			Team temp = new Team( name, longitude, latitude, tempdiv, tier);
 			teams.add(temp);
 		}
 		
@@ -97,7 +96,7 @@ public class CreateDataStrucs {
 	 * @param Time_Exceptions
 	 * @param Date_Exceptions
 	 */
-	public void createExceptions(ArrayList<ArrayList<Object>> Time_Exceptions, ArrayList<ArrayList<Object>> Date_Exceptions) {
+	public void createExceptions(ArrayList<ArrayList<String>> Time_Exceptions, ArrayList<ArrayList<String>> Date_Exceptions) {
 		LocalDateTime start;
 		LocalDateTime end;
 		//LocalDateTime start,LocalDateTime end
@@ -131,9 +130,9 @@ public class CreateDataStrucs {
 	 * 
 	 * @param teamsstr
 	 */
-	public void createArenas(ArrayList<ArrayList<Object>> arenasStr) {
+	public void createArenas(ArrayList<ArrayList<String>> arenasStr) {
 		
-		for (ArrayList<Object> a : arenasStr) {
+		for (ArrayList<String> a : arenasStr) {
 			arenas = new ArrayList<Arena>();
 			arenas.add(new Arena((String) a.get(0), Float.parseFloat((String) a.get(1)), Float.parseFloat((String) a.get(2) )));
 		}
@@ -141,9 +140,9 @@ public class CreateDataStrucs {
 	}
 	
 	
-	public void createTimeSlots(ArrayList<ArrayList<Object>> timeSlotsStr) {
+	public void createTimeSlots(ArrayList<ArrayList<String>> timeSlotsStr) {
 		
-		for (ArrayList<Object> t : timeSlotsStr) {
+		for (ArrayList<String> t : timeSlotsStr) {
 			timeslots = new ArrayList<TimeSlot>();
 			//create DateTime
 			LocalDateTime dateTime = generateDateTime((String)t.get(1),(String)t.get(2));
@@ -232,5 +231,31 @@ public class CreateDataStrucs {
 		}
 		return temp;
 	}
+
+	
+	//Getters and setters
+	public ArrayList<League> getLeagues() {
+		return leagues;
+	}
+
+	public ArrayList<Division> getDivisions() {
+		return divisions;
+	}
+
+	public ArrayList<Team> getTeams() {
+		return teams;
+	}
+
+	public ArrayList<Arena> getArenas() {
+		return arenas;
+	}
+
+	public ArrayList<TimeSlot> getTimeslots() {
+		return timeslots;
+	}
+	
+	
+	
+	
 	
 }

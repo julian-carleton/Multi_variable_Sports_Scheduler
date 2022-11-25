@@ -19,5 +19,21 @@ public enum Tier {
         }
         return null;
     }
+	public static int fromEnum(Tier x) {
+        switch(x) {
+        case ZERO:
+            return 0;
+        case ONE:
+            return 1;
+        case TWO:
+            return 2;
+        case THREE:
+            return 3;
+        case FOUR:
+            return 4;
+        
+        }
+        return -1;
+    }
 	
 }

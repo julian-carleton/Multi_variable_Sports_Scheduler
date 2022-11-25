@@ -18,12 +18,12 @@ import java.util.List;
  */
 public class Excel_Import {
     // 2D Arraylists for each sheet
-    List<List<String>> teams = new ArrayList<List<String>>();
-    List<List<String>> timeExceptions =  new ArrayList<List<String>>();
-    List<List<String>> dateExceptions = new ArrayList<List<String>>();
-    List<List<String>> arenas = new ArrayList<List<String>>();
-    List<List<String>> timeSlots = new ArrayList<List<String>>();
-    List<List<String>> homeArenas = new ArrayList<List<String>>();
+	ArrayList<ArrayList<String>> teams =  new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<String>> timeExceptions =  new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<String>> dateExceptions = new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<String>> arenas = new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<String>> timeSlots = new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<String>> homeArenas = new ArrayList<ArrayList<String>>();
 
     // Excel Variables
     XSSFWorkbook wb;
@@ -394,7 +394,7 @@ public class Excel_Import {
 
     }
 
-    public void printTeamsData(List<List<String>> sheetArray) {
+    public void printTeamsData(ArrayList<ArrayList<String>> sheetArray) {
         // Size of internal lists
         int totalLength = sheetArray.get(0).size();
 
@@ -408,7 +408,7 @@ public class Excel_Import {
         }
     }
 
-    public void printTimeExceptionsData(List<List<String>> sheetArray) {
+    public void printTimeExceptionsData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Time Exception: " + (i+1));
             System.out.println("Division: " + sheetArray.get(0).get(i));
@@ -421,7 +421,7 @@ public class Excel_Import {
         }
     }
 
-    public void printDateExceptionsData(List<List<String>> sheetArray) {
+    public void printDateExceptionsData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Date Exception: " + (i+1));
             System.out.println("Division: " + sheetArray.get(0).get(i));
@@ -431,7 +431,7 @@ public class Excel_Import {
         }
     }
 
-    public void printArenasData(List<List<String>> sheetArray) {
+    public void printArenasData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Arena: " + (i+1));
             System.out.println("Name: " + sheetArray.get(0).get(i));
@@ -440,7 +440,7 @@ public class Excel_Import {
         }
     }
 
-    public void printTimeSlotsData(List<List<String>> sheetArray) {
+    public void printTimeSlotsData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Time Slot: " + (i+1));
             System.out.println("Arena Name: " + sheetArray.get(0).get(i));
@@ -450,7 +450,7 @@ public class Excel_Import {
         }
     }
 
-    public void printHomeArenasData(List<List<String>> sheetArray) {
+    public void printHomeArenasData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Home Arena: " + (i+1));
             System.out.println("Team: " + sheetArray.get(0).get(i));
@@ -459,8 +459,49 @@ public class Excel_Import {
             System.out.println("Rank: " + sheetArray.get(3).get(i));
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // Getters and setters
 
-    public static void main(String[] args) throws IOException {
+    public ArrayList<ArrayList<String>> getTeams() {
+		return teams;
+	}
+
+	public ArrayList<ArrayList<String>> getTimeExceptions() {
+		return timeExceptions;
+	}
+
+	public ArrayList<ArrayList<String>> getDateExceptions() {
+		return dateExceptions;
+	}
+
+
+	public ArrayList<ArrayList<String>> getArenas() {
+		return arenas;
+	}
+
+	public ArrayList<ArrayList<String>> getTimeSlots() {
+		return timeSlots;
+	}
+
+	public ArrayList<ArrayList<String>> getHomeArenas() {
+		return homeArenas;
+	}
+
+
+	/**
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
         // Create test run
         Excel_Import test = new Excel_Import();
 
