@@ -28,6 +28,15 @@ public class Team {
 	}
 	
 	/**
+	 * Name only constructor
+	 * @param name
+	 */
+	public Team(String name) {
+		this.name = name;
+		exceptions = new ArrayList<Exception>();
+	}
+	
+	/**
 	 * Adds exception to exceptions list for a Team
 	 * @param newException
 	 */
