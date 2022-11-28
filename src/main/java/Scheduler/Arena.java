@@ -1,4 +1,4 @@
-package main.java.Scheduler
+package main.java.Scheduler;
 
 import java.math.*;
 

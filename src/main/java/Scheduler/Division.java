@@ -12,6 +12,7 @@ public class Division {
 	 */
 	public Division(String name) {
 		this.name = name;
+		teams = new ArrayList<Team>();
 	}
 	
 

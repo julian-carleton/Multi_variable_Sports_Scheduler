@@ -1,7 +1,9 @@
 package main.java.Scheduler;
 
 import java.io.IOException.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
 import main.java.Excel_Import_Export.CreateDataStrucs;
@@ -35,8 +37,9 @@ public class League {
 	public League(String name, ArrayList<Division> divisions, ArrayList<TimeSlot> timeslots, ArrayList<Arena> arenas) {
 		this.name = name;
 		this.divisions = divisions;
-		this.timeslots = timeslots;
+		this.timeslots = sortTimeSlots(timeslots); // Sorts Time slots by date
 		this.arenas = arenas;
+		
 		generateSchedules();
 	}
 	
@@ -96,20 +99,25 @@ public class League {
     */
    public ArrayList<TimeSlot> seletTimeslot(ArrayList<Team> team, ArrayList<Arena> arenas) {
        int slotsPerWeek = (int) ((team.size()/2) * gamesperweek) ;
-       LocalDateTime FirstDay = timeslots.get(0).getStartDateTime();
+       LocalDateTime curDay = timeslots.get(0).getStartDateTime();
        int weeks = getNumberWeeks();
-       for (int i = 0; i > weeks;i++) {
+       for (int i = 0; i < weeks;i++) {
            for (int j = 0; j > slotsPerWeek;j++) {
         	   //Select Slot
            }
+           curDay.plusDays(7);
 
        }
        return null;
    }
 
    private int getNumberWeeks() {
-		// TODO Auto-generated method stub
-		return 0;
+	   LocalDateTime firstDay = timeslots.get(0).getStartDateTime();
+	   LocalDateTime LastDay = timeslots.get((timeslots.size())-1).getStartDateTime();
+	   float firsDayCount =  (float) ( (float) firstDay.getYear() * (365.25)) + firstDay.getDayOfYear();
+	   float LastDayCount =  (float) ( (float) LastDay.getYear() * (365.25)) + LastDay.getDayOfYear();
+	   int weekcount =  (int) (LastDayCount - firsDayCount)/7;
+	   return weekcount;
 	}
 
 /**
@@ -141,6 +149,74 @@ public class League {
 			
 		return count;
 	}
+	
+	
+	/**
+	 * Source: https://www.geeksforgeeks.org/heap-sort/
+	 * HeapSort
+	 * @param arr
+	 */
+	private ArrayList<TimeSlot> sortTimeSlots(ArrayList<TimeSlot> timeslots1){
+        int N = timeslots1.size();
+        ArrayList<TimeSlot> timeslotstemp = timeslots1;
+        // Build heap (rearrange list)
+        for (int i = N / 2 - 1; i >= 0; i--)
+        	timeslotstemp = heapify(timeslots1, N, i);
+ 
+        // One by one extract an element from heap
+        for (int i = N - 1; i > 0; i--) {
+            // Move current root to end
+            TimeSlot tempSlot = timeslots1.get(0);
+            timeslots1.set(0, (timeslots1).get(i));
+            timeslots1.set(i, tempSlot);
+ 
+            // call max heapify on the reduced heap
+            timeslotstemp = heapify(timeslots1, i, 0);
+        }
+		return timeslotstemp;
+    }
+ 
+
+	/**
+	 * Source: https://www.geeksforgeeks.org/heap-sort/
+	 * To heapify a subtree rooted with node i which is
+	 * an index in arr[]. n is size of heap
+	 * @param timeslots1
+	 * @param N
+	 * @param i
+	 */
+	private ArrayList<TimeSlot> heapify(ArrayList<TimeSlot> timeslots1, int N, int i)
+    {
+        int largest = i; // Initialize largest as root
+        int l = 2 * i + 1; // left = 2*i + 1
+        int r = 2 * i + 2; // right = 2*i + 2
+        
+        // If left child is larger than root
+        ;
+        if (l < N && (timeslots1.get(l).getStartDateTime().compareTo(timeslots1.get(largest).getStartDateTime()) > 0))
+            largest = l;
+ 
+        // If right child is larger than largest so far
+        if (r < N && (timeslots1.get(r).getStartDateTime().compareTo(timeslots1.get(largest).getStartDateTime()) > 0))
+            largest = r;
+ 
+        // If largest is not root
+        if (largest != i) {
+        	TimeSlot tempSlot = timeslots1.get(i);
+            timeslots1.set(i, (timeslots1).get(largest));
+            timeslots1.set(largest, tempSlot);
+ 
+            // Recursively heapify the affected sub-tree
+            heapify(timeslots1, N, largest);
+        }
+		return timeslots1;
+    }
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * Main Funtion to of Scheduling Program
@@ -158,6 +234,7 @@ public class League {
 		Import.importArenas();
 		Import.importTimeSlots();
 		Import.importHomeArenas();
+		Import.ExtraInfo();
 		//Create Data Types
 		CreateDataStrucs strucs = new CreateDataStrucs(Import.getTeams(), Import.getTimeExceptions(),Import.getDateExceptions(), Import.getArenas(),Import.getTimeSlots());
 		
