@@ -1,32 +1,32 @@
 package main.java.Scheduler;
 
 public class Game {
-	Object homeTeam;
-	Object awayTeam;
-	Object timeSlot;
+	Team homeTeam;
+	Team awayTeam;
+	TimeSlot timeSlot;
 	
 	public Game() {
 		
 	}
 	
-	public Game(Object homeTeam, Object awayTeam) {
+	public Game(Team homeTeam, Team awayTeam) {
 		this.homeTeam = homeTeam;
 		this.awayTeam = awayTeam;
 	}
 	
-	public Object getHomeTeam() {
+	public Team getHomeTeam() {
 		return this.homeTeam;
 	}
 	
-	public Object getAwayTeam() {
+	public Team getAwayTeam() {
 		return this.awayTeam;
 	}
 	
-	public void setHomeTeam(Object homeTeam) {
+	public void setHomeTeam(Team homeTeam) {
 		this.homeTeam = homeTeam;
 	}
 	
-	public void setAwayTeam(Object awayTeam) {
+	public void setAwayTeam(Team awayTeam) {
 		this.awayTeam = awayTeam;
 	}
 }

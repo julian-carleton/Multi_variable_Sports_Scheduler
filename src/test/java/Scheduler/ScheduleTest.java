@@ -18,6 +18,8 @@ class ScheduleTest {
 	private ArrayList<Object> teams;
 	//private ArrayList<Round> rounds;
 	
+	//Broken because of teams type.
+	
     @BeforeEach
     void setUp() {
 
