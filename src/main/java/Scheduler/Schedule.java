@@ -3,14 +3,22 @@ package main.java.Scheduler;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+/**
+ * Creates a set of matchups and a schedule for a set of teams provided
+ * 
+ * @author Julian Obando, Quinn Sondermeyer
+ */
 public class Schedule {
 	ArrayList<Round> rounds;
 	ArrayList<Team> teams;
-	int num_rounds;
+	int numRounds;
+
 
 	/**
 	 * Default constructor
-	 * */
+	 * @author Quinn Sondermeyer Julian Obando 
+	 * @param teams
+	 */
 	public Schedule(ArrayList<Team> teams){//, ArrayList<TimeSlot> timelsots) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
@@ -26,49 +34,51 @@ public class Schedule {
 	}
 
 	/**
+	 * Makes mathcups based on teams provided in constructor
 	 *
-	 *
+	 * @author Julian Obando
 	 **/
 	public void matchRR() {
 		//Determine if even or odd # teams
 		boolean even = false;
-		int num_teams = this.teams.size();
-		if (num_teams % 2 == 0) {
-			num_rounds = num_teams - 1;
+		int numTeams = this.teams.size();
+		if (numTeams % 2 == 0) {
+			numRounds = numTeams - 1;
 			even = true;
 		} else {
-			num_rounds = num_teams;
+			numRounds = numTeams;
 		}
 
-		for (int j = 0; j < num_rounds; j++) {
+		for (int j = 0; j < numRounds; j++) {
 			//Matching a round
-			int curr_x = (0 + j) % num_rounds;
-			int curr_y = (num_teams - 1 + j) % num_rounds;
-			Round curr_round = new Round();
-			for (int i = 0; i < Math.floorDiv(num_teams, 2); i++) {
-				Game curr_game = new Game();
-				//System.out.print(curr_x);
-				//System.out.print(curr_y);
-				curr_game.setHomeTeam(teams.get(curr_x));
+			int currX = (0 + j) % numRounds;
+			int currY = (numTeams - 1 + j) % numRounds;
+			Round currRound = new Round();
+			for (int i = 0; i < Math.floorDiv(numTeams, 2); i++) {
+				Game currGame = new Game();
+				currGame.setHomeTeam(teams.get(currX));
 				if(even && i == 0) {
-					curr_game.setAwayTeam(teams.get(num_teams - 1));
+					currGame.setAwayTeam(teams.get(numTeams - 1));
 				} else {
-					curr_game.setAwayTeam(teams.get(curr_y));
+					currGame.setAwayTeam(teams.get(currY));
 				}
-				curr_round.add(curr_game);
-				curr_x = (curr_x + 1) % num_rounds;
-				curr_y --;
-				if (curr_y < 0) {
-					curr_y += num_rounds;
+				currRound.add(currGame);
+				currX = (currX + 1) % numRounds;
+				currY --;
+				if (currY < 0) {
+					currY += numRounds;
 				}
 
 			}
-			this.rounds.add(curr_round);
+			this.rounds.add(currRound);
 		}
 	}
 
 
 
+	/**
+	 * 
+	 */
 	public void matchRound() {
 
 	}
@@ -76,6 +86,7 @@ public class Schedule {
 	/**
 	 * Orders the rounds so that the games with matchups with most exceptions are ordered first.
 	 * 
+	 * @author Julian Obando
 	 * */
 	public void orderExceptionNumber() {
 		ArrayList<Round> new_rounds = new ArrayList<Round>();
@@ -106,10 +117,16 @@ public class Schedule {
 		this.rounds = new_rounds;
 	}
 	
+	/*
+	 * Getters and Setters
+	 */
 	public ArrayList<Round> getRounds() {
 		return this.rounds;
 	}
 
+	/*
+	 * Main Function
+	 */
 	public static void main(String[] args) {
 		ArrayList<Team> teams = new ArrayList<Team>();
 

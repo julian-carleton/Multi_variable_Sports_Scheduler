@@ -1,8 +1,19 @@
 package main.java.Scheduler;
 
+/**
+ * Enum for the tier as there will never be more than 0-4 tiers
+ * 
+ * @author Quinn Sondermeyer
+ */
 public enum Tier {
 	ZERO, ONE, TWO, THREE, FOUR;
 	
+	/**
+	 * Gets the Enum given the int value
+	 * 
+	 * @param x
+	 * @return Enum of int provided
+	 */
 	public static Tier fromInteger(int x) {
         switch(x) {
         case 0:
@@ -19,6 +30,13 @@ public enum Tier {
         }
         return null;
     }
+	
+	/**
+	 * Gets the int given the Enum value
+	 * 
+	 * @param x
+	 * @return int of Enum provided
+	 */
 	public static int fromEnum(Tier x) {
         switch(x) {
         case ZERO:

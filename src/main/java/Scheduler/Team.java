@@ -2,34 +2,42 @@ package main.java.Scheduler;
 
 import java.util.ArrayList;
 
+/**
+ * Data Type for teams stores their name, division, tier, league, location, radius of travel, home arenas, and exceptions
+ * 
+ * @author Quinn Sondermeyer
+ */
 public class Team {
 	
 	private String name;
-	private float longitude;
-	private float latitude;
+	private double longitude;
+	private double latitude;
 	private Division division;
 	private Tier tier;
 	private League league;
 	private ArrayList<Exception> exceptions;
-	private float radius;
+	private double radius;
 	private ArrayList<Arena> homeArenas;
 	
 	
 	/**
 	 * Default Constructor
+	 * 
 	 * @param name, division, tier, league
 	 */
-	public Team(String name, float longitude, float latitude,  Division division, Tier tier) {
+	public Team(String name, double longitude, double latitude,  Division division, Tier tier) {
 		this.name = name;
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.division = division;
 		this.tier = tier;
 		exceptions = new ArrayList<Exception>();
+		homeArenas = new ArrayList<Arena>();
 	}
 	
 	/**
 	 * Name only constructor
+	 * 
 	 * @param name
 	 */
 	public Team(String name) {
@@ -39,6 +47,7 @@ public class Team {
 	
 	/**
 	 * Adds exception to exceptions list for a Team
+	 * 
 	 * @param newException
 	 */
 	public void addException(Exception newException) {
@@ -46,80 +55,55 @@ public class Team {
 	}
 	
 	
-	//Getters and setters
-	/**
-	 * @return the name
+	/*
+	 * Getters and setters
 	 */
 	public String getName() {
 		return name;
 	}
 	
-	/**
-	 * @return the longitude
-	 */
-	public float getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	/**
-	 * @return the latitude
-	 */
-	public float getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	/**
-	 * @return the exceptions
-	 */
 	public ArrayList<Exception> getExceptions() {
 		return exceptions;
 	}
 
-	/**
-	 * @return the division
-	 */
 	public Division getDivision() {
 		return division;
 	}
 
-	/**
-	 * @return the tier
-	 */
 	public Tier getTier() {
 		return tier;
 	}
 
-	/**
-	 * @return the league
-	 */
 	public League getLeague() {
 		return league;
 	}
 
-	/**
-	 * 
-	 * @return radius
-	 */
-	public float getRadius() {
+	public double getRadius() {
 		return radius;
 	}
 
+	public void setLongitude(double x) { 
+		longitude = x; 
+	}
 	
-	 * Setter method for the longitude component of the teams location
-	 *
-	 * @param x
-	 */
-	public void setLongitude(float x) { longitude = x; }
+	public void setLatitude(double y) { 
+		latitude = y; 
+	}
 
-	/**
-	 * Setter method for the latitude component of the teams location
-	 *
-	 * @param y
-	 */
-	public void setLatitude(float y) { latitude = y; }
+	public void addArena(Arena a) { 
+		homeArenas.add(a); 
+	}
 
-	public void addArena(Arena a) { homeArenas.add(a); }
-
-	public ArrayList<Arena> getHomeArenas() { return homeArenas; }
+	public ArrayList<Arena> getHomeArenas() { 
+		return homeArenas; 
+	}
 	
 }
