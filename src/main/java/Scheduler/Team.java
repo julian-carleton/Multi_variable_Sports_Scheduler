@@ -11,19 +11,19 @@ public class Team {
 	private Tier tier;
 	private League league;
 	private ArrayList<Exception> exceptions;
+	private float radius;
 	
 	
 	/**
 	 * Default Constructor
 	 * @param name, division, tier, league
 	 */
-	public Team(String name, float longitude, float latitude,  Division division, Tier tier, League league) {
+	public Team(String name, float longitude, float latitude,  Division division, Tier tier) {
 		this.name = name;
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.division = division;
 		this.tier = tier;
-		this.league = league;
 		exceptions = new ArrayList<Exception>();
 	}
 	
@@ -86,6 +86,15 @@ public class Team {
 		return league;
 	}
 
+	/**
+	 * 
+	 * @return radius
+	 */
+	public float getRadius() {
+		return radius;
+	}
+
+	
 	
 	
 }

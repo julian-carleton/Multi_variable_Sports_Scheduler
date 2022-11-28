@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * 
@@ -18,12 +19,12 @@ import java.util.List;
  */
 public class Excel_Import {
     // 2D Arraylists for each sheet
-    List<List<String>> teams = new ArrayList<List<String>>();
-    List<List<String>> timeExceptions =  new ArrayList<List<String>>();
-    List<List<String>> dateExceptions = new ArrayList<List<String>>();
-    List<List<String>> arenas = new ArrayList<List<String>>();
-    List<List<String>> timeSlots = new ArrayList<List<String>>();
-    List<List<String>> homeArenas = new ArrayList<List<String>>();
+	ArrayList<ArrayList<String>> teams =  new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<Object>> timeExceptions =  new ArrayList<ArrayList<Object>>();
+	ArrayList<ArrayList<Object>> dateExceptions = new ArrayList<ArrayList<Object>>();
+	ArrayList<ArrayList<String>> arenas = new ArrayList<ArrayList<String>>();
+	ArrayList<ArrayList<Object>> timeSlots = new ArrayList<ArrayList<Object>>();
+	ArrayList<ArrayList<String>> homeArenas = new ArrayList<ArrayList<String>>();
 
     // Excel Variables
     XSSFWorkbook wb;
@@ -33,6 +34,7 @@ public class Excel_Import {
     XSSFSheet arenasSheet;
     XSSFSheet timeSlotsSheet;
     XSSFSheet homeArenasSheet;
+    XSSFSheet extraInfo;
 
     /**
      * Constructor for Excel_Import class
@@ -52,6 +54,7 @@ public class Excel_Import {
             arenasSheet = wb.getSheetAt(3);
             timeSlotsSheet = wb.getSheetAt(4);
             homeArenasSheet = wb.getSheetAt(5);
+            extraInfo = wb.getSheetAt(6);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,14 +128,14 @@ public class Excel_Import {
     public void importTimeExceptions() {
         // Initialize Internal Arrays
         ArrayList<String> headers = new ArrayList<>();
-        ArrayList<String> division = new ArrayList<>();
-        ArrayList<String> team = new ArrayList<>();
-        ArrayList<String> date = new ArrayList<>();
-        ArrayList<String> startTime = new ArrayList<>();
-        ArrayList<String> endTime = new ArrayList<>();
-        ArrayList<String> rank = new ArrayList<>();
-        ArrayList<String> weekly = new ArrayList<>();
-        ArrayList<String> day = new ArrayList<>();
+        ArrayList<Object> division = new ArrayList<>();
+        ArrayList<Object> team = new ArrayList<>();
+        ArrayList<Object> date = new ArrayList<>();
+        ArrayList<Object> startTime = new ArrayList<>();
+        ArrayList<Object> endTime = new ArrayList<>();
+        ArrayList<Object> rank = new ArrayList<>();
+        ArrayList<Object> weekly = new ArrayList<>();
+        ArrayList<Object> day = new ArrayList<>();
 
         // Add internal arrays to sheet array
         timeExceptions.add(division);
@@ -167,7 +170,7 @@ public class Excel_Import {
                         timeExceptions.get(1).add(cell.getStringCellValue());
                     }
                     else if(cell.getColumnIndex() == 2) {
-                        timeExceptions.get(2).add(String.valueOf(cell.getDateCellValue()));
+                        timeExceptions.get(2).add(cell.getLocalDateTimeCellValue());
                     }
                     else if(cell.getColumnIndex() == 3) {
                         String format = String.valueOf(cell.getLocalDateTimeCellValue());
@@ -196,14 +199,14 @@ public class Excel_Import {
      */
     public void importDateExceptions() {
         // Initialize internal arrays
-        ArrayList<String> headers = new ArrayList<>();
-        ArrayList<String> division = new ArrayList<>();
-        ArrayList<String> team = new ArrayList<>();
-        ArrayList<String> startDate = new ArrayList<>();
-        ArrayList<String> endDate = new ArrayList<>();
+        ArrayList<Object> headers = new ArrayList<>();
+        ArrayList<Object> division = new ArrayList<>();
+        ArrayList<Object> team = new ArrayList<>();
+        ArrayList<Object> startDate = new ArrayList<>();
+        ArrayList<Object> endDate = new ArrayList<>();
 
         // Add internal arrays to sheet array
-        dateExceptions.add(division);
+        dateExceptions.add(division); 
         dateExceptions.add(team);
         dateExceptions.add(startDate);
         dateExceptions.add(endDate);
@@ -228,14 +231,10 @@ public class Excel_Import {
                         dateExceptions.get(1).add(cell.getStringCellValue());
                     }
                     else if(cell.getColumnIndex() == 2) {
-                        String date = String.valueOf(cell.getDateCellValue());
-                        date = date.substring(0, 10) + date.substring(date.length() - 5);
-                        dateExceptions.get(2).add(date);
+                        dateExceptions.get(2).add(cell.getLocalDateTimeCellValue());
                     }
                     else if(cell.getColumnIndex() == 3) {
-                        String date = String.valueOf(cell.getDateCellValue());
-                        date = date.substring(0, 10) + date.substring(date.length() - 5);
-                        dateExceptions.get(3).add(date);
+                        dateExceptions.get(3).add(cell.getLocalDateTimeCellValue());
                     }
                 }
             }
@@ -276,7 +275,7 @@ public class Excel_Import {
                     else if(cell.getColumnIndex() == 1) {
                         arenas.get(1).add(String.valueOf(cell.getNumericCellValue()));
                     }
-                    else if(cell.getColumnIndex() == 1) {
+                    else if(cell.getColumnIndex() == 2) {
                         arenas.get(2).add(String.valueOf(cell.getNumericCellValue()));
                     }
                 }
@@ -290,11 +289,11 @@ public class Excel_Import {
      */
     public void importTimeSlots() {
         // Initialize internal arrays
-        ArrayList<String> headers = new ArrayList<>();
-        ArrayList<String> arenaName = new ArrayList<>();
-        ArrayList<String> day = new ArrayList<>();
-        ArrayList<String> start = new ArrayList<>();
-        ArrayList<String> preferredDivisions = new ArrayList<>();
+        ArrayList<Object> headers = new ArrayList<>();
+        ArrayList<Object> arenaName = new ArrayList<>();
+        ArrayList<Object> day = new ArrayList<>();
+        ArrayList<Object> start = new ArrayList<>();
+        ArrayList<Object> preferredDivisions = new ArrayList<>();
 
         // Add internal arrays to sheet array
         timeSlots.add(arenaName);
@@ -319,12 +318,8 @@ public class Excel_Import {
                         timeSlots.get(0).add(cell.getStringCellValue());
                     }
                     else if(cell.getColumnIndex() == 1) {
-                        String date = String.valueOf(cell.getDateCellValue());
-                        if(date.length() > 4) {
-                            date = date.substring(4,10) + date.substring(date.length() - 5);
-                        }
-                        //timeSlots.get(1).add(String.valueOf(date.length()));
-                        timeSlots.get(1).add(date);
+
+                        timeSlots.get(1).add(cell.getLocalDateTimeCellValue());
                     }
                     else if(cell.getColumnIndex() == 2) {
                         String format = String.valueOf(cell.getLocalDateTimeCellValue());
@@ -393,8 +388,27 @@ public class Excel_Import {
         }
 
     }
+    
+    public ArrayList<String> ExtraInfo() {
+    	Iterator<Row> rowIterator = extraInfo.rowIterator();
+    	ArrayList<String> temp = new ArrayList<String>();
+        // Iterate over data
+        while(rowIterator.hasNext()) {
+            // Next row
+            Row row = rowIterator.next();
+            Iterator<Cell> cellIterator = row.cellIterator();
+            while(cellIterator.hasNext()) {
+            	Cell cell = cellIterator.next();
+            	if(cell.getColumnIndex() == 1) {
+            		temp.add(String.valueOf(cell.getNumericCellValue()));
+            	}
+            }
+            }
+        return temp;
+    }
+        
 
-    public void printTeamsData(List<List<String>> sheetArray) {
+    public void printTeamsData(ArrayList<ArrayList<String>> sheetArray) {
         // Size of internal lists
         int totalLength = sheetArray.get(0).size();
 
@@ -408,7 +422,7 @@ public class Excel_Import {
         }
     }
 
-    public void printTimeExceptionsData(List<List<String>> sheetArray) {
+    public void printTimeExceptionsData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Time Exception: " + (i+1));
             System.out.println("Division: " + sheetArray.get(0).get(i));
@@ -421,7 +435,7 @@ public class Excel_Import {
         }
     }
 
-    public void printDateExceptionsData(List<List<String>> sheetArray) {
+    public void printDateExceptionsData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Date Exception: " + (i+1));
             System.out.println("Division: " + sheetArray.get(0).get(i));
@@ -431,7 +445,7 @@ public class Excel_Import {
         }
     }
 
-    public void printArenasData(List<List<String>> sheetArray) {
+    public void printArenasData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Arena: " + (i+1));
             System.out.println("Name: " + sheetArray.get(0).get(i));
@@ -440,7 +454,7 @@ public class Excel_Import {
         }
     }
 
-    public void printTimeSlotsData(List<List<String>> sheetArray) {
+    public void printTimeSlotsData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Time Slot: " + (i+1));
             System.out.println("Arena Name: " + sheetArray.get(0).get(i));
@@ -450,7 +464,7 @@ public class Excel_Import {
         }
     }
 
-    public void printHomeArenasData(List<List<String>> sheetArray) {
+    public void printHomeArenasData(ArrayList<ArrayList<String>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Home Arena: " + (i+1));
             System.out.println("Team: " + sheetArray.get(0).get(i));
@@ -459,8 +473,49 @@ public class Excel_Import {
             System.out.println("Rank: " + sheetArray.get(3).get(i));
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // Getters and setters
 
-    public static void main(String[] args) throws IOException {
+    public ArrayList<ArrayList<String>> getTeams() {
+		return teams;
+	}
+
+	public ArrayList<ArrayList<Object>> getTimeExceptions() {
+		return timeExceptions;
+	}
+
+	public ArrayList<ArrayList<Object>> getDateExceptions() {
+		return dateExceptions;
+	}
+
+
+	public ArrayList<ArrayList<String>> getArenas() {
+		return arenas;
+	}
+
+	public ArrayList<ArrayList<Object>> getTimeSlots() {
+		return timeSlots;
+	}
+
+	public ArrayList<ArrayList<String>> getHomeArenas() {
+		return homeArenas;
+	}
+
+
+	/**
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
         // Create test run
         Excel_Import test = new Excel_Import();
 

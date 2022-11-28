@@ -26,7 +26,7 @@ public class Schedule {
 	/**
 	 *
 	 *
-	 * */
+	 **/
 	public void matchRR() {
 		//Determine if even or odd # teams
 		boolean even = false;

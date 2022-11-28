@@ -1,5 +1,8 @@
 package main.java.Scheduler;
 
+import java.math.*;
+
+
 public class Arena {
 	private String name;
 	private float longitude;
@@ -17,6 +20,21 @@ public class Arena {
 		this.latitude = latitude;
 	}
 
+	/**
+	 * Checks if arena is in a teams radius
+	 * @param latitude2
+	 * @param longitude2
+	 * @param radius
+	 * @return
+	 */
+	public boolean isInrad(float latitude2, float longitude2, double radius) {
+		float length = (float) Math.sqrt((Math.pow((longitude-longitude2), 2) + Math.pow((latitude-latitude2), 2)));
+		if (radius < length) {
+			return true;
+		}
+		return false;
+	}
+	
 	
 	//Getters and Setters
 	
@@ -40,6 +58,9 @@ public class Arena {
 	public float getLatitude() {
 		return latitude;
 	}
+
+
+
 	
 	
 	
