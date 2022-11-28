@@ -4,21 +4,21 @@ import java.util.ArrayList;
 
 public class Round {
 
-	ArrayList<Object> matchups;   //List of games in the round
+	ArrayList<Game> matchups;   //List of games in the round
 
 	public Round() {
-		this.matchups = new ArrayList<Object>();
+		this.matchups = new ArrayList<Game>();
 	}
 	
 	public void add(Game game) {
 		this.matchups.add(game);
 	}
 	
-	public Object getGame(int index) {
+	public Game getGame(int index) {
 		return this.matchups.get(index);
 	}
 	
-	public Object getMatchups() {
+	public ArrayList<Game> getMatchups() {
 		return this.matchups;
 	}
 }

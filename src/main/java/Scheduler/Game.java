@@ -4,6 +4,7 @@ public class Game {
 	Team homeTeam;
 	Team awayTeam;
 	TimeSlot timeSlot;
+	int exceptions_num;
 	
 	public Game() {
 		
@@ -12,6 +13,7 @@ public class Game {
 	public Game(Team homeTeam, Team awayTeam) {
 		this.homeTeam = homeTeam;
 		this.awayTeam = awayTeam;
+		this.exceptions_num = homeTeam.getExceptions().size() + awayTeam.getExceptions().size();
 	}
 	
 	public Team getHomeTeam() {
@@ -28,5 +30,9 @@ public class Game {
 	
 	public void setAwayTeam(Team awayTeam) {
 		this.awayTeam = awayTeam;
+	}
+	
+	public int getExceptionsNumber() {
+		return this.exceptions_num;
 	}
 }

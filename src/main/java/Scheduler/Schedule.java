@@ -13,6 +13,7 @@ public class Schedule {
 	public Schedule(ArrayList<Team> teams){//, ArrayList<TimeSlot> timelsots) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
+		matchRR();
 	}
 
 	/**
@@ -69,6 +70,39 @@ public class Schedule {
 
 	}
 
+	/**
+	 * Orders the rounds so that the games with matchups with most exceptions are ordered first.
+	 * 
+	 * */
+	public void orderExceptionNumber() {
+		ArrayList<Round> new_rounds = new ArrayList<Round>();
+		
+		//Iterating through the rounds
+		for (int i = 0; i < this.rounds.size(); i++) {
+			//Creating the new round
+			Round new_round = new Round();
+			Round curr_round = rounds.get(i);
+			for (int j = 0; j < curr_round.getMatchups().size(); j++) {
+				Game curr_game = curr_round.getGame(j);
+				int curr_game_excps_number = curr_game.getExceptionsNumber();
+				ArrayList<Game> new_round_matchups = new_round.getMatchups();
+				if (new_round_matchups.size() == 0) {
+					new_round_matchups.add(curr_game);
+				} else {
+					for (int k = 0; k < new_round_matchups.size(); k++) {
+						int next_game_excps_number = new_round_matchups.get(k).getExceptionsNumber();
+						if (curr_game_excps_number > next_game_excps_number) {
+							new_round_matchups.add(k, curr_game);
+							break;
+						}
+					}
+				}
+			}
+			new_rounds.add(new_round);
+		}
+		this.rounds = new_rounds;
+	}
+	
 	public ArrayList<Round> getRounds() {
 		return this.rounds;
 	}
