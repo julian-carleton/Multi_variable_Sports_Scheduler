@@ -103,7 +103,7 @@ public class Excel_Import {
                 } else {
                     if (cell.getColumnIndex() == 0) {
                         //league.add(cell.getStringCellValue());
-                        teams.get(0).add(cell.getStringCellValue());
+                        teams.get(0).add(cell.getStringCellValue     ());
                     }
                     else if (cell.getColumnIndex() == 1) {
                         teams.get(1).add(cell.getStringCellValue());
@@ -273,10 +273,14 @@ public class Excel_Import {
                         arenas.get(0).add(cell.getStringCellValue());
                     }
                     else if(cell.getColumnIndex() == 1) {
+                        String test = String.valueOf(cell.getNumericCellValue());
                         arenas.get(1).add(String.valueOf(cell.getNumericCellValue()));
+                        System.out.println("Added: " + test);
                     }
                     else if(cell.getColumnIndex() == 2) {
+                        String test = String.valueOf(cell.getNumericCellValue());
                         arenas.get(2).add(String.valueOf(cell.getNumericCellValue()));
+                        System.out.println("Added: " + test);
                     }
                 }
             }
@@ -449,8 +453,8 @@ public class Excel_Import {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Arena: " + (i+1));
             System.out.println("Name: " + sheetArray.get(0).get(i));
-            // System.out.println("Location x: " + sheetArray.get(1).get(i));
-            // System.out.println("Location y: " + sheetArray.get(2).get(i));
+            System.out.println("Location x: " + sheetArray.get(1).get(i));
+            System.out.println("Location y: " + sheetArray.get(2).get(i));
         }
     }
 
@@ -484,38 +488,12 @@ public class Excel_Import {
     
     // Getters and setters
 
-    public ArrayList<ArrayList<String>> getTeams() {
-		return teams;
-	}
 
-	public ArrayList<ArrayList<Object>> getTimeExceptions() {
-		return timeExceptions;
-	}
+    public List<List<String>> getHomeArenas() {
+        return homeArenas;
+    }
 
-	public ArrayList<ArrayList<Object>> getDateExceptions() {
-		return dateExceptions;
-	}
-
-
-	public ArrayList<ArrayList<String>> getArenas() {
-		return arenas;
-	}
-
-	public ArrayList<ArrayList<Object>> getTimeSlots() {
-		return timeSlots;
-	}
-
-	public ArrayList<ArrayList<String>> getHomeArenas() {
-		return homeArenas;
-	}
-
-
-	/**
-	 * 
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         // Create test run
         Excel_Import test = new Excel_Import();
 
@@ -531,8 +509,8 @@ public class Excel_Import {
         //test.printTeamsData(test.teams);
         //test.printTimeExceptionsData(test.timeExceptions);
         //test.printDateExceptionsData(test.dateExceptions);
-        //test.printArenasData(test.arenas);
+        test.printArenasData(test.arenas);
         //test.printTimeSlotsData(test.timeSlots);
-        test.printHomeArenasData(test.homeArenas);
+        //test.printHomeArenasData(test.homeArenas);
     }
 }
