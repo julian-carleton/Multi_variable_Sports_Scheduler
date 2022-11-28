@@ -49,6 +49,7 @@ public class League {
 	private void generateSchedules() {
 		ArrayList<Team> tempteam = new ArrayList<Team>();
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
+		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 		for (Division d: divisions) {
 			int numTiers = 0;
 			for (Team t: d.getTeams()) {
@@ -70,6 +71,8 @@ public class League {
 					}
 				}
 				ArrayList<TimeSlot> tempTimeSlots = getTimeslots(tempteam,arenas);
+				Schedule tempSchedule = new Schedule(tempteam); // call schedule
+				schedules.add(tempSchedule);
 			}
 		}
 		
@@ -98,12 +101,28 @@ public class League {
     * @return list of timeslots for given team
     */
    public ArrayList<TimeSlot> seletTimeslot(ArrayList<Team> team, ArrayList<Arena> arenas) {
+	   ArrayList<TimeSlot> tempTimeSlots = new ArrayList<TimeSlot>();
+	   
        int slotsPerWeek = (int) ((team.size()/2) * gamesperweek) ;
        LocalDateTime curDay = timeslots.get(0).getStartDateTime();
+       int curSlot = 0;
        int weeks = getNumberWeeks();
        for (int i = 0; i < weeks;i++) {
-           for (int j = 0; j > slotsPerWeek;j++) {
-        	   //Select Slot
+    	   int availableSlotsperwk = slotsAvaialblePerWeek(curSlot);
+           for (int j = 0; j < slotsPerWeek;j++) {
+        	   int point = curSlot+ j*(availableSlotsperwk/slotsPerWeek);
+        	   TimeSlot slot = timeslots.get(point);
+        	   
+        	   while(!checkArena(slot, arenas)) {
+        		   if  ( point < (availableSlotsperwk+curSlot)) {
+        			   point++;
+        			   slot = timeslots.get(point);
+        		   }else {
+        			   return null; // not enoughTimeslots exit to prevent being stuck if there are no good time slots
+        		   }
+        	   }
+        	   slot.useTimeslot();	// Set as no longer available
+        	   tempTimeSlots.add(slot);
            }
            curDay.plusDays(7);
 
@@ -111,7 +130,20 @@ public class League {
        return null;
    }
 
-   private int getNumberWeeks() {
+   private int slotsAvaialblePerWeek(int curSlot) {
+	   LocalDateTime curDay = timeslots.get(curSlot).getStartDateTime();
+	   LocalDateTime endDay = curDay;
+	   endDay.plusDays(7);
+	   int startDay = (int) (curDay.getDayOfYear() + curDay.getYear()*365.25);
+	   int count = 0;
+	   while ( 0 < curDay.compareTo(endDay) ) {
+			count++;
+			curDay.plusDays(1);
+		}
+		return count;
+	}
+
+private int getNumberWeeks() {
 	   LocalDateTime firstDay = timeslots.get(0).getStartDateTime();
 	   LocalDateTime LastDay = timeslots.get((timeslots.size())-1).getStartDateTime();
 	   float firsDayCount =  (float) ( (float) firstDay.getYear() * (365.25)) + firstDay.getDayOfYear();

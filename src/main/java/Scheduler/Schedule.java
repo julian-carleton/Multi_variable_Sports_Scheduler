@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class Schedule {
 	ArrayList<Round> rounds;
-	ArrayList<Object> teams;
+	ArrayList<Team> teams;
 	int num_rounds;
 
 	/**
 	 * Default constructor
 	 * */
-	public Schedule(ArrayList<Object> teams){//, ArrayList<TimeSlot> timelsots) {
+	public Schedule(ArrayList<Team> teams){//, ArrayList<TimeSlot> timelsots) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
 	}
@@ -74,17 +74,17 @@ public class Schedule {
 	}
 
 	public static void main(String[] args) {
-		ArrayList<Object> teams = new ArrayList<Object>();
-		teams.add("Team 1");
-		teams.add("Team 2");
-		teams.add("Team 3");
-		teams.add("Team 4");
-		teams.add("Team 5");
-		teams.add("Team 6");
-		teams.add("Team 7");
-		teams.add("Team 8");
-		teams.add("Team 9");
-		teams.add("Team 10");
+		ArrayList<Team> teams = new ArrayList<Team>();
+//		teams.add("Team 1");
+//		teams.add("Team 2");
+//		teams.add("Team 3");
+//		teams.add("Team 4");
+//		teams.add("Team 5");
+//		teams.add("Team 6");
+//		teams.add("Team 7");
+//		teams.add("Team 8");
+//		teams.add("Team 9");
+//		teams.add("Team 10");
 		Schedule schedule = new Schedule(teams);
 		schedule.matchRR();
 
