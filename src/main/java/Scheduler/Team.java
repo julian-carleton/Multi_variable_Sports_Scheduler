@@ -11,6 +11,7 @@ public class Team {
 	private Tier tier;
 	private League league;
 	private ArrayList<Exception> exceptions;
+	private ArrayList<Arena> homeArenas;
 	
 	
 	/**
@@ -86,6 +87,22 @@ public class Team {
 		return league;
 	}
 
-	
+	/**
+	 * Setter method for the longitude component of the teams location
+	 *
+	 * @param x
+	 */
+	public void setLongitude(float x) { longitude = x; }
+
+	/**
+	 * Setter method for the latitude component of the teams location
+	 *
+	 * @param y
+	 */
+	public void setLatitude(float y) { latitude = y; }
+
+	public void addArena(Arena a) { homeArenas.add(a); }
+
+	public ArrayList<Arena> getHomeArenas() { return homeArenas; }
 	
 }

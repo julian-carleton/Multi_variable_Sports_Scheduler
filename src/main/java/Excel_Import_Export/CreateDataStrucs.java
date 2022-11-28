@@ -2,6 +2,7 @@ package main.java.Excel_Import_Export;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import main.java.Scheduler.*;
 import main.java.Scheduler.Exception;
@@ -120,8 +121,7 @@ public class CreateDataStrucs {
 			Exception tempException = new Exception(start,end);
 			temp.addException(tempException);
 		}
-		
-		
+
 	}
 	
 	/**
@@ -232,5 +232,92 @@ public class CreateDataStrucs {
 		}
 		return temp;
 	}
-	
+
+	/**
+	 * Method to set location radius for a team that's defined by their given home arenas
+	 *
+	 * @param teamArenas list of home arenas a team can play at
+	 */
+	private void makeTeamRadius(ArrayList<ArrayList<Object>> teamArenas) {
+		// Iterate over teams
+		for (int i = 0; i < teamArenas.get(0).size(); i++) {
+			 // Find the potential home arenas for team
+			String team = (String) teamArenas.get(0).get(i);
+			String division = (String) teamArenas.get(1).get(i);
+			Arena a = getArena((String) teamArenas.get(2).get(i));
+
+			// Add arena to team
+			getTeamFromStr(division, team).addArena(a);
+		}
+
+		for(Team t: teams) {
+			ArrayList<Arena> arenas = t.getHomeArenas();
+			double lat1, lat2, lat3;
+			double lon1, lon2, lon3;
+			double dLon, Bx, By;
+
+			switch(arenas.size()) {
+				case 1:
+					t.setLatitude(arenas.get(0).getLatitude());
+					t.setLongitude(arenas.get(0).getLongitude());
+				case 2:
+					// Convert arena 1 coords to rad
+					lat1 = Math.toRadians(arenas.get(0).getLatitude());
+					lon1 = Math.toRadians(arenas.get(0).getLongitude());
+
+					// Convert arena 2 coords to rad
+					lat2 = Math.toRadians(arenas.get(1).getLatitude());
+					lon2 = Math.toRadians(arenas.get(1).getLongitude());
+
+					// Intermediate variables
+					dLon = Math.toRadians(lon2 - lon1);
+					Bx = Math.cos(lat2) * Math.cos(dLon);
+					By = Math.cos(lat2) * Math.sin(dLon);
+
+					// Calculate midpoint
+					double latF = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx)*(Math.cos(lat1)+ Bx) + By * By));
+					double lonF = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+					// Set midpoint for team
+					t.setLatitude((float) Math.toDegrees(latF));
+					t.setLongitude((float) Math.toDegrees(lonF));
+				case 3:
+					lat1 = Math.toRadians(arenas.get(0).getLatitude());
+					lon1 = Math.toRadians(arenas.get(0).getLongitude());
+
+					lat2 = Math.toRadians(arenas.get(1).getLatitude());
+					lon2 = Math.toRadians(arenas.get(1).getLongitude());
+
+					lat3 = Math.toRadians(arenas.get(2).getLatitude());
+					lon3 = Math.toRadians(arenas.get(2).getLongitude());
+
+					// Average of points
+					latF = (lat1 + lat2 + lat3) / 3;
+					lonF = (lon1 + lon2 + lon3) / 3;
+
+					// Set midpoint for team
+					t.setLatitude((float) Math.toDegrees(latF));
+					t.setLongitude((float) Math.toDegrees(lonF));
+			}
+		}
+	}
+
+	/**
+	 * Temporary method to check if team can play at an arena as a home team
+	 *
+	 * Note: this should be changed to use location as a check
+	 *
+	 * @param team
+	 * @param arena
+	 * @return
+	 */
+	public boolean canTeamPlay(Team team, Arena arena) {
+		// Check if given arena is in list of home arenas
+		for(Arena a: team.getHomeArenas()) {
+			if(arena != a) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
