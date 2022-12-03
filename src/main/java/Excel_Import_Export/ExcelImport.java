@@ -19,7 +19,9 @@ import java.time.LocalDateTime;
  *
  */
 public class ExcelImport {
-    // 2D Arraylists for each sheet
+    /*
+     * 2D Arraylists for each sheet
+     */
 	private ArrayList<ArrayList<String>> teams =  new ArrayList<ArrayList<String>>();
 	private ArrayList<ArrayList<Object>> timeExceptions =  new ArrayList<ArrayList<Object>>();
 	private ArrayList<ArrayList<Object>> dateExceptions = new ArrayList<ArrayList<Object>>();
@@ -28,7 +30,9 @@ public class ExcelImport {
 	private ArrayList<ArrayList<String>> homeArenas = new ArrayList<ArrayList<String>>();
 	private ArrayList<ArrayList<Object>> extraInfo = new ArrayList<ArrayList<Object>>();
 
-    // Excel Variables
+    /*
+     * Excel Variables
+     */
 	private  XSSFWorkbook wb;
 	private XSSFSheet teamsSheet;
 	private XSSFSheet timeExceptionsSheet;

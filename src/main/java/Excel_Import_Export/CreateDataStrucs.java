@@ -52,7 +52,7 @@ public class CreateDataStrucs {
 		teams = new ArrayList<Team>();
 		
 		for (int i = 0; i < teamsStr.get(0).size(); i++) {
-			//String name, float longitude, float latitude,  Division division, Tier tier, League league
+
 			String name = (String) teamsStr.get(1).get(i);
 //			float longitude = Float.parseFloat( (String) teamsstr.get(x).get(5));
 //			float latitude = Float.parseFloat( (String) teamsstr.get(x).get(6));	will calculate location based on home arena
@@ -72,6 +72,10 @@ public class CreateDataStrucs {
 				tempDiv = new Division((String) teamsStr.get(3).get(i));
 				divisions.add(tempDiv);
 			}
+			
+			/*
+			 * Assign League
+			 */
 			
 //			contains = false;
 //			League tempLeague = null; // same as div
@@ -287,14 +291,20 @@ public class CreateDataStrucs {
 	 * @param teamArenas list of home arenas a team can play at
 	 */
 	private void teamSetCenterPoint(ArrayList<ArrayList<String>> teamArenas) {
-		// Iterate over teams
+		/*
+		 * Iterate over teams
+		 */
 		for (int i = 0; i < teamArenas.get(0).size(); i++) {
-			 // Find the potential home arenas for team
+			 /*
+			  * Find the potential home arenas for team
+			  */
 			String team =  teamArenas.get(0).get(i);
 			String division = teamArenas.get(1).get(i);
 			Arena a = getArena( teamArenas.get(2).get(i));
 
-			// Add arena to team
+			/*
+			 * Add arena to team
+			 */
 			getTeamFromStr(division, team).addArena(a);
 		}
 
@@ -375,7 +385,9 @@ public class CreateDataStrucs {
 	 * @return
 	 */
 	public boolean canTeamPlay(Team team, Arena arena) {
-		// Check if given arena is in list of home arenas
+		/*
+		 * Check if given arena is in list of home arenas
+		 */
 		for(Arena a: team.getHomeArenas()) {
 			if(arena != a) {
 				return false;
