@@ -9,9 +9,10 @@ import java.util.ArrayList;
  * @author Julian Obando, Quinn Sondermeyer
  */
 public class Schedule {
-	ArrayList<Round> rounds;
-	ArrayList<Team> teams;
-	int numRounds;
+	private ArrayList<Round> rounds;
+	private ArrayList<Team> teams;
+	private int numRounds;
+	private Object timeslots;
 
 
 	/**
@@ -19,12 +20,16 @@ public class Schedule {
 	 * @author Quinn Sondermeyer Julian Obando 
 	 * @param teams
 	 */
-	public Schedule(ArrayList<Team> teams){//, ArrayList<TimeSlot> timelsots) {
+	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timelsots) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
+		this.timeslots = timeslots;
 		matchRR();
+		orderExceptionNumber();
+		assignGames();
 	}
 
+	
 	/**
 	 *
 	 *
@@ -89,33 +94,71 @@ public class Schedule {
 	 * @author Julian Obando
 	 * */
 	public void orderExceptionNumber() {
-		ArrayList<Round> new_rounds = new ArrayList<Round>();
+		ArrayList<Round> newRounds = new ArrayList<Round>();
 		
 		//Iterating through the rounds
 		for (int i = 0; i < this.rounds.size(); i++) {
 			//Creating the new round
-			Round new_round = new Round();
-			Round curr_round = rounds.get(i);
-			for (int j = 0; j < curr_round.getMatchups().size(); j++) {
-				Game curr_game = curr_round.getGame(j);
-				int curr_game_excps_number = curr_game.getExceptionsNumber();
-				ArrayList<Game> new_round_matchups = new_round.getMatchups();
-				if (new_round_matchups.size() == 0) {
-					new_round_matchups.add(curr_game);
+			Round newRound = new Round();
+			Round currRound = rounds.get(i);
+			for (int j = 0; j < currRound.getMatchups().size(); j++) {
+				Game currGame = currRound.getGame(j);
+				int currGameExcpsNumr = currGame.getExceptionsNumber();
+				ArrayList<Game> newRoundMatchups = newRound.getMatchups();
+				if (newRoundMatchups.size() == 0) {
+					newRoundMatchups.add(currGame);
 				} else {
-					for (int k = 0; k < new_round_matchups.size(); k++) {
-						int next_game_excps_number = new_round_matchups.get(k).getExceptionsNumber();
-						if (curr_game_excps_number > next_game_excps_number) {
-							new_round_matchups.add(k, curr_game);
+					for (int k = 0; k < newRoundMatchups.size(); k++) {
+						int nextGameExcpsNum = newRoundMatchups.get(k).getExceptionsNumber();
+						if (currGameExcpsNumr > nextGameExcpsNum) {
+							newRoundMatchups.add(k, currGame);
 							break;
 						}
 					}
 				}
 			}
-			new_rounds.add(new_round);
+			newRounds.add(newRound);
 		}
-		this.rounds = new_rounds;
+		this.rounds = newRounds;
 	}
+	
+	
+	/**
+	 * 
+	 */
+	private void assignGames() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
+	/**
+	 * Checks if team is available 
+	 * 
+     * @author Faris
+     * @param team
+     * @param timeSlot
+     * @return
+     */
+    private boolean exceptionCheck(Team team, TimeSlot timeSlot ) {
+        int lengthofTimeSlot = 3;
+        ArrayList<Exception> exceptions = team.getExceptions();                 // get exceptions
+        for (Exception e: exceptions) {                                        // Loop Through all exceptions
+
+            if (e.getStart().compareTo(timeSlot.getStartDateTime()) < 0) {     // check of start is earlier than exception
+                if (e.getEnd().compareTo(timeSlot.getStartDateTime()) > 0) { // check of end is later than exception
+                    return false;
+                }
+            }else if(e.getStart().compareTo(timeSlot.getStartDateTime().plusHours(lengthofTimeSlot)) < 0) {// check of start is earlier than exception - given timeslot length
+                    return false;
+
+            }
+        }
+        return true;
+
+    }
+	
 	
 	/*
 	 * Getters and Setters
@@ -129,7 +172,7 @@ public class Schedule {
 	 */
 	public static void main(String[] args) {
 		ArrayList<Team> teams = new ArrayList<Team>();
-
+		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		teams.add(new Team("Team 1"));
 		teams.add(new Team("Team 2"));
 		teams.add(new Team("Team 3"));
@@ -140,7 +183,8 @@ public class Schedule {
 		teams.add(new Team("Team 8"));
 		teams.add(new Team("Team 9"));
 		teams.add(new Team("Team 10"));
-		Schedule schedule = new Schedule(teams);
+		
+		Schedule schedule = new Schedule(teams, timeSlots);
 		schedule.matchRR();
 
 		boolean even = false;

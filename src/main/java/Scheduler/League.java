@@ -72,7 +72,7 @@ public class League {
 					}
 				}
 				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
-				Schedule tempSchedule = new Schedule(tempTeam); // call schedule
+				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots); // call schedule
 				schedules.add(tempSchedule);
 			}
 		}
@@ -250,7 +250,14 @@ public class League {
 	
 	
 	
-	
+	/**
+	 * Adds new division to league
+	 * 
+	 * @param division
+	 */
+	public void addDivision(Division division) {
+		divisions.add(division);
+	}
 	
 	
 
@@ -263,25 +270,18 @@ public class League {
 	public static void main(String[] args) {
 		ExcelImport excelImport = new ExcelImport();
 
-        // Import sheets
+        /*
+         * Import sheets
+         */
 		excelImport.importData();
-		//Create Data Types
+		
+		/*
+		 * Create Data Types
+		 */
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
 		
 		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
 		
-	}
-	
-	
-	
-	
-	/**
-	 * Adds new division to league
-	 * 
-	 * @param division
-	 */
-	public void addDivision(Division division) {
-		divisions.add(division);
 	}
 	
 	
@@ -300,6 +300,12 @@ public class League {
 	public void setDivisions(ArrayList<Division> divisions) {
 		this.divisions = divisions;
 	}
+
+	public double getGamesPerWeek() {
+		return gamesPerWeek;
+	}
+	
+	
 
 	
 	
