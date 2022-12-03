@@ -10,12 +10,18 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Excel_Export {
+/**
+ * Exports the games into Excel
+ * 
+ * @author Brady Norton
+ *
+ */
+public class ExcelExport {
 
     /**
      *  Constructor for Excel_Export class
      */
-    public Excel_Export() {
+    public ExcelExport() {
     }
 
 }

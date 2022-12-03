@@ -10,6 +10,45 @@ This project focuses on an algorithm that takes input data provided by a sports 
  
 The striking difference of our scheduler is allowing for more dynamic schedules. The first key difference is the exceptions. Exceptions are provided days and times by each team determining when they are unavailable to play games. With current scheduling softwares they do not take multiple exceptions into account which cost teams money if a game is booked over a teams event. The second key difference is the ranking system which will be implemented later into the project's development. The scheduler will allow the league to create matchups for teams outside their tier. The main benefit for this is for more skill based matchups for less competitive leagues. Another difference that will be implemented if we have time is having multiple division per timeslot, where as current systems only have one.
 
+## Notation
+Class
+/**
+* Description
+*
+* @autor
+*/
+public class ClassName{
+
+Methods
+    /**
+    * Description
+    * 
+    * @author (if multiple authors for class)
+    * @param
+    * @return
+    */
+    public/private void methodName(){
+    }
+Variable
+     Local: Type variableName;
+     Global: private Type variableName;
+loops
+     while (cond && cond){
+     for (int i = 0; i < variable; i++){
+
+Comments
+Block Message
+code 
+
+/* 
+* message
+*/
+code
+
+Line
+
+code 	// message
+
 ## Project Set Up
 
 1. Download the zip file from github and extract

@@ -2,23 +2,41 @@ package main.java.Scheduler;
 
 import java.util.ArrayList;
 
+/**
+ * ---------------------Add Description
+ * 
+ * @author Julian Obando
+ *
+ */
 public class Round {
 
-	ArrayList<Object> matchups;   //List of games in the round
+	ArrayList<Game> matchups;   //List of games in the round
 
+	/**
+	 * Default Constructor
+	 * 
+	 */
 	public Round() {
-		this.matchups = new ArrayList<Object>();
+		this.matchups = new ArrayList<Game>();
 	}
 	
+	/**
+	 * Add game to matchups in Round Instance
+	 * 
+	 * @param game
+	 */
 	public void add(Game game) {
 		this.matchups.add(game);
 	}
 	
-	public Object getGame(int index) {
+	/*
+	 * Getters and Setters
+	 */
+	public Game getGame(int index) {
 		return this.matchups.get(index);
 	}
 	
-	public Object getMatchups() {
+	public ArrayList<Game> getMatchups() {
 		return this.matchups;
 	}
 }

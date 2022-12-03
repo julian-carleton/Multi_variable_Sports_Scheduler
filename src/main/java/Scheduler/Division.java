@@ -2,6 +2,11 @@ package main.java.Scheduler;
 
 import java.util.ArrayList;
 
+/**
+ * Data Type of arena storing its name, and teams in it
+ * 
+ * @author Quinn Sondermeyer
+ */
 public class Division {
 	private String name;
 	private int age;
@@ -19,6 +24,7 @@ public class Division {
 
 	/**
 	 * Adds team in Division 
+	 * 
 	 * @param name
 	 */
 	public void addTeam(Team team) {
@@ -26,27 +32,17 @@ public class Division {
 	}
 	
 	
-	
-	
-// -----------------------------------Getters------------------------------------------------
-	/**
-	 * @return the name
+	/*
+	 * Getters and Setters
 	 */
 	public String getName() {
 		return name;
 	}
-
-	/**
-	 * @return the age
-	 */
+	
 	public int getAge() {
 		return age;
 	}
 	
-	
-	/**
-	 * @return the teams
-	 */
 	public ArrayList<Team> getTeams() {
 		return teams;
 	}
