@@ -114,9 +114,11 @@ public class Schedule {
 						if (currGameExcpsNumr > nextGameExcpsNum) {
 							newRoundMatchups.add(k, currGame);
 							break;
+						} else if (k == newRoundMatchups.size() - 1) {
+							newRoundMatchups.add(currGame);
+							break;
 						}
 					}
-					newRoundMatchups.add(currGame);
 				}
 			}
 			newRounds.add(newRound);
@@ -180,7 +182,7 @@ public class Schedule {
 		for (int i = 0; i < numTeams; i++) {
 			Team tempTeam = new Team("Team " + (i+1));
 			//Adding as many exceptions as team number
-			for (int j = 0; j < i; j++) {
+			for (int j = 0; j < i + 1; j++) {
 				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
 			}
 			teams.add(tempTeam);
@@ -205,6 +207,7 @@ public class Schedule {
 				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
 				System.out.print(" vs ");
 				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
+				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
 				System.out.print("\n");
 			}
 			System.out.print("This round has: ");
@@ -223,6 +226,7 @@ public class Schedule {
 				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
 				System.out.print(" vs ");
 				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
+				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
 				System.out.print("\n");
 			}
 			System.out.print("This round has: ");
