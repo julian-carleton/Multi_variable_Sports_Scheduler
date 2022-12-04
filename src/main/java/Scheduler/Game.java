@@ -89,12 +89,12 @@ public class Game {
 	
 	public void setHomeTeam(Team homeTeam) {
 		this.homeTeam = homeTeam;
-		this.exceptionsNum = homeTeam.getExceptions().size() + this.awayTeam.getExceptions().size();
+		this.exceptionsNum = this.homeTeam.getExceptions().size() + this.awayTeam.getExceptions().size();
 	}
 	
 	public void setAwayTeam(Team awayTeam) {
 		this.awayTeam = awayTeam;
-		this.exceptionsNum = homeTeam.getExceptions().size() + this.awayTeam.getExceptions().size();
+		this.exceptionsNum = this.homeTeam.getExceptions().size() + this.awayTeam.getExceptions().size();
 	}
 	
 	public int getExceptionsNumber() {
