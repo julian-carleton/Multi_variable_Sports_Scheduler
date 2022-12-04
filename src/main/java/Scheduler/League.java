@@ -22,6 +22,7 @@ public class League {
 	private ArrayList<Division> divisions;
 	private ArrayList<TimeSlot> timeslots;
 	private ArrayList<Arena> arenas;
+	private ArrayList<Schedule> schedules;
 	private double gamesPerWeek = 1;
 
 
@@ -76,7 +77,7 @@ public class League {
 				schedules.add(tempSchedule);
 			}
 		}
-		
+		this.schedules = schedules;
 	}
 
 
@@ -282,6 +283,9 @@ public class League {
 		
 		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
 		
+		//ArrayList<Team> teams = league.getDivisions().get(1).getTeams();
+		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+		//Schedule testSchedule = new Schedule(teams, timeSlots);
 	}
 	
 	
@@ -304,7 +308,10 @@ public class League {
 	public double getGamesPerWeek() {
 		return gamesPerWeek;
 	}
-	
+
+	public ArrayList<Schedule> getSchedules() {
+		return schedules;
+	}
 	
 
 	

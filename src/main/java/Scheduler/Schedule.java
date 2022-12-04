@@ -1,6 +1,7 @@
 package main.java.Scheduler;
 
 import java.lang.reflect.Array;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
@@ -12,7 +13,7 @@ public class Schedule {
 	private ArrayList<Round> rounds;
 	private ArrayList<Team> teams;
 	private int numRounds;
-	private Object timeslots;
+	private Object timeSlots;
 
 
 	/**
@@ -20,12 +21,12 @@ public class Schedule {
 	 * @author Quinn Sondermeyer Julian Obando 
 	 * @param teams
 	 */
-	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timelsots) {
+	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
-		this.timeslots = timeslots;
+		this.timeSlots = timeSlots;
 		matchRR();
-		orderExceptionNumber();
+		//orderExceptionNumber();
 		assignGames();
 	}
 
@@ -48,30 +49,30 @@ public class Schedule {
 		boolean even = false;
 		int numTeams = this.teams.size();
 		if (numTeams % 2 == 0) {
-			numRounds = numTeams - 1;
+			this.numRounds = numTeams - 1;
 			even = true;
 		} else {
-			numRounds = numTeams;
+			this.numRounds = numTeams;
 		}
 
-		for (int j = 0; j < numRounds; j++) {
+		for (int j = 0; j < this.numRounds; j++) {
 			//Matching a round
-			int currX = (0 + j) % numRounds;
-			int currY = (numTeams - 1 + j) % numRounds;
+			int currX = (0 + j) % this.numRounds;
+			int currY = (numTeams - 1 + j) % this.numRounds;
 			Round currRound = new Round();
 			for (int i = 0; i < Math.floorDiv(numTeams, 2); i++) {
-				Game currGame = new Game();
-				currGame.setHomeTeam(teams.get(currX));
+				Team currHomeTeam = teams.get(currX);
+				Team currAwayTeam;
 				if(even && i == 0) {
-					currGame.setAwayTeam(teams.get(numTeams - 1));
+					currAwayTeam = teams.get(numTeams - 1);
 				} else {
-					currGame.setAwayTeam(teams.get(currY));
+					currAwayTeam = teams.get(currY);
 				}
-				currRound.add(currGame);
-				currX = (currX + 1) % numRounds;
+				currRound.add(new Game(currHomeTeam, currAwayTeam));
+				currX = (currX + 1) % this.numRounds;
 				currY --;
 				if (currY < 0) {
-					currY += numRounds;
+					currY += this.numRounds;
 				}
 
 			}
@@ -115,6 +116,7 @@ public class Schedule {
 							break;
 						}
 					}
+					newRoundMatchups.add(currGame);
 				}
 			}
 			newRounds.add(newRound);
@@ -173,19 +175,18 @@ public class Schedule {
 	public static void main(String[] args) {
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-		teams.add(new Team("Team 1"));
-		teams.add(new Team("Team 2"));
-		teams.add(new Team("Team 3"));
-		teams.add(new Team("Team 4"));
-		teams.add(new Team("Team 5"));
-		teams.add(new Team("Team 6"));
-		teams.add(new Team("Team 7"));
-		teams.add(new Team("Team 8"));
-		teams.add(new Team("Team 9"));
-		teams.add(new Team("Team 10"));
+		
+		int numTeams = 10;
+		for (int i = 0; i < numTeams; i++) {
+			Team tempTeam = new Team("Team " + (i+1));
+			//Adding as many exceptions as team number
+			for (int j = 0; j < i; j++) {
+				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
+			}
+			teams.add(tempTeam);
+		}
 		
 		Schedule schedule = new Schedule(teams, timeSlots);
-		schedule.matchRR();
 
 		boolean even = false;
 		int num_teams = teams.size();
@@ -197,6 +198,24 @@ public class Schedule {
 			num_rounds = num_teams;
 		}
 
+		for (int j = 0; j < num_rounds; j++) {
+			Round curr_round = schedule.getRounds().get(j);
+
+			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
+				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
+				System.out.print(" vs ");
+				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
+				System.out.print("\n");
+			}
+			System.out.print("This round has: ");
+			System.out.print(((ArrayList<Game>)curr_round.getMatchups()).size());
+			System.out.print(" matchups\n\n");
+		}
+		
+		//Ordering rounds based on the number of exceptions
+		schedule.orderExceptionNumber();
+		System.out.print("\nAfter ordering...\n\n");
+		
 		for (int j = 0; j < num_rounds; j++) {
 			Round curr_round = schedule.getRounds().get(j);
 
