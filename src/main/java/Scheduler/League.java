@@ -41,7 +41,9 @@ public class League {
 		this.divisions = divisions;
 		this.timeslots = sortTimeSlots(timeslots); // Sorts Time slots by date
 		this.arenas = arenas;
+		this.schedules = new ArrayList<Schedule>(); 
 		
+		testGeneratedSchedules();
 		generateSchedules();
 	}
 	
@@ -73,14 +75,22 @@ public class League {
 					}
 				}
 				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
-				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots); // call schedule
+				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek)); // call schedule
 				schedules.add(tempSchedule);
 			}
 		}
 		this.schedules = schedules;
 	}
 
-
+	/**
+	 * Generates schedules for each division, for testing only...
+	 * It gives the schedules access to all of the timeSlots
+	 */
+	private void testGeneratedSchedules() {
+		for (Division d: divisions) {
+			this.schedules.add(new Schedule(d.getTeams(), this.timeslots, (int)(getNumberWeeks()*this.gamesPerWeek)));
+		}
+	}
 
 	
 	/**
@@ -281,11 +291,7 @@ public class League {
 		 */
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
 		
-		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
-		
-		//ArrayList<Team> teams = league.getDivisions().get(1).getTeams();
-		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-		//Schedule testSchedule = new Schedule(teams, timeSlots);
+		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());		
 	}
 	
 	

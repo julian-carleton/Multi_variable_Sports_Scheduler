@@ -10,10 +10,12 @@ import java.util.ArrayList;
  * @author Julian Obando, Quinn Sondermeyer
  */
 public class Schedule {
-	private ArrayList<Round> rounds;
+	private ArrayList<Round> rounds;    //List of all possible RR matchups in rounds
+	private ArrayList<Game> games;		//List of the actual games in the schedule
 	private ArrayList<Team> teams;
-	private int numRounds;
-	private Object timeSlots;
+	private int numRounds;				//Number of different rounds possible
+	private int actualNumRounds; 		//Number of rounds in the schedule
+	private ArrayList<TimeSlot> timeSlots;
 
 
 	/**
@@ -21,22 +23,16 @@ public class Schedule {
 	 * @author Quinn Sondermeyer Julian Obando 
 	 * @param teams
 	 */
-	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots) {
+	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots, int actualNumRounds) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
+		this.games = new ArrayList<Game>();
 		this.timeSlots = timeSlots;
+		this.actualNumRounds = actualNumRounds;
 		matchRR();
-		//orderExceptionNumber();
+		orderExceptionNumber();
+		getListGames();   //Concatenates the rounds that will be used
 		assignGames();
-	}
-
-	
-	/**
-	 *
-	 *
-	 **/
-	public void makeMatchups() {
-
 	}
 
 	/**
@@ -80,15 +76,6 @@ public class Schedule {
 		}
 	}
 
-
-
-	/**
-	 * 
-	 */
-	public void matchRound() {
-
-	}
-
 	/**
 	 * Orders the rounds so that the games with matchups with most exceptions are ordered first.
 	 * 
@@ -126,13 +113,58 @@ public class Schedule {
 		this.rounds = newRounds;
 	}
 	
+	/**
+	 * Creates a list of all the games to be played in the schedule
+	 * 
+	 * @author Julian Obando
+	 */
+	private void getListGames() {
+		int currRoundIndex = 0;
+		for (int roundIndex = 0; roundIndex < this.actualNumRounds; roundIndex++) {
+			ArrayList<Game> currRoundGames = this.getRounds().get(currRoundIndex).getMatchups();
+			int numGames = currRoundGames.size();
+			for (int i = 0; i < numGames; i++) {
+				Game currGame = currRoundGames.get(i);
+				Game newGame = new Game(currGame.getHomeTeam(), currGame.getAwayTeam());    //Making a copy of the game
+				this.games.add(newGame);
+			}
+			currRoundIndex ++;
+			currRoundIndex = currRoundIndex % this.numRounds;
+		}
+	}
 	
 	/**
 	 * 
 	 */
 	private void assignGames() {
-		// TODO Auto-generated method stub
 		
+		Game currGame;
+		int currTimeSlotIndex = 0;
+		TimeSlot currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+		for (int i = 0; i < this.games.size(); i++) {
+			currGame = this.games.get(i);
+			//finding the next Available time S;pt
+			while(!currTimeSlot.isAvailable()) {
+				currTimeSlotIndex ++;
+				if (currTimeSlotIndex == this.timeSlots.size()) {
+					//No more timeSlots available
+					break;
+				}
+				currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+			}
+			if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot)) {
+				currGame.setTimeSlot(currTimeSlot);
+				currTimeSlot.useTimeslot();     //Update availability of timeSlot
+			} else {
+				//TimeSlot was not a match, try next one.
+				currTimeSlotIndex ++;
+				i--;        //try to set timeSlot for same game.
+				if (currTimeSlotIndex == this.timeSlots.size()) {
+					//No more timeSlots available
+					break;
+				}
+			}
+		}
 	}
 
 	
@@ -177,6 +209,7 @@ public class Schedule {
 	public static void main(String[] args) {
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+		int numRounds = 20;
 		
 		int numTeams = 10;
 		for (int i = 0; i < numTeams; i++) {
@@ -188,7 +221,7 @@ public class Schedule {
 			teams.add(tempTeam);
 		}
 		
-		Schedule schedule = new Schedule(teams, timeSlots);
+		Schedule schedule = new Schedule(teams, timeSlots, numRounds);
 
 		boolean even = false;
 		int num_teams = teams.size();
