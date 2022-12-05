@@ -374,27 +374,6 @@ public class CreateDataStrucs {
 			}
 		}
 	}
-
-	/**
-	 * Temporary method to check if team can play at an arena as a home team
-	 *
-	 * Note: this should be changed to use location as a check
-	 * @author Brady Norton
-	 * @param team
-	 * @param arena
-	 * @return
-	 */
-	public boolean canTeamPlay(Team team, Arena arena) {
-		/*
-		 * Check if given arena is in list of home arenas
-		 */
-		for(Arena a: team.getHomeArenas()) {
-			if(arena != a) {
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	/*
 	 * Getters and Setters

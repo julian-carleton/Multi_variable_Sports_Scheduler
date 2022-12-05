@@ -210,5 +210,6 @@ public class Schedule {
 			System.out.print(((ArrayList<Game>)curr_round.getMatchups()).size());
 			System.out.print(" matchups\n\n");
 		}
+
 	}
 }

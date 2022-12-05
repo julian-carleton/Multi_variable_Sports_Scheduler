@@ -74,7 +74,15 @@ public class Game {
 		}
 		return count;
 	}
-	
+
+	/**
+	 * Checks if the timeslot for this game is filled
+	 *
+	 * @return true if timeslot not filled, false if not
+	 */
+	public boolean isGameScheduled(){
+		return timeSlot.isAvailable();
+	}
 	
 	/*
 	 * Getters and Setters
