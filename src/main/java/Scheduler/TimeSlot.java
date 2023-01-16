@@ -10,8 +10,10 @@ public class TimeSlot {
 	private LocalDateTime startDateTime;
 	private Arena arena;
 	private Division division;
-	private boolean isAvailable;
+	private boolean isAvailable;	// whether it has been given a game
+	private boolean isSelected; 	// Assigned to division to be given a game
 	
+
 	/**
 	 * Default Constructor
 	 * 
@@ -24,6 +26,7 @@ public class TimeSlot {
 		this.division = division;
 		this.startDateTime = start;
 		this.isAvailable = true;
+		this.isSelected = false;
 		
 	}
 
@@ -32,6 +35,13 @@ public class TimeSlot {
 	 */
 	public void useTimeslot() {
 		this.isAvailable = false;
+	}
+	
+	/**
+	 * Sets Whether it is selected to true
+	 */
+	public void selectTimeslot() {
+		this.isSelected = true;
 	}
 	
 	/*
@@ -51,6 +61,10 @@ public class TimeSlot {
 
 	public boolean isAvailable() {
 		return isAvailable;
+	}
+	
+	public boolean isSelected() {
+		return isSelected;
 	}
 
 

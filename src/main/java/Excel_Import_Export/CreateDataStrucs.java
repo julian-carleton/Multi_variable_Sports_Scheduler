@@ -35,9 +35,12 @@ public class CreateDataStrucs {
 		createExceptions(timeExceptions,dateExceptions);
 		createArenas(arenasStr);
 		createTimeSlots(timeSlotsStr);
+		addHomeArenas(homeArenas);
 		//teamSetCenterPoint(homeArenas); 		// Add in once Fixed
 		System.out.println();
 	}
+
+	
 
 	/**
 	 * Creates list of teams, division, league types 
@@ -281,6 +284,25 @@ public class CreateDataStrucs {
 			}
 		}
 		return temp;
+	}
+	
+	/**
+	 * @author Quinn Sondermeyer
+	 * 
+	 * @param homeArenas
+	 */
+	private void addHomeArenas(ArrayList<ArrayList<String>> homeArenas) {
+		for (int i = 0; i < homeArenas.get(0).size(); i++) {
+			Arena tempArena = getArena(homeArenas.get(2).get(i));
+			for (Team t : teams) {
+				Team tempTeam = getTeamFromStr(homeArenas.get(1).get(i), homeArenas.get(0).get(i));
+				if (tempTeam.equals(t)) {
+					t.addArena(tempArena);
+				}
+			}
+			
+		}
+		
 	}
 
 
