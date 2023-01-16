@@ -29,12 +29,20 @@ public class Schedule {
 		this.games = new ArrayList<Game>();
 		this.timeSlots = timeSlots;
 		this.actualNumRounds = actualNumRounds;
+	}
+
+	/**
+	 * Wrapper function for the sequence of calls required to create the schedule
+	 *
+	 * @author Julian Obando
+	 **/
+	public void createSchedule() {
 		matchRR();
 		orderExceptionNumber();
 		getListGames();   //Concatenates the rounds that will be used
 		assignGames();
 	}
-
+	
 	/**
 	 * Makes mathcups based on teams provided in constructor
 	 *
@@ -205,13 +213,14 @@ public class Schedule {
 
 	/*
 	 * Main Function
+	 * 
 	 */
 	public static void main(String[] args) {
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		int numRounds = 20;
 		
-		int numTeams = 10;
+		int numTeams = 7;
 		for (int i = 0; i < numTeams; i++) {
 			Team tempTeam = new Team("Team " + (i+1));
 			//Adding as many exceptions as team number
@@ -222,6 +231,7 @@ public class Schedule {
 		}
 		
 		Schedule schedule = new Schedule(teams, timeSlots, numRounds);
+		schedule.matchRR();
 
 		boolean even = false;
 		int num_teams = teams.size();

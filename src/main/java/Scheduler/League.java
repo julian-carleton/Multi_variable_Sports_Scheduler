@@ -87,8 +87,11 @@ public class League {
 	 * It gives the schedules access to all of the timeSlots
 	 */
 	private void testGeneratedSchedules() {
+		Schedule currSchedule;
 		for (Division d: divisions) {
-			this.schedules.add(new Schedule(d.getTeams(), this.timeslots, (int)(getNumberWeeks()*this.gamesPerWeek)));
+			currSchedule = new Schedule(d.getTeams(), this.timeslots, (int)(getNumberWeeks()*this.gamesPerWeek)); 
+			currSchedule.createSchedule();
+			this.schedules.add(currSchedule);
 		}
 	}
 

@@ -2,20 +2,20 @@ package test.java.Scheduler;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import main.java.Scheduler.*;
-import main.java.Scheduler.Round;
-import main.java.Scheduler.Game;
+import main.java.Scheduler.Exception;
 
 class ScheduleTest {
 
 	private Schedule schedule;
 	//private ArrayList<Object> games;
-	private ArrayList<Object> teams;
+	private ArrayList<Team> teams;
 	//private ArrayList<Round> rounds;
 	
 	//Broken because of teams type.
@@ -27,53 +27,137 @@ class ScheduleTest {
 	
 	@Test
 	void testOddRR() {
-    	teams = new ArrayList<Object>();
-    	teams.add("Team 1");
-    	teams.add("Team 2");
-    	teams.add("Team 3");
-    	teams.add("Team 4");
-    	teams.add("Team 5");
-    	teams.add("Team 6");
-    	teams.add("Team 7");
-    	schedule = new Schedule(teams);
+    	teams = new ArrayList<Team>();
+    	ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    	int actualNumRounds = 1;
+    	
+		int numTeams = 7;
+		//Creating teams name Team # from 1 to numTeams
+		for (int i = 0; i < numTeams; i++) {
+			Team tempTeam = new Team("Team " + (i+1));
+			//Adding as many exceptions as team number
+			for (int j = 0; j < i + 1; j++) {
+				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
+			}
+			teams.add(tempTeam);
+		}
+    	
+    	schedule = new Schedule(teams, timeSlots, actualNumRounds);
 		schedule.matchRR();
-		Round curr_round = schedule.getRounds().get(0);
+		Round curr_round; 
+		
+		////First Round
+		curr_round = schedule.getRounds().get(0);
 		//First Match Up
-		assertEquals("Team 1", ((Game) curr_round.getGame(0)).getHomeTeam());
-		assertEquals("Team 7", ((Game) curr_round.getGame(0)).getAwayTeam());
+		assertEquals("Team 1", curr_round.getGame(0).getHomeTeam().getName());
+		assertEquals("Team 7", curr_round.getGame(0).getAwayTeam().getName());
 		//Second Match Up
-		assertEquals("Team 2", ((Game) curr_round.getGame(1)).getHomeTeam());
-		assertEquals("Team 6", ((Game) curr_round.getGame(1)).getAwayTeam());
+		assertEquals("Team 2", curr_round.getGame(1).getHomeTeam().getName());
+		assertEquals("Team 6", curr_round.getGame(1).getAwayTeam().getName());
 		//Third Match Up
-		assertEquals("Team 3", ((Game) curr_round.getGame(2)).getHomeTeam());
-		assertEquals("Team 5", ((Game) curr_round.getGame(2)).getAwayTeam());
+		assertEquals("Team 3", curr_round.getGame(2).getHomeTeam().getName());
+		assertEquals("Team 5", curr_round.getGame(2).getAwayTeam().getName());
 		//Test number of match ups
-		assertEquals(3, ((ArrayList<Object>)curr_round.getMatchups()).size());
+		assertEquals(3, (curr_round.getMatchups()).size());
+		
+		////Second Round
+		curr_round = schedule.getRounds().get(1);
+		//First Match Up
+		assertEquals("Team 2", curr_round.getGame(0).getHomeTeam().getName());
+		assertEquals("Team 1", curr_round.getGame(0).getAwayTeam().getName());
+		//Second Match Up
+		assertEquals("Team 3", curr_round.getGame(1).getHomeTeam().getName());
+		assertEquals("Team 7", curr_round.getGame(1).getAwayTeam().getName());
+		//Third Match Up
+		assertEquals("Team 4", curr_round.getGame(2).getHomeTeam().getName());
+		assertEquals("Team 6", curr_round.getGame(2).getAwayTeam().getName());
+		//Test number of match ups
+		assertEquals(3, (curr_round.getMatchups()).size());
 	}
 	
 	@Test
 	void testEvenRR() {
-    	teams = new ArrayList<Object>();
-    	teams.add("Team 1");
-    	teams.add("Team 2");
-    	teams.add("Team 3");
-    	teams.add("Team 4");
-    	teams.add("Team 5");
-    	teams.add("Team 6");
-    	schedule = new Schedule(teams);
+    	teams = new ArrayList<Team>();
+    	ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    	int actualNumRounds = 1;
+    	
+		int numTeams = 6;
+		//Creating teams name Team # from 1 to numTeams
+		for (int i = 0; i < numTeams; i++) {
+			Team tempTeam = new Team("Team " + (i+1));
+			//Adding as many exceptions as team number
+			for (int j = 0; j < i + 1; j++) {
+				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
+			}
+			teams.add(tempTeam);
+		}
+    	
+    	schedule = new Schedule(teams, timeSlots, actualNumRounds);
 		schedule.matchRR();
-		Round curr_round = schedule.getRounds().get(0);
+		Round curr_round;
+		
+		////First Round
+		curr_round = schedule.getRounds().get(0);
 		//First Match Up
-		assertEquals("Team 1", ((Game) curr_round.getGame(0)).getHomeTeam());
-		assertEquals("Team 6", ((Game) curr_round.getGame(0)).getAwayTeam());
+		assertEquals("Team 1", curr_round.getGame(0).getHomeTeam().getName());
+		assertEquals("Team 6", curr_round.getGame(0).getAwayTeam().getName());
 		//Second Match Up
-		assertEquals("Team 2", ((Game) curr_round.getGame(1)).getHomeTeam());
-		assertEquals("Team 5", ((Game) curr_round.getGame(1)).getAwayTeam());
+		assertEquals("Team 2", curr_round.getGame(1).getHomeTeam().getName());
+		assertEquals("Team 5", curr_round.getGame(1).getAwayTeam().getName());
 		//Third Match Up
-		assertEquals("Team 3", ((Game) curr_round.getGame(2)).getHomeTeam());
-		assertEquals("Team 4", ((Game) curr_round.getGame(2)).getAwayTeam());
+		assertEquals("Team 3", curr_round.getGame(2).getHomeTeam().getName());
+		assertEquals("Team 4", curr_round.getGame(2).getAwayTeam().getName());
 		//Test number of match ups
-		assertEquals(3, ((ArrayList<Object>)curr_round.getMatchups()).size());
+		assertEquals(3, (curr_round.getMatchups()).size());
+		
+		//Second Round
+		curr_round = schedule.getRounds().get(1);
+		//First Match Up
+		assertEquals("Team 2", curr_round.getGame(0).getHomeTeam().getName());
+		assertEquals("Team 6", curr_round.getGame(0).getAwayTeam().getName());
+		//Second Match Up
+		assertEquals("Team 3", curr_round.getGame(1).getHomeTeam().getName());
+		assertEquals("Team 1", curr_round.getGame(1).getAwayTeam().getName());
+		//Third Match Up
+		assertEquals("Team 4", curr_round.getGame(2).getHomeTeam().getName());
+		assertEquals("Team 5", curr_round.getGame(2).getAwayTeam().getName());
+		//Test number of match ups
+		assertEquals(3, (curr_round.getMatchups()).size());
 	}
 
+	@Test
+	void testOrderExceptionNumber() {
+    	teams = new ArrayList<Team>();
+    	ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    	int actualNumRounds = 1;
+    	
+		int numTeams = 6;
+		//Creating teams name Team # from 1 to numTeams
+		for (int i = 0; i < numTeams; i++) {
+			Team tempTeam = new Team("Team " + (i+1));
+			//Adding as many exceptions as team number
+			for (int j = 0; j < i + 1; j++) {
+				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
+			}
+			teams.add(tempTeam);
+		}
+    	
+    	schedule = new Schedule(teams, timeSlots, actualNumRounds);
+		schedule.matchRR();
+		
+		Round curr_round;
+		//Before ordering
+		curr_round = schedule.getRounds().get(1);  //Second round, because for first all have the same # exceptions
+		assertEquals(8,curr_round.getGame(0).getExceptionsNumber());
+		assertEquals(4,curr_round.getGame(1).getExceptionsNumber());
+		assertEquals(9,curr_round.getGame(2).getExceptionsNumber());
+		
+		schedule.orderExceptionNumber();
+		//After ordering
+		curr_round = schedule.getRounds().get(1);
+		assertEquals(9,curr_round.getGame(0).getExceptionsNumber());
+		assertEquals(8,curr_round.getGame(1).getExceptionsNumber());
+		assertEquals(4,curr_round.getGame(2).getExceptionsNumber());
+		
+	}
 }
