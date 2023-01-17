@@ -64,8 +64,8 @@ public class League {
 				for (Team t: d.getTeams()) {
 					if (t.getTier() == Tier.fromInteger(i)) {
 						tempTeam.add(t);
-						for (Arena a: arenas) {
-							if (a.isInrad(t.getLatitude(),t.getLongitude(),t.getRadius())) {
+						for (Arena a: t.getHomeArenas()) {
+							if (!arenas.contains(a)) {
 								arenas.add(a);
 							}
 						}
@@ -74,6 +74,7 @@ public class League {
 				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
 				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots); // call schedule
 				schedules.add(tempSchedule);
+				System.out.print(false);
 			}
 		}
 		
@@ -93,7 +94,7 @@ public class League {
 	   ArrayList<TimeSlot> tempTimeSlots = new ArrayList<TimeSlot>();
 	   
        int slotsPerWeek = (int) ((team.size()/2) * gamesPerWeek) ;
-       LocalDateTime curDay = timeslots.get(0).getStartDateTime();
+       LocalDateTime curDay = timeslots.get(0).getStartDateTime().minusHours(timeslots.get(0).getStartDateTime().getHour());
        int curSlot = 0;
        int weeks = getNumberWeeks();
        for (int i = 0; i < weeks;i++) {
@@ -102,21 +103,29 @@ public class League {
         	   int point = curSlot+ j*(availableSlotsPerWk/slotsPerWeek);
         	   TimeSlot slot = timeslots.get(point);
         	   
-        	   while(!checkArena(slot, arenas)) {
+        	   while(!arenas.contains(slot.getArena())|| slot.isSelected()) {
         		   if  ( point < (availableSlotsPerWk+curSlot)) {
         			   point++;
         			   slot = timeslots.get(point);
-        		   }else {
-        			   return null; // not enoughTimeslots exit to prevent being stuck if there are no good time slots
-        		   }
+        		   }//else {
+//        			   return tempTimeSlots; 
+//        			   }
         	   }
-        	   slot.useTimeslot();	// Set as no longer available
-        	   tempTimeSlots.add(slot);
+        	   if (arenas.contains(slot.getArena())) {
+        		   slot.selectTimeslot();	// Set as no longer available
+        		   tempTimeSlots.add(slot);
+        	   }
            }
-           curDay.plusDays(7);
-
+           curDay = curDay.plusDays(7);
+           while (timeslots.get(curSlot).getStartDateTime().compareTo(curDay) < 0) {
+        	   curSlot++;
+        	   if (curSlot >= timeslots.size()) {
+        		   return tempTimeSlots;
+        	   }
+           }
+           
        }
-       return null;
+       return tempTimeSlots;
    }
 
    /**
@@ -127,13 +136,20 @@ public class League {
     */
    private int slotsAvaialblePerWeek(int curSlot) {
 	   LocalDateTime curDay = timeslots.get(curSlot).getStartDateTime();
-	   LocalDateTime endDay = curDay;
-	   endDay.plusDays(7);
+	   curDay = curDay.plusHours((long) (-curDay.getHour()));
+	   LocalDateTime endDay = curDay.plusDays(7);
+	   endDay = endDay.plusHours((long) (24.0));
 	   int startDay = (int) (curDay.getDayOfYear() + curDay.getYear()*365.25);
 	   int count = 0;
-	   while ( 0 < curDay.compareTo(endDay) ) {
-			count++;
-			curDay.plusDays(1);
+	   int offset = 0;
+	   while( 0 > timeslots.get(offset).getStartDateTime().compareTo(curDay)) {
+		   offset++;
+	   }
+	   while ( 0 > curDay.compareTo(endDay) ) {
+		   while(0 > timeslots.get(count+offset).getStartDateTime().compareTo(curDay)) {
+			   count++;
+		   }
+			curDay = curDay.plusDays(1);
 		}
 		return count;
 	}

@@ -23,7 +23,7 @@ public class Schedule {
 	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timelsots) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
-		this.timeslots = timeslots;
+		this.timeslots = timelsots;
 		matchRR();
 		orderExceptionNumber();
 		assignGames();
