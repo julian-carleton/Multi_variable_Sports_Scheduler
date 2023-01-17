@@ -54,6 +54,14 @@ public class Team {
 		this.exceptions.add(newException);
 	}
 	
+	/**
+	 * Adds Arena to home arena list
+	 * 
+	 * @param a - Arena that you want to add
+	 */
+	public void addArena(Arena a) { 
+		homeArenas.add(a); 
+	}
 	
 	/*
 	 * Getters and setters
@@ -96,10 +104,6 @@ public class Team {
 	
 	public void setLatitude(double y) { 
 		latitude = y; 
-	}
-
-	public void addArena(Arena a) { 
-		homeArenas.add(a); 
 	}
 
 	public ArrayList<Arena> getHomeArenas() { 

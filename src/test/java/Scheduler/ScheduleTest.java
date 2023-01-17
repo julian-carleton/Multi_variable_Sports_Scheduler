@@ -27,9 +27,9 @@ class ScheduleTest {
 	
 	@Test
 	void testOddRR() {
-    	teams = new ArrayList<Team>();
-    	ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-    	int actualNumRounds = 1;
+    teams = new ArrayList<Team>();
+    ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    int actualNumRounds = 1;
     	
 		int numTeams = 7;
 		//Creating teams name Team # from 1 to numTeams
@@ -42,7 +42,7 @@ class ScheduleTest {
 			teams.add(tempTeam);
 		}
     	
-    	schedule = new Schedule(teams, timeSlots, actualNumRounds);
+    schedule = new Schedule(teams, timeSlots, actualNumRounds);
 		schedule.matchRR();
 		Round curr_round; 
 		
@@ -77,9 +77,9 @@ class ScheduleTest {
 	
 	@Test
 	void testEvenRR() {
-    	teams = new ArrayList<Team>();
-    	ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-    	int actualNumRounds = 1;
+    teams = new ArrayList<Team>();
+    ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    int actualNumRounds = 1;
     	
 		int numTeams = 6;
 		//Creating teams name Team # from 1 to numTeams
@@ -92,7 +92,7 @@ class ScheduleTest {
 			teams.add(tempTeam);
 		}
     	
-    	schedule = new Schedule(teams, timeSlots, actualNumRounds);
+    schedule = new Schedule(teams, timeSlots, actualNumRounds);
 		schedule.matchRR();
 		Round curr_round;
 		
@@ -107,7 +107,7 @@ class ScheduleTest {
 		//Third Match Up
 		assertEquals("Team 3", curr_round.getGame(2).getHomeTeam().getName());
 		assertEquals("Team 4", curr_round.getGame(2).getAwayTeam().getName());
-		//Test number of match ups
+		//Test number of match up
 		assertEquals(3, (curr_round.getMatchups()).size());
 		
 		//Second Round
