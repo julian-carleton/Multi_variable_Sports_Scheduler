@@ -74,6 +74,7 @@ public class League {
 				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
 				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots); // call schedule
 				schedules.add(tempSchedule);
+				System.out.print(false);
 			}
 		}
 		
