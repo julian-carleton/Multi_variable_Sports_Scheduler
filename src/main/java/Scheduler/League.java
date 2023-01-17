@@ -22,6 +22,7 @@ public class League {
 	private ArrayList<Division> divisions;
 	private ArrayList<TimeSlot> timeslots;
 	private ArrayList<Arena> arenas;
+	private ArrayList<Schedule> schedules;
 	private double gamesPerWeek = 1;
 
 
@@ -40,7 +41,9 @@ public class League {
 		this.divisions = divisions;
 		this.timeslots = sortTimeSlots(timeslots); // Sorts Time slots by date
 		this.arenas = arenas;
+		this.schedules = new ArrayList<Schedule>(); 
 		
+		testGeneratedSchedules();
 		generateSchedules();
 	}
 	
@@ -72,15 +75,26 @@ public class League {
 					}
 				}
 				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
-				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots); // call schedule
+				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek)); // call schedule
 				schedules.add(tempSchedule);
 				System.out.print(false);
 			}
 		}
-		
+		this.schedules = schedules;
 	}
 
-
+	/**
+	 * Generates schedules for each division, for testing only...
+	 * It gives the schedules access to all of the timeSlots
+	 */
+	private void testGeneratedSchedules() {
+		Schedule currSchedule;
+		for (Division d: divisions) {
+			currSchedule = new Schedule(d.getTeams(), this.timeslots, (int)(getNumberWeeks()*this.gamesPerWeek)); 
+			currSchedule.createSchedule();
+			this.schedules.add(currSchedule);
+		}
+	}
 
 	
 	/**
@@ -296,8 +310,7 @@ public class League {
 		 */
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
 		
-		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
-		
+		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());		
 	}
 	
 	
@@ -320,7 +333,10 @@ public class League {
 	public double getGamesPerWeek() {
 		return gamesPerWeek;
 	}
-	
+
+	public ArrayList<Schedule> getSchedules() {
+		return schedules;
+	}
 	
 
 	

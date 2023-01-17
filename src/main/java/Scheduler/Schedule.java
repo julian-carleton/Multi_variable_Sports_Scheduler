@@ -1,6 +1,7 @@
 package main.java.Scheduler;
 
 import java.lang.reflect.Array;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 /**
@@ -9,10 +10,12 @@ import java.util.ArrayList;
  * @author Julian Obando, Quinn Sondermeyer
  */
 public class Schedule {
-	private ArrayList<Round> rounds;
+	private ArrayList<Round> rounds;    //List of all possible RR matchups in rounds
+	private ArrayList<Game> games;		//List of the actual games in the schedule
 	private ArrayList<Team> teams;
-	private int numRounds;
-	private Object timeslots;
+	private int numRounds;				//Number of different rounds possible
+	private int actualNumRounds; 		//Number of rounds in the schedule
+	private ArrayList<TimeSlot> timeSlots;
 
 
 	/**
@@ -20,24 +23,26 @@ public class Schedule {
 	 * @author Quinn Sondermeyer Julian Obando 
 	 * @param teams
 	 */
-	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timelsots) {
+	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots, int actualNumRounds) {
 		this.teams = teams;
 		this.rounds = new ArrayList<Round>();
-		this.timeslots = timelsots;
+		this.games = new ArrayList<Game>();
+		this.timeSlots = timeSlots;
+		this.actualNumRounds = actualNumRounds;
+	}
+
+	/**
+	 * Wrapper function for the sequence of calls required to create the schedule
+	 *
+	 * @author Julian Obando
+	 **/
+	public void createSchedule() {
 		matchRR();
 		orderExceptionNumber();
+		getListGames();   //Concatenates the rounds that will be used
 		assignGames();
 	}
-
 	
-	/**
-	 *
-	 *
-	 **/
-	public void makeMatchups() {
-
-	}
-
 	/**
 	 * Makes mathcups based on teams provided in constructor
 	 *
@@ -48,44 +53,35 @@ public class Schedule {
 		boolean even = false;
 		int numTeams = this.teams.size();
 		if (numTeams % 2 == 0) {
-			numRounds = numTeams - 1;
+			this.numRounds = numTeams - 1;
 			even = true;
 		} else {
-			numRounds = numTeams;
+			this.numRounds = numTeams;
 		}
 
-		for (int j = 0; j < numRounds; j++) {
+		for (int j = 0; j < this.numRounds; j++) {
 			//Matching a round
-			int currX = (0 + j) % numRounds;
-			int currY = (numTeams - 1 + j) % numRounds;
+			int currX = (0 + j) % this.numRounds;
+			int currY = (numTeams - 1 + j) % this.numRounds;
 			Round currRound = new Round();
 			for (int i = 0; i < Math.floorDiv(numTeams, 2); i++) {
-				Game currGame = new Game();
-				currGame.setHomeTeam(teams.get(currX));
+				Team currHomeTeam = teams.get(currX);
+				Team currAwayTeam;
 				if(even && i == 0) {
-					currGame.setAwayTeam(teams.get(numTeams - 1));
+					currAwayTeam = teams.get(numTeams - 1);
 				} else {
-					currGame.setAwayTeam(teams.get(currY));
+					currAwayTeam = teams.get(currY);
 				}
-				currRound.add(currGame);
-				currX = (currX + 1) % numRounds;
+				currRound.add(new Game(currHomeTeam, currAwayTeam));
+				currX = (currX + 1) % this.numRounds;
 				currY --;
 				if (currY < 0) {
-					currY += numRounds;
+					currY += this.numRounds;
 				}
 
 			}
 			this.rounds.add(currRound);
 		}
-	}
-
-
-
-	/**
-	 * 
-	 */
-	public void matchRound() {
-
 	}
 
 	/**
@@ -113,6 +109,9 @@ public class Schedule {
 						if (currGameExcpsNumr > nextGameExcpsNum) {
 							newRoundMatchups.add(k, currGame);
 							break;
+						} else if (k == newRoundMatchups.size() - 1) {
+							newRoundMatchups.add(currGame);
+							break;
 						}
 					}
 				}
@@ -122,13 +121,58 @@ public class Schedule {
 		this.rounds = newRounds;
 	}
 	
+	/**
+	 * Creates a list of all the games to be played in the schedule
+	 * 
+	 * @author Julian Obando
+	 */
+	private void getListGames() {
+		int currRoundIndex = 0;
+		for (int roundIndex = 0; roundIndex < this.actualNumRounds; roundIndex++) {
+			ArrayList<Game> currRoundGames = this.getRounds().get(currRoundIndex).getMatchups();
+			int numGames = currRoundGames.size();
+			for (int i = 0; i < numGames; i++) {
+				Game currGame = currRoundGames.get(i);
+				Game newGame = new Game(currGame.getHomeTeam(), currGame.getAwayTeam());    //Making a copy of the game
+				this.games.add(newGame);
+			}
+			currRoundIndex ++;
+			currRoundIndex = currRoundIndex % this.numRounds;
+		}
+	}
 	
 	/**
 	 * 
 	 */
 	private void assignGames() {
-		// TODO Auto-generated method stub
 		
+		Game currGame;
+		int currTimeSlotIndex = 0;
+		TimeSlot currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+		for (int i = 0; i < this.games.size(); i++) {
+			currGame = this.games.get(i);
+			//finding the next Available time S;pt
+			while(!currTimeSlot.isAvailable()) {
+				currTimeSlotIndex ++;
+				if (currTimeSlotIndex == this.timeSlots.size()) {
+					//No more timeSlots available
+					break;
+				}
+				currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+			}
+			if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot)) {
+				currGame.setTimeSlot(currTimeSlot);
+				currTimeSlot.useTimeslot();     //Update availability of timeSlot
+			} else {
+				//TimeSlot was not a match, try next one.
+				currTimeSlotIndex ++;
+				i--;        //try to set timeSlot for same game.
+				if (currTimeSlotIndex == this.timeSlots.size()) {
+					//No more timeSlots available
+					break;
+				}
+			}
+		}
 	}
 
 	
@@ -169,22 +213,24 @@ public class Schedule {
 
 	/*
 	 * Main Function
+	 * 
 	 */
 	public static void main(String[] args) {
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-		teams.add(new Team("Team 1"));
-		teams.add(new Team("Team 2"));
-		teams.add(new Team("Team 3"));
-		teams.add(new Team("Team 4"));
-		teams.add(new Team("Team 5"));
-		teams.add(new Team("Team 6"));
-		teams.add(new Team("Team 7"));
-		teams.add(new Team("Team 8"));
-		teams.add(new Team("Team 9"));
-		teams.add(new Team("Team 10"));
+		int numRounds = 20;
 		
-		Schedule schedule = new Schedule(teams, timeSlots);
+		int numTeams = 7;
+		for (int i = 0; i < numTeams; i++) {
+			Team tempTeam = new Team("Team " + (i+1));
+			//Adding as many exceptions as team number
+			for (int j = 0; j < i + 1; j++) {
+				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
+			}
+			teams.add(tempTeam);
+		}
+		
+		Schedule schedule = new Schedule(teams, timeSlots, numRounds);
 		schedule.matchRR();
 
 		boolean even = false;
@@ -204,6 +250,26 @@ public class Schedule {
 				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
 				System.out.print(" vs ");
 				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
+				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
+				System.out.print("\n");
+			}
+			System.out.print("This round has: ");
+			System.out.print(((ArrayList<Game>)curr_round.getMatchups()).size());
+			System.out.print(" matchups\n\n");
+		}
+		
+		//Ordering rounds based on the number of exceptions
+		schedule.orderExceptionNumber();
+		System.out.print("\nAfter ordering...\n\n");
+		
+		for (int j = 0; j < num_rounds; j++) {
+			Round curr_round = schedule.getRounds().get(j);
+
+			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
+				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
+				System.out.print(" vs ");
+				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
+				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
 				System.out.print("\n");
 			}
 			System.out.print("This round has: ");
