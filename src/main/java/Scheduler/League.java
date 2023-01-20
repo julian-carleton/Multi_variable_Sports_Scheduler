@@ -43,14 +43,14 @@ public class League {
 		this.arenas = arenas;
 		this.schedules = new ArrayList<Schedule>(); 
 		
-		testGeneratedSchedules();
 		generateSchedules();
+
 	}
 	
 	/**
 	 * Calls Schedule to generate Schedule
 	 */
-	private void generateSchedules() {
+	public void generateSchedules() {
 		ArrayList<Team> tempTeam = new ArrayList<Team>();
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
 		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
@@ -62,22 +62,23 @@ public class League {
 				}
 			}
 			arenas = new ArrayList<Arena>();
-			tempTeam = new ArrayList<Team>();
-			for (int i = 0; i < numTiers; i++) {
+			
+			for (int i = 0; i <= numTiers; i++) {
+				tempTeam = new ArrayList<Team>();
 				for (Team t: d.getTeams()) {
 					if (t.getTier() == Tier.fromInteger(i)) {
 						tempTeam.add(t);
 						for (Arena a: t.getHomeArenas()) {
-							if (!arenas.contains(a)) {
 								arenas.add(a);
-							}
 						}
 					}
 				}
-				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
-				Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek)); // call schedule
-				schedules.add(tempSchedule);
-				System.out.print(false);
+
+				if (!tempTeam.isEmpty()) {
+					ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
+					Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek)); // call schedule
+					schedules.add(tempSchedule);
+				}
 			}
 		}
 		this.schedules = schedules;
@@ -104,8 +105,9 @@ public class League {
     * @param arenas
     * @return list of timeslots for given team
     */
-   public ArrayList<TimeSlot> seletTimeslot(ArrayList<Team> team, ArrayList<Arena> arenas) {
+   private ArrayList<TimeSlot> seletTimeslot(ArrayList<Team> team, ArrayList<Arena> arenas) {
 	   ArrayList<TimeSlot> tempTimeSlots = new ArrayList<TimeSlot>();
+	   ArrayList<Arena> tempArenas = new ArrayList<Arena>();
 	   
        int slotsPerWeek = (int) ((team.size()/2) * gamesPerWeek) ;
        LocalDateTime curDay = timeslots.get(0).getStartDateTime().minusHours(timeslots.get(0).getStartDateTime().getHour());
@@ -121,14 +123,23 @@ public class League {
         		   if  ( point < (availableSlotsPerWk+curSlot)) {
         			   point++;
         			   slot = timeslots.get(point);
-        		   }//else {
+        			   for(int k = 0 ; k > arenas.size(); k++ ) {
+            			   if (arenas.get(k).equals(slot.getArena())) {
+            				   tempArenas.add(arenas.remove(k));
+            			   }
+        			   }
+        		   }else {
+        			   break;
+        			   }
 //        			   return tempTimeSlots; 
 //        			   }
         	   }
-        	   if (arenas.contains(slot.getArena())) {
-        		   slot.selectTimeslot();	// Set as no longer available
-        		   tempTimeSlots.add(slot);
+        	   for (Arena a: tempArenas) {
+        		   arenas.add(a);
         	   }
+    		   slot.selectTimeslot();	// Set as no longer available
+    		   tempTimeSlots.add(slot);
+        	   
            }
            curDay = curDay.plusDays(7);
            while (timeslots.get(curSlot).getStartDateTime().compareTo(curDay) < 0) {
@@ -310,7 +321,17 @@ public class League {
 		 */
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
 		
-		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());		
+
+		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
+		league.generateSchedules();
+		
+		for (Schedule s: league.getSchedules()) {
+			if (!s.getTimeSlots().isEmpty()) {
+				s.createSchedule();
+			}
+		}
+		System.out.print(false);
+		
 	}
 	
 	
