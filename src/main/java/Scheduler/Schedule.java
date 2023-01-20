@@ -146,6 +146,8 @@ public class Schedule {
 	 * of each team allows them and if the timeSlot is at the home arena
 	 * of the home team
 	 * 
+	 * Works, but it only iterates through the timeSlots once
+	 * 
 	 * @author Julian Obando
 	 */
 	private void assignGames() {
@@ -182,6 +184,32 @@ public class Schedule {
 				}
 			} else {
 				break;		//Breaking the for loop
+			}
+		}
+	}
+	
+	
+	/**
+	 * Assigns the games to available timeSlots if the exceptions
+	 * of each team allows them and if the timeSlot is at the home arena
+	 * of the home team
+	 * 
+	 * @author Julian Obando
+	 */
+	private void assignGames2() {
+		Game currGame;
+		TimeSlot currTimeSlot;
+		for (int i = 0; i < this.games.size(); i++) {
+			currGame = games.get(i);
+			for (int j = 0; j < this.timeSlots.size(); j++) {
+				currTimeSlot = this.timeSlots.get(j);
+				if(currTimeSlot.isAvailable()) {
+					if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot) && currGame.getHomeTeam().getHomeArenas().contains(currTimeSlot.getArena())) {
+						currGame.setTimeSlot(currTimeSlot);
+						currTimeSlot.useTimeslot();     //Update availability of timeSlot
+						break;		//Go to next game
+					}
+				}
 			}
 		}
 	}
@@ -229,12 +257,14 @@ public class Schedule {
 	/*
 	 * Main Function
 	 * 
+	 * Demo to show the functionality of the scheduling
+	 * 
 	 */
 	public static void main(String[] args) {
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-		int actualNumRounds = 3;
+		int actualNumRounds = 10;
 		
 		//Making list of Arenas
 		int numArenas = 7;
@@ -256,9 +286,10 @@ public class Schedule {
 		}
 		
 		//Making list of timeSlots
-		int numTimeSlots = 7;
+		int numTimeSlots = 17;
 		for (int i = 0; i < numTimeSlots; i++) {
-			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i), new Division("Div Test"));
+			//The arenas are wrapped around
+			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % numArenas), new Division("Div Test"));
 			timeSlots.add(tempTimeSlot);
 		}
 		
@@ -325,17 +356,26 @@ public class Schedule {
 			System.out.print("\n");
 		}
 		
-		schedule.assignGames();
+		System.out.print("\n");
+		System.out.print("The time slots allocated for this scheduled are: \n");
+		
+		for (int j = 0; j < timeSlots.size(); j++) {
+			System.out.print(timeSlots.get(j) + "\n");
+		}
+		System.out.print("\n");
+		
+		//schedule.assignGames();
+		schedule.assignGames2();
 		
 		//Showing the assigning of games to timeSlots
-		System.out.print("The games for this schedule are:\n");
+		System.out.print("The SCHEDULED games for this schedule are:\n");
 		games = schedule.getGames();
 		for (int j = 0; j < games.size(); j++) {
 			Game currGame = games.get(j);
 			System.out.print(currGame.getHomeTeam().getName());
 			System.out.print(" vs ");
 			System.out.print(currGame.getAwayTeam().getName());
-			System.out.print(" With assigned "+currGame.getTimeSlot());
+			System.out.print(" with assigned "+currGame.getTimeSlot());
 			System.out.print("\n");
 		}
 	}
