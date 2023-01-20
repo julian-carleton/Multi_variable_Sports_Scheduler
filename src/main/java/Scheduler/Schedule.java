@@ -129,6 +129,40 @@ public class Schedule {
 	private void assignGames() {
 		// TODO Auto-generated method stub
 		
+<<<<<<< Updated upstream
+=======
+		Game currGame;
+		int currTimeSlotIndex = 0;
+		TimeSlot currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+		for (int i = 0; i < this.games.size(); i++) {
+			currGame = this.games.get(i);
+			//finding the next Available time S;pt
+			while(!currTimeSlot.isAvailable()) {
+				currTimeSlotIndex ++;
+				if (currTimeSlotIndex >= this.timeSlots.size()) {
+					//No more timeSlots available
+					break;
+				}
+				currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+			}
+			if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot) && currGame.getHomeTeam().isHomeArena(currTimeSlot.getArena())) {
+				currGame.setTimeSlot(currTimeSlot);
+				currTimeSlot.useTimeslot();     //Update availability of timeSlot
+				currTimeSlotIndex = 0;
+			} else {
+				//TimeSlot was not a match, try next one.
+				currTimeSlotIndex ++;
+				i--;        //try to set timeSlot for same game.
+				if (currTimeSlotIndex >= this.timeSlots.size()) {
+					//No more timeSlots available
+					i++;
+				}else {
+					currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
+				}
+			}
+		}
+
+>>>>>>> Stashed changes
 	}
 
 	
@@ -165,7 +199,20 @@ public class Schedule {
 	 */
 	public ArrayList<Round> getRounds() {
 		return this.rounds;
+	}	
+
+	public ArrayList<Game> getGames() {
+		return games;
 	}
+
+	public ArrayList<Team> getTeams() {
+		return teams;
+	}
+	
+	public ArrayList<TimeSlot> getTimeSlots() {
+		return this.timeSlots;
+	}
+
 
 	/*
 	 * Main Function
