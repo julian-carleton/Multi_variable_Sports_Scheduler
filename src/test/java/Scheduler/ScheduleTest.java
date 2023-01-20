@@ -158,6 +158,28 @@ class ScheduleTest {
 		assertEquals(9,curr_round.getGame(0).getExceptionsNumber());
 		assertEquals(8,curr_round.getGame(1).getExceptionsNumber());
 		assertEquals(4,curr_round.getGame(2).getExceptionsNumber());
-		
+	}
+	
+	@Test
+	void testGetListGames() {
+    	teams = new ArrayList<Team>();
+    	ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
+    	int actualNumRounds = 1;
+    	
+		int numTeams = 6;
+		//Creating teams name Team # from 1 to numTeams
+		for (int i = 0; i < numTeams; i++) {
+			Team tempTeam = new Team("Team " + (i+1));
+			//Adding as many exceptions as team number
+			for (int j = 0; j < i + 1; j++) {
+				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
+			}
+			teams.add(tempTeam);
+		}
+    	
+    	schedule = new Schedule(teams, timeSlots, actualNumRounds);
+		schedule.matchRR();
+		schedule.orderExceptionNumber();
+		//schedule.makeListGames();
 	}
 }
