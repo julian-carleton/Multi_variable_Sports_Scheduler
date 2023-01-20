@@ -140,34 +140,6 @@ public class Schedule {
 			currRoundIndex = currRoundIndex % this.numRounds;
 		}
 	}
-	
-	/**
-	 * Assigns the games to available timeSlots if the exceptions
-	 * of each team allows them and if the timeSlot is at the home arena
-	 * of the home team
-	 * 
-	 * Works, but it only iterates through the timeSlots once
-	 * 
-	 * @author Julian Obando
-	 */
-	private void assignGames() {
-		Game currGame;
-		int currTimeSlotIndex = 0;
-		TimeSlot currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
-		boolean foundTimeSlot = true;
-		for (int i = 0; i < this.games.size(); i++) {
-			currGame = this.games.get(i);
-			//finding the next Available timeSlot;
-			while(!currTimeSlot.isAvailable()) {
-				currTimeSlotIndex ++;
-        
-				if (currTimeSlotIndex >= this.timeSlots.size()) {
-					//No more timeSlots available
-					foundTimeSlot = false;
-					break;		//Breaking the while loop
-				}
-				currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
-			}
 
 	/**
 	 * Assigns the games to available timeSlots if the exceptions
@@ -176,7 +148,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 */
-	private void assignGames2() {
+	private void assignGames() {
 		Game currGame;
 		TimeSlot currTimeSlot;
 		for (int i = 0; i < this.games.size(); i++) {
@@ -229,10 +201,6 @@ public class Schedule {
 	public ArrayList<Round> getRounds() {
 		return this.rounds;
 	}	
-
-	public ArrayList<Game> getGames() {
-		return games;
-	}
 
 	public ArrayList<Team> getTeams() {
 		return teams;
@@ -364,7 +332,7 @@ public class Schedule {
 		System.out.print("\n");
 		
 		//schedule.assignGames();
-		schedule.assignGames2();
+		schedule.assignGames();
 		
 		//Showing the assigning of games to timeSlots
 		System.out.print("The SCHEDULED games for this schedule are:\n");
