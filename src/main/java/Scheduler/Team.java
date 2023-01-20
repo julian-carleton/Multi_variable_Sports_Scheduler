@@ -43,6 +43,7 @@ public class Team {
 	public Team(String name) {
 		this.name = name;
 		exceptions = new ArrayList<Exception>();
+		homeArenas = new ArrayList<Arena>();
 	}
 	
 	/**
