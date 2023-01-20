@@ -267,17 +267,23 @@ public class Schedule {
 		int actualNumRounds = 10;
 		
 		//Making list of Arenas
-		int numArenas = 7;
+		int numArenas = 3;
 		for (int i = 0; i < numArenas; i++) {
 			Arena tempArena = new Arena("Arena "+ (i+1), (float) 0.0, (float) 0.0);
 			arenas.add(tempArena);
 		}
+		//Adding two extra non schedulable arenas
+		Arena tempArena = new Arena("Arena X", (float) 0.0, (float) 0.0);
+		arenas.add(tempArena);
+		tempArena = new Arena("Arena Y", (float) 0.0, (float) 0.0);
+		arenas.add(tempArena);
 		
-		//Making list of teams
-		int numTeams = 7;
+		
+		//Making list of teams with home arena in form Arena numArenas%
+		int numTeams = 8;
 		for (int i = 0; i < numTeams; i++) {
 			Team tempTeam = new Team("Team " + (i+1));
-			tempTeam.addArena(arenas.get(i));
+			tempTeam.addArena(arenas.get(i % numArenas));    //The home arenas wrap around based on the available ones.
 			//Adding as many exceptions as team number
 			for (int j = 0; j < i + 1; j++) {
 				tempTeam.addException(new Exception(LocalDateTime.now(), LocalDateTime.now()));
@@ -286,10 +292,10 @@ public class Schedule {
 		}
 		
 		//Making list of timeSlots
-		int numTimeSlots = 17;
+		int numTimeSlots = 40;
 		for (int i = 0; i < numTimeSlots; i++) {
 			//The arenas are wrapped around
-			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % numArenas), new Division("Div Test"));
+			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % arenas.size()), new Division("Div Test"));
 			timeSlots.add(tempTimeSlot);
 		}
 		
@@ -378,5 +384,13 @@ public class Schedule {
 			System.out.print(" with assigned "+currGame.getTimeSlot());
 			System.out.print("\n");
 		}
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots are now as follows: \n");
+		
+		for (int j = 0; j < timeSlots.size(); j++) {
+			System.out.print(timeSlots.get(j) + "\n");
+		}
+		System.out.print("\n");
 	}
 }
