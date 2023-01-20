@@ -64,6 +64,20 @@ public class Team {
 		homeArenas.add(a); 
 	}
 	
+	/**
+	 * Check if Team has arena in home arena List
+	 * 
+	 * @param arena
+	 * @return true if arena is in homeArenas 
+	 */
+	public boolean isHomeArena(Arena arena) {
+		if (this.homeArenas.contains(arena)) {
+			return true;
+		}
+		return false;
+		
+	}
+	
 	/*
 	 * Getters and setters
 	 */

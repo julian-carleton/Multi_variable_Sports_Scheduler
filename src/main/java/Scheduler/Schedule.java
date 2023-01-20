@@ -151,7 +151,6 @@ public class Schedule {
 	 * @author Julian Obando
 	 */
 	private void assignGames() {
-		
 		Game currGame;
 		int currTimeSlotIndex = 0;
 		TimeSlot currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
@@ -161,34 +160,15 @@ public class Schedule {
 			//finding the next Available timeSlot;
 			while(!currTimeSlot.isAvailable()) {
 				currTimeSlotIndex ++;
-				if (currTimeSlotIndex == this.timeSlots.size()) {
+        
+				if (currTimeSlotIndex >= this.timeSlots.size()) {
 					//No more timeSlots available
 					foundTimeSlot = false;
 					break;		//Breaking the while loop
 				}
 				currTimeSlot = this.timeSlots.get(currTimeSlotIndex);
 			}
-			//Checking that an available timeSlot was found
-			if (foundTimeSlot) {
-				if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot) && currGame.getHomeTeam().getHomeArenas().contains(currTimeSlot.getArena())) {
-					currGame.setTimeSlot(currTimeSlot);
-					currTimeSlot.useTimeslot();     //Update availability of timeSlot
-				} else {
-					//TimeSlot was not a match, try next one.
-					currTimeSlotIndex ++;
-					i--;        //try to set timeSlot for same game.
-					if (currTimeSlotIndex == this.timeSlots.size()) {
-						//No more timeSlots available
-						break;   //Breaking the for loop
-					}
-				}
-			} else {
-				break;		//Breaking the for loop
-			}
-		}
-	}
-	
-	
+
 	/**
 	 * Assigns the games to available timeSlots if the exceptions
 	 * of each team allows them and if the timeSlot is at the home arena
@@ -248,11 +228,24 @@ public class Schedule {
 	 */
 	public ArrayList<Round> getRounds() {
 		return this.rounds;
+	}	
+
+	public ArrayList<Game> getGames() {
+		return games;
+	}
+
+	public ArrayList<Team> getTeams() {
+		return teams;
+	}
+	
+	public ArrayList<TimeSlot> getTimeSlots() {
+		return this.timeSlots;
 	}
 	
 	public ArrayList<Game> getGames() {
 		return this.games;
 	}
+
 
 	/*
 	 * Main Function
