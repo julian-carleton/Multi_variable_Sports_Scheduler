@@ -452,6 +452,7 @@ public class League {
 
 		// Excel Export
 		ExcelExport export = new ExcelExport(league);
+		export.printLeagueData();
 		export.exportSchedule();
 	}
 

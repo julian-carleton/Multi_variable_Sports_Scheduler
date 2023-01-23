@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import static org.apache.commons.math3.util.Precision.round;
+
 /**
  * Exports the games into Excel
  * 
@@ -81,15 +83,10 @@ public class ExcelExport {
         for(int i = 1; i < scheduleNum; ++i) {
             // Current schedule info
             Schedule schedule = league.getSchedules().get(i);
-            if(demo) {
-                System.out.println("Teams: " + schedule.getTeams().size());
-                System.out.println("Games: " + schedule.getGames().size());
-                System.out.println("Rounds: " + schedule.getActualNumRounds());
-            }
 
             // Create Sheet
             XSSFSheet sheet = wb.createSheet("Schedule " + (i));
-            System.out.println("Sheet " + (i) +" created");
+            //System.out.println("Sheet " + (i) +" created");
 
             // Create sheet headers
             Row row = sheet.createRow(0);
@@ -143,29 +140,6 @@ public class ExcelExport {
     }
 
     /**
-     * Set the arenas for matchups in designated schedule
-     *
-     * @param scheduleNum
-     */
-    public void setArena(int scheduleNum) {
-        // Get schedule corresponding to scheduleNum
-        Schedule schedule = league.getSchedules().get(scheduleNum);
-        ArrayList<Game> games = schedule.getGames();
-
-        // Iterate over the scheduled games
-        for(int i = 0; i < games.size(); ++i) {
-            if(games.get(i).getTimeSlot() != null){
-                String arena = games.get(i).getTimeSlot().getArena().getName();
-                System.out.println("Game " + (i+1) + " arena: " + arena);
-                wb.getSheetAt(scheduleNum).getRow(i+1).getCell(4).setCellValue(arena);
-            }
-            else{
-                //System.out.println("Game: " + (i+1) + games.get(i).getTimeSlot().isSelected());
-            }
-        }
-    }
-
-    /**
      * Method to sort scheduled games by date
      *
      * NOTE: under development
@@ -185,9 +159,13 @@ public class ExcelExport {
 
         Collections.sort(scheduledGames, Comparator.comparing(x -> x.getTimeSlot().getStartDateTime()));
 
+        /*
+        // Print dates in order
         for(Game g : scheduledGames) {
             System.out.println("Date: " + g.getTimeSlot().getStartDateTime().toString());
         }
+         */
+
         return scheduledGames;
     }
 
@@ -212,6 +190,71 @@ public class ExcelExport {
     }
 
     /**
+     * Prints the total games, scheduled games, allotted timeslots, remaining timeslots, and scheduling success rate
+     * for each division/tier schedule
+     */
+    public void printLeagueData() {
+        ArrayList<Schedule> schedules = league.getSchedules();
+        double leagueTimeslots = 0;
+        double leagueUsedTimeslots = 0;
+
+        for(int i = 1; i < schedules.size(); ++i) {
+            Schedule s = schedules.get(i);
+            ArrayList<Game> scheduledGames = new ArrayList<>();
+            ArrayList<TimeSlot> unusedTimeslots = new ArrayList<>();
+
+            String division = s.getTeams().get(1).getDivision().getName();
+            int tier = s.getTeams().get(1).getTier().ordinal();
+
+            // Finding all games with an assigned timeslot
+            for(Game g : s.getGames()) {
+                if(g.getTimeSlot() != null) {
+                    scheduledGames.add(g);
+                }
+            }
+
+            // Finding all remaining available timeslots
+            for(TimeSlot t : s.getTimeSlots()) {
+                if(t.isAvailable()) {
+                    unusedTimeslots.add(t);
+                }
+            }
+
+            double tg = s.getGames().size(); // total games
+            double tsg = scheduledGames.size(); // total scheduled games
+            double ssr = (tsg / tg) * 100; // scheduling success rate
+            double tsTotal = s.getTimeSlots().size(); // total allotted timeslots
+            double atsTotal = unusedTimeslots.size(); // total available timeslots (unused remaining timeslots)
+
+            leagueTimeslots = leagueTimeslots + tsTotal;
+            leagueUsedTimeslots = leagueUsedTimeslots + (tsTotal - atsTotal);
+
+            System.out.println();
+            System.out.println("Schedule: " + division + " (Tier " + tier + ")");
+            System.out.println("Total Games: " + tg);
+            System.out.println("Total Scheduled Games: " + tsg);
+            System.out.println("Total allotted timeslots: " + tsTotal);
+            System.out.println("Remaining available timeslots: " + atsTotal);
+            System.out.println("Scheduling Success Rate: " + round(ssr,2) + "%" + "\n");
+
+        }
+        System.out.println("Total timeslots allotted to league: " + leagueTimeslots);
+        System.out.println("Total timeslots used by league: " + leagueUsedTimeslots);
+        System.out.println("Remaining timeslots: " + (leagueTimeslots - leagueUsedTimeslots));
+        System.out.println("Program Scheduling Rate: " + ((leagueUsedTimeslots/leagueTimeslots) * 100) + "%");
+    }
+
+    /**
+     * Prints the schedule data for a specific division and tier
+     *
+     * @param division
+     * @param tier
+     */
+    public void printScheduleData(Division division, Tier tier) {
+
+    }
+
+    /**
      * Method called to create the workbook file containing schedule info
      */
     public void exportSchedule() throws IOException {
@@ -219,7 +262,7 @@ public class ExcelExport {
         printLeagueInfo();
 
         // Process Rounds
-        System.out.println("Number of sheets: " + wb.getNumberOfSheets());
+        //System.out.println("Number of sheets: " + wb.getNumberOfSheets());
         processLeague();
 
         // Format workbook sheets
