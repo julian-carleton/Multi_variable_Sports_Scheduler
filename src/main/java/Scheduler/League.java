@@ -24,6 +24,7 @@ public class League {
 	private ArrayList<Arena> arenas;
 	private ArrayList<Schedule> schedules;
 	private double gamesPerWeek = 1;
+	private TimeSlot emptySlot;
 
 
 	
@@ -42,8 +43,10 @@ public class League {
 		this.timeslots = sortTimeSlots(timeslots); // Sorts Time slots by date
 		this.arenas = arenas;
 		this.schedules = new ArrayList<Schedule>(); 
-		
-		generateSchedules();
+		Arena a = new Arena("null", 0, 0);
+		LocalDateTime time; 
+		time = LocalDateTime.of(0, 1, 1, 0, 0);
+		this.emptySlot = new TimeSlot(time,a, this.divisions.get(0));
 
 	}
 	
@@ -53,7 +56,6 @@ public class League {
 	public void generateSchedules() {
 		ArrayList<Team> tempTeam = new ArrayList<Team>();
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
-		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 		for (Division d: divisions) {
 			int numTiers = 0;
 			for (Team t: d.getTeams()) {
@@ -69,19 +71,19 @@ public class League {
 					if (t.getTier() == Tier.fromInteger(i)) {
 						tempTeam.add(t);
 						for (Arena a: t.getHomeArenas()) {
+							if (!a.equals(null)) {
 								arenas.add(a);
+							}
 						}
 					}
 				}
 
 				if (!tempTeam.isEmpty()) {
 					ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);
-					Schedule tempSchedule = new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek)); // call schedule
-					schedules.add(tempSchedule);
+					this.schedules.add(new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek))); // call schedule
 				}
 			}
 		}
-		this.schedules = schedules;
 	}
 
 	/**
@@ -119,35 +121,41 @@ public class League {
         	   int point = curSlot+ j*(availableSlotsPerWk/slotsPerWeek);
         	   TimeSlot slot = timeslots.get(point);
         	   
-        	   while(!arenas.contains(slot.getArena())|| slot.isSelected()) {
+        	   while(!arenas.contains(slot.getArena())| slot.isSelected()) {
         		   if  ( point < (availableSlotsPerWk+curSlot)) {
         			   point++;
         			   slot = timeslots.get(point);
-        			   for(int k = 0 ; k > arenas.size(); k++ ) {
-            			   if (arenas.get(k).equals(slot.getArena())) {
-            				   tempArenas.add(arenas.remove(k));
-            			   }
-        			   }
+
         		   }else {
+        			   slot = emptySlot;
         			   break;
         			   }
 //        			   return tempTimeSlots; 
 //        			   }
         	   }
-        	   for (Arena a: tempArenas) {
-        		   arenas.add(a);
-        	   }
+        	   
     		   slot.selectTimeslot();	// Set as no longer available
     		   tempTimeSlots.add(slot);
+			   for(int k = 0 ; k < arenas.size(); k++ ) {
+				   if (arenas.get(k).equals(slot.getArena())) {
+					   tempArenas.add(arenas.remove(k));
+					   break;
+				   }
+			   }
+    		   
         	   
            }
            curDay = curDay.plusDays(7);
            while (timeslots.get(curSlot).getStartDateTime().compareTo(curDay) < 0) {
         	   curSlot++;
         	   if (curSlot >= timeslots.size()) {
-        		   return tempTimeSlots;
+        		   break;
+        		   //return tempTimeSlots;
         	   }
            }
+           for (int k = 0 ; k < tempArenas.size(); k++ ) {
+    		   arenas.add(tempArenas.remove(k));
+    	   }
            
        }
        return tempTimeSlots;
