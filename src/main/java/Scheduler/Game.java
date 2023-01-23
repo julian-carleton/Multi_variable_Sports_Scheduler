@@ -1,4 +1,4 @@
-package main.java.Scheduler;
+package Scheduler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -108,8 +108,4 @@ public class Game {
 	public void setTimeSlot(TimeSlot timeSlot) {
 		this.timeSlot = timeSlot;
 	}
-	
-	
-	
-
 }
