@@ -1,5 +1,8 @@
-package main.java.Scheduler;
+package Scheduler;
 
+import Excel_Import_Export.ExcelExport;
+
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -214,14 +217,13 @@ public class Schedule {
 		return this.games;
 	}
 
-
 	/*
 	 * Main Function
 	 * 
 	 * Demo to show the functionality of the scheduling
 	 * 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
@@ -353,5 +355,8 @@ public class Schedule {
 			System.out.print(timeSlots.get(j) + "\n");
 		}
 		System.out.print("\n");
+
+		ExcelExport export = new ExcelExport(schedule);
+		export.exportSchedule();
 	}
 }
