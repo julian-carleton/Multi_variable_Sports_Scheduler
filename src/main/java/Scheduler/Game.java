@@ -87,6 +87,10 @@ public class Game {
 		return this.awayTeam;
 	}
 	
+	public TimeSlot getTimeSlot() {
+		return this.timeSlot;
+	}
+	
 	public void setHomeTeam(Team homeTeam) {
 		this.homeTeam = homeTeam;
 		this.exceptionsNum = this.homeTeam.getExceptions().size() + this.awayTeam.getExceptions().size();

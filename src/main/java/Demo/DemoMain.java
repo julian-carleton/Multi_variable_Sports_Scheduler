@@ -1,3 +1,4 @@
+
 package main.java.Demo;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import main.java.Scheduler.Division;
 import main.java.Scheduler.Exception;
 import main.java.Scheduler.Game;
 
+
 public class DemoMain {
     public static void main(String[] args) {
         ExcelImport excelImport = new ExcelImport();
@@ -27,11 +29,13 @@ public class DemoMain {
          * Create Data Types
          */
         CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
+
         printCreateDataStruc(strucs);
         System.out.print(true);
 
         League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
         league.generateSchedules();
+
 
         int t1 = 0;
         int t2 = 0;
@@ -178,4 +182,6 @@ public class DemoMain {
 	}
     
     
+
+
 }

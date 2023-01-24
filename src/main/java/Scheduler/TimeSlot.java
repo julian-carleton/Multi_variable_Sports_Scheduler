@@ -66,6 +66,10 @@ public class TimeSlot {
 	public boolean isSelected() {
 		return isSelected;
 	}
+	
+	public String toString() {
+		return "Time Slot at: "+this.arena.getName()+" and is available: " + this.isAvailable;
+	}
 
 	
 

@@ -1,4 +1,4 @@
-package main.java.Excel_Import_Export;
+package Excel_Import_Export;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -55,7 +55,7 @@ public class ExcelImport {
             /*
              *  Input_Proposal Workbook
              */
-            XSSFWorkbook wb = new XSSFWorkbook(schedulingData);
+            wb = new XSSFWorkbook(schedulingData);
 
             /*
              * Sheets
