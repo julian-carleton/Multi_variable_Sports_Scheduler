@@ -1,11 +1,9 @@
 package main.java.Scheduler;
 
-<<<<<<< Updated upstream
-=======
+
 import main.java.Excel_Import_Export.ExcelExport;
 
 import java.io.IOException;
->>>>>>> Stashed changes
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

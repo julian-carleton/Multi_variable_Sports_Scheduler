@@ -12,6 +12,7 @@ import main.java.Scheduler.TimeSlot;
 import main.java.Scheduler.Arena;
 import main.java.Scheduler.Division;
 import main.java.Scheduler.Exception;
+import main.java.Scheduler.Game;
 
 public class DemoMain {
     public static void main(String[] args) {
@@ -32,13 +33,20 @@ public class DemoMain {
         League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
         league.generateSchedules();
 
+        int t1 = 0;
+        int t2 = 0;
         for (Schedule s: league.getSchedules()) {
             if (!s.getTimeSlots().isEmpty()) {
                 s.createSchedule();
+                for (Game g :s.getGames()) {
+                	if(g.getTimeSlot() == null) {
+                		t2++;
+                	}else {t1++;}
+                }
             }
         }
         printTeamTimeSlotSelect(league);
-        System.out.print(false);
+        System.out.println((float)t1/(t1+t2));
     }
     
     
