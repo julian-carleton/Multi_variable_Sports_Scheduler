@@ -218,6 +218,10 @@ public class Schedule {
 		return this.games;
 	}
 
+	public int getActualNumRounds() {
+		return actualNumRounds;
+	}
+
 	/*
 	 * Main Function
 	 * 
@@ -356,8 +360,5 @@ public class Schedule {
 			System.out.print(timeSlots.get(j) + "\n");
 		}
 		System.out.print("\n");
-
-		ExcelExport export = new ExcelExport(schedule);
-		export.exportSchedule();
 	}
 }
