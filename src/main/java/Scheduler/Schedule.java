@@ -34,6 +34,21 @@ public class Schedule {
 		this.games = new ArrayList<Game>();
 		this.timeSlots = timeSlots;
 		this.actualNumRounds = actualNumRounds;
+		this.printInfo = false;
+	}
+	
+	/**
+	 * Constructor with option to print the information of the schedule
+	 * @author Quinn Sondermeyer Julian Obando 
+	 * @param teams
+	 */
+	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots, int actualNumRounds, boolean printInfo) {
+		this.teams = teams;
+		this.rounds = new ArrayList<Round>();
+		this.games = new ArrayList<Game>();
+		this.timeSlots = timeSlots;
+		this.actualNumRounds = actualNumRounds;
+		this.printInfo = printInfo;
 	}
 
 	/**
@@ -64,6 +79,39 @@ public class Schedule {
 			makeListGames();   		//Concatenates the rounds that will be used
 			assignGames();
 		}
+	}
+	
+	/*
+	 * Creates and prints the information of the schedule
+	 */
+	public void printSchedule() {
+		
+		//Round Robin 
+		matchRR();
+		printRounds();		
+		orderExceptionNumber();			//Ordering rounds based on the number of exceptions
+		System.out.print("After ordering...\n");
+		printRounds();
+		
+		//Getting the list of games in schedule
+		makeListGames();	
+		System.out.print("Before scheduling...\n");
+		printGames();
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots BEFORE scheduling are as follows: \n");
+		printTimeSlots();
+		
+		//Assigning the Games
+		assignGames();
+		
+		//Showing the assigning of games to timeSlots
+		System.out.print("After scheduling...\n");
+		printGames();
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots AFTER scheduling are as follows: \n");
+		printTimeSlots();
 	}
 	
 	/**
@@ -142,39 +190,6 @@ public class Schedule {
 			newRounds.add(newRound);
 		}
 		this.rounds = newRounds;
-	}
-
-		/*
-	 * Creates and prints the information of the schedule
-	 */
-	public void printSchedule() {
-		
-		//Round Robin 
-		matchRR();
-		printRounds();		
-		orderExceptionNumber();			//Ordering rounds based on the number of exceptions
-		System.out.print("After ordering...\n");
-		printRounds();
-		
-		//Getting the list of games in schedule
-		makeListGames();	
-		System.out.print("Before scheduling...\n");
-		printGames();
-		
-		System.out.print("\n");
-		System.out.print("The timeSlots BEFORE scheduling are as follows: \n");
-		printTimeSlots();
-		
-		//Assigning the Games
-		assignGames();
-		
-		//Showing the assigning of games to timeSlots
-		System.out.print("After scheduling...\n");
-		printGames();
-		
-		System.out.print("\n");
-		System.out.print("The timeSlots AFTER scheduling are as follows: \n");
-		printTimeSlots();
 	}
 
 	/**
@@ -273,16 +288,20 @@ public class Schedule {
 		return actualNumRounds;
 	}
 
+	/*
+	 * Print Functions
+	 */
 	public void printRounds() {
 		
 		System.out.print("The following matchups are possible for the given teams:\n");
 		for (int j = 0; j < this.numRounds; j++) {
 			Round curr_round = this.rounds.get(j);
 			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
+				System.out.print("	");
 				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
 				System.out.print(" vs ");
 				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
-				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
+				System.out.print("	This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
 				System.out.print("\n");
 			}
 			System.out.print("This round has: ");
@@ -292,23 +311,25 @@ public class Schedule {
 	}
 	
 	public void printGames() {
+		
 		System.out.print("The games for this schedule are:\n");
 		for (int j = 0; j < this.games.size(); j++) {
 			Game currGame = this.games.get(j);
+			System.out.print("	");
 			System.out.print(currGame.getHomeTeam().getName());
 			System.out.print(" vs ");
 			System.out.print(currGame.getAwayTeam().getName());
-			System.out.print(" with assigned "+currGame.getTimeSlot());
+			System.out.print("	assigned	"+currGame.getTimeSlot());
 			System.out.print("\n");
 		}
 	}
 	
 	public void printTimeSlots() {
+		System.out.print("The time slots are:\n");
 		for (int j = 0; j < this.timeSlots.size(); j++) {
-			System.out.print(this.timeSlots.get(j) + "\n");
+			System.out.print("	"+this.timeSlots.get(j) + "\n");
 		}
-		System.out.print("\n");
-		System.out.print("\n");
+		System.out.print("\n\n");
 	}
 	
 	/*
