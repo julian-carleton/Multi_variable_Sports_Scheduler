@@ -71,6 +71,7 @@ public class TimeSlot {
 		return "Time Slot at: "+this.arena.getName()+" and is available: " + this.isAvailable;
 	}
 
+	
 
 	
 	
