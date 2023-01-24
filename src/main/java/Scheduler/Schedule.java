@@ -52,20 +52,6 @@ public class Schedule {
 	}
 
 	/**
-	 * Constructor with option to print the information of the schedule
-	 * @author Quinn Sondermeyer Julian Obando 
-	 * @param teams
-	 */
-	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots, int actualNumRounds, boolean printInfo) {
-		this.teams = teams;
-		this.rounds = new ArrayList<Round>();
-		this.games = new ArrayList<Game>();
-		this.timeSlots = timeSlots;
-		this.actualNumRounds = actualNumRounds;
-		this.printInfo = printInfo;
-	}
-
-	/**
 	 * Wrapper function for the sequence of calls required to create the schedule
 	 *
 	 * @author Julian Obando
