@@ -104,4 +104,9 @@ public class Game {
 	public int getExceptionsNumber() {
 		return this.exceptionsNum;
 	}
+
+	public void setTimeSlot(TimeSlot currTimeSlot) {
+		this.timeSlot = currTimeSlot;
+		
+	}
 }
