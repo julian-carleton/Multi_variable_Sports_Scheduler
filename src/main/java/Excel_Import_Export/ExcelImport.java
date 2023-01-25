@@ -357,12 +357,11 @@ public class ExcelImport {
                     else if(cell.getColumnIndex() == 1) {
                         String test = String.valueOf(cell.getNumericCellValue());
                         arenas.get(1).add(String.valueOf(cell.getNumericCellValue()));
-                        System.out.println("Added: " + test);
                     }
                     else if(cell.getColumnIndex() == 2) {
                         String test = String.valueOf(cell.getNumericCellValue());
                         arenas.get(2).add(String.valueOf(cell.getNumericCellValue()));
-                        System.out.println("Added: " + test);
+
                     }
                 }
             }
@@ -539,7 +538,7 @@ public class ExcelImport {
         }
     }
 
-    public void printTimeExceptionsData(ArrayList<ArrayList<String>> sheetArray) {
+    public void printTimeExceptionsData(ArrayList<ArrayList<Object>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Time Exception: " + (i+1));
             System.out.println("Division: " + sheetArray.get(0).get(i));
@@ -552,7 +551,7 @@ public class ExcelImport {
         }
     }
 
-    public void printDateExceptionsData(ArrayList<ArrayList<String>> sheetArray) {
+    public void printDateExceptionsData(ArrayList<ArrayList<Object>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Date Exception: " + (i+1));
             System.out.println("Division: " + sheetArray.get(0).get(i));
@@ -571,7 +570,7 @@ public class ExcelImport {
         }
     }
 
-    public void printTimeSlotsData(ArrayList<ArrayList<String>> sheetArray) {
+    public void printTimeSlotsData(ArrayList<ArrayList<Object>> sheetArray) {
         for(int i = 0; i < sheetArray.get(0).size(); i++) {
             System.out.println("\n" + "Time Slot: " + (i+1));
             System.out.println("Arena Name: " + sheetArray.get(0).get(i));
@@ -604,13 +603,13 @@ public class ExcelImport {
         test.importTimeSlots();
         test.importHomeArenas();
 
-        // Print sheet arrays
-        //test.printTeamsData(test.teams);
-        //test.printTimeExceptionsData(test.timeExceptions);
-        //test.printDateExceptionsData(test.dateExceptions);
+         //Print sheet arrays
+        test.printTeamsData(test.teams);
+        test.printTimeExceptionsData(test.timeExceptions);
+        test.printDateExceptionsData(test.dateExceptions);
         test.printArenasData(test.arenas);
-        //test.printTimeSlotsData(test.timeSlots);
-        //test.printHomeArenasData(test.homeArenas);
+        test.printTimeSlotsData(test.timeSlots);
+        test.printHomeArenasData(test.homeArenas);
     }
     
     /*
