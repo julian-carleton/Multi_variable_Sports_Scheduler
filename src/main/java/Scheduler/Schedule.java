@@ -1,4 +1,4 @@
-package Scheduler;
+package main.java.Scheduler;
 
 import main.java.Excel_Import_Export.ExcelExport;
 
@@ -20,6 +20,7 @@ public class Schedule {
 	private int numRounds;				//Number of different rounds possible
 	private int actualNumRounds; 		//Number of rounds in the schedule
 	private ArrayList<TimeSlot> timeSlots;
+	private boolean printInfo;
 
 
 	/**
@@ -33,6 +34,21 @@ public class Schedule {
 		this.games = new ArrayList<Game>();
 		this.timeSlots = timeSlots;
 		this.actualNumRounds = actualNumRounds;
+		this.printInfo = false;
+	}
+	
+	/**
+	 * Constructor with option to print the information of the schedule
+	 * @author Quinn Sondermeyer Julian Obando 
+	 * @param teams
+	 */
+	public Schedule(ArrayList<Team> teams, ArrayList<TimeSlot> timeSlots, int actualNumRounds, boolean printInfo) {
+		this.teams = teams;
+		this.rounds = new ArrayList<Round>();
+		this.games = new ArrayList<Game>();
+		this.timeSlots = timeSlots;
+		this.actualNumRounds = actualNumRounds;
+		this.printInfo = printInfo;
 	}
 
 	/**
@@ -41,10 +57,47 @@ public class Schedule {
 	 * @author Julian Obando
 	 **/
 	public void createSchedule() {
+		if (this.printInfo) {
+			printSchedule();
+		} else {
+			matchRR();
+			orderExceptionNumber();	//Ordering rounds based on the number of exceptions
+			makeListGames();   		//Concatenates the rounds that will be used
+			assignGames();
+		}
+	}
+	
+	/*
+	 * Creates and prints the information of the schedule
+	 */
+	public void printSchedule() {
+		
+		//Round Robin 
 		matchRR();
-		orderExceptionNumber();
-		makeListGames();   //Concatenates the rounds that will be used
+		printRounds();		
+		orderExceptionNumber();			//Ordering rounds based on the number of exceptions
+		System.out.print("After ordering...\n");
+		printRounds();
+		
+		//Getting the list of games in schedule
+		makeListGames();	
+		System.out.print("Before scheduling...\n");
+		printGames();
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots BEFORE scheduling are as follows: \n");
+		printTimeSlots();
+		
+		//Assigning the Games
 		assignGames();
+		
+		//Showing the assigning of games to timeSlots
+		System.out.print("After scheduling...\n");
+		printGames();
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots AFTER scheduling are as follows: \n");
+		printTimeSlots();
 	}
 	
 	/**
@@ -124,7 +177,7 @@ public class Schedule {
 		}
 		this.rounds = newRounds;
 	}
-	
+
 	/**
 	 * Creates a list of all the games to be played in the schedule
 	 * 
@@ -198,7 +251,6 @@ public class Schedule {
 
     }
 	
-	
 	/*
 	 * Getters and Setters
 	 */
@@ -223,19 +275,60 @@ public class Schedule {
 	}
 
 	/*
-	 * Main Function
-	 * 
-	 * Demo to show the functionality of the scheduling
-	 * 
+	 * Print Functions
 	 */
-	public static void main(String[] args) throws IOException {
+	public void printRounds() {
+		
+		System.out.print("The following matchups are possible for the given teams:\n");
+		for (int j = 0; j < this.numRounds; j++) {
+			Round curr_round = this.rounds.get(j);
+			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
+				System.out.print("	");
+				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
+				System.out.print(" vs ");
+				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
+				System.out.print("	This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
+				System.out.print("\n");
+			}
+			System.out.print("This round has: ");
+			System.out.print(((ArrayList<Game>)curr_round.getMatchups()).size());
+			System.out.print(" matchups\n\n");
+		}
+	}
+	
+	public void printGames() {
+		
+		System.out.print("The games for this schedule are:\n");
+		for (int j = 0; j < this.games.size(); j++) {
+			Game currGame = this.games.get(j);
+			System.out.print("	");
+			System.out.print(currGame.getHomeTeam().getName());
+			System.out.print(" vs ");
+			System.out.print(currGame.getAwayTeam().getName());
+			System.out.print("	assigned	"+currGame.getTimeSlot());
+			System.out.print("\n");
+		}
+	}
+	
+	public void printTimeSlots() {
+		System.out.print("The time slots are:\n");
+		for (int j = 0; j < this.timeSlots.size(); j++) {
+			System.out.print("	"+this.timeSlots.get(j) + "\n");
+		}
+		System.out.print("\n\n");
+	}
+	
+	/*
+	 * Demo with simulated data
+	 */
+	public static void demo() {
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		int actualNumRounds = 10;
 		
 		//Making list of Arenas
-		int numArenas = 3;
+		int numArenas = 7;
 		for (int i = 0; i < numArenas; i++) {
 			Arena tempArena = new Arena("Arena "+ (i+1), (float) 0.0, (float) 0.0);
 			arenas.add(tempArena);
@@ -248,6 +341,7 @@ public class Schedule {
 		
 		
 		//Making list of teams with home arena in form Arena numArenas%
+		System.out.print("Assume that each team has as many exceptions as its team number\n");
 		int numTeams = 8;
 		for (int i = 0; i < numTeams; i++) {
 			Team tempTeam = new Team("Team " + (i+1));
@@ -267,98 +361,19 @@ public class Schedule {
 			timeSlots.add(tempTimeSlot);
 		}
 		
-		Schedule schedule = new Schedule(teams, timeSlots, actualNumRounds);
-		schedule.matchRR();
-
-		boolean even = false;
-		int num_teams = teams.size();
-		int num_rounds;
-		if (num_teams % 2 == 0) {
-			num_rounds = num_teams - 1;
-			even = true;
-		} else {
-			num_rounds = num_teams;
-		}
-
-		System.out.print("The following matchups are possible for the given teams:\n");
-		System.out.print("Assume that each team has as many exceptions as its team number\n\n");
-		
-		for (int j = 0; j < num_rounds; j++) {
-			Round curr_round = schedule.getRounds().get(j);
-
-			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
-				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
-				System.out.print(" vs ");
-				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
-				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
-				System.out.print("\n");
-			}
-			System.out.print("This round has: ");
-			System.out.print(((ArrayList<Game>)curr_round.getMatchups()).size());
-			System.out.print(" matchups\n\n");
-		}
-		
-		//Ordering rounds based on the number of exceptions
-		schedule.orderExceptionNumber();
-		System.out.print("\nAfter ordering...\n\n");
-		
-		for (int j = 0; j < num_rounds; j++) {
-			Round curr_round = schedule.getRounds().get(j);
-
-			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
-				System.out.print(((Game) curr_round.getGame(i)).getHomeTeam().getName());
-				System.out.print(" vs ");
-				System.out.print(((Game) curr_round.getGame(i)).getAwayTeam().getName());
-				System.out.print("  This match up has (# exceptions):" +curr_round.getGame(i).getExceptionsNumber());
-				System.out.print("\n");
-			}
-			System.out.print("This round has: ");
-			System.out.print(((ArrayList<Game>)curr_round.getMatchups()).size());
-			System.out.print(" matchups\n\n");
-		}
-		
-		//Showing the list of games
-		schedule.makeListGames();
-		
-		System.out.print("The games for this schedule are:\n");
-		ArrayList<Game> games = schedule.getGames();
-		for (int j = 0; j < games.size(); j++) {
-			Game currGame = games.get(j);
-			System.out.print(currGame.getHomeTeam().getName());
-			System.out.print(" vs ");
-			System.out.print(currGame.getAwayTeam().getName());
-			System.out.print("\n");
-		}
-		
-		System.out.print("\n");
-		System.out.print("The time slots allocated for this scheduled are: \n");
-		
-		for (int j = 0; j < timeSlots.size(); j++) {
-			System.out.print(timeSlots.get(j) + "\n");
-		}
-		System.out.print("\n");
-		
-		//schedule.assignGames();
-		schedule.assignGames();
-		
-		//Showing the assigning of games to timeSlots
-		System.out.print("The SCHEDULED games for this schedule are:\n");
-		games = schedule.getGames();
-		for (int j = 0; j < games.size(); j++) {
-			Game currGame = games.get(j);
-			System.out.print(currGame.getHomeTeam().getName());
-			System.out.print(" vs ");
-			System.out.print(currGame.getAwayTeam().getName());
-			System.out.print(" with assigned "+currGame.getTimeSlot());
-			System.out.print("\n");
-		}
-		
-		System.out.print("\n");
-		System.out.print("The timeSlots are now as follows: \n");
-		
-		for (int j = 0; j < timeSlots.size(); j++) {
-			System.out.print(timeSlots.get(j) + "\n");
-		}
-		System.out.print("\n");
+		Schedule schedule = new Schedule(teams, timeSlots, actualNumRounds, true);
+		schedule.createSchedule();
+	}
+	
+	/*
+	 * Main Function
+	 * 
+	 * Demo to show the functionality of the scheduling
+	 * 
+	 */
+	public static void main(String[] args) {
+		demo();
 	}
 }
+
+
