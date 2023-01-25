@@ -1,4 +1,4 @@
-package Excel_Import_Export;
+package main.java.Excel_Import_Export;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -357,12 +357,11 @@ public class ExcelImport {
                     else if(cell.getColumnIndex() == 1) {
                         String test = String.valueOf(cell.getNumericCellValue());
                         arenas.get(1).add(String.valueOf(cell.getNumericCellValue()));
-                        System.out.println("Added: " + test);
                     }
                     else if(cell.getColumnIndex() == 2) {
                         String test = String.valueOf(cell.getNumericCellValue());
                         arenas.get(2).add(String.valueOf(cell.getNumericCellValue()));
-                        System.out.println("Added: " + test);
+
                     }
                 }
             }

@@ -31,7 +31,6 @@ public class DemoMain {
         CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
 
         printCreateDataStruc(strucs);
-        System.out.print(true);
 
         League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
         league.generateSchedules();

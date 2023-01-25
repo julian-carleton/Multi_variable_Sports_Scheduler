@@ -338,7 +338,6 @@ public class League {
 				s.createSchedule();
 			}
 		}
-		System.out.print(false);
 		
 	}
 	

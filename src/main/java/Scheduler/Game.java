@@ -108,10 +108,6 @@ public class Game {
 	public void setTimeSlot(TimeSlot timeSlot) {
 		this.timeSlot = timeSlot;
 	}
-
-	public TimeSlot getTimeSlot() {
-		return timeSlot;
-	}
 	
 	
 	
