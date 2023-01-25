@@ -1,13 +1,18 @@
 package main.java.Scheduler;
 
+import java.io.IOException;
 import java.io.IOException.*;
+import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
+//import main.java.Excel_Import_Export.CreateDataStrucs;
 import main.java.Excel_Import_Export.CreateDataStrucs;
+import main.java.Excel_Import_Export.ExcelExport;
 import main.java.Excel_Import_Export.ExcelImport;
+//import main.java.Excel_Import_Export.ExcelImport;
 
 
 
@@ -26,9 +31,6 @@ public class League {
 	private double gamesPerWeek = 1;
 	private TimeSlot emptySlot;
 
-
-	
-	
 	
 	/**
 	 * Default Constructor
@@ -238,7 +240,7 @@ public class League {
 	 * Source: https://www.geeksforgeeks.org/heap-sort/
 	 * HeapSort
 	 * 
-	 * @param arr
+	 * @param timeSlots1
 	 */
 	private ArrayList<TimeSlot> sortTimeSlots(ArrayList<TimeSlot> timeSlots1){
         int n = timeSlots1.size();
@@ -307,7 +309,124 @@ public class League {
 	public void addDivision(Division division) {
 		divisions.add(division);
 	}
-	
+
+	/**
+	 * Method for finding the unused timeslots during scheduling
+	 *
+	 * @param timeslots
+	 * @return
+	 */
+	public ArrayList<TimeSlot> findEmptyTimeslots(ArrayList<TimeSlot> timeslots) {
+		ArrayList<TimeSlot> unusedTimeslots = new ArrayList<>();
+
+		for(TimeSlot timeSlot: timeslots) {
+			if (timeSlot.isAvailable()) {
+				unusedTimeslots.add(timeSlot);
+			}
+		}
+
+		return unusedTimeslots;
+	}
+
+	/**
+	 * Method for finding the unscheduled games in each of the rounds for a league
+	 *
+	 * @param rounds the rounds holding all the scheduled and unscheduled games
+	 * @return ArrayList of unscheduled games
+	 */
+	public ArrayList<Game> findUnscheduledGames(ArrayList<Round> rounds) {
+		ArrayList<Game> unscheduledGames = new ArrayList<>();
+
+		for(Round r: rounds) {
+			for(Game g: r.getMatchups()){
+				if(g.getTimeSlot() == null){
+					unscheduledGames.add(g);
+				}
+			}
+		}
+		for(Game ug: unscheduledGames){
+			System.out.println("Home Team: " + ug.getHomeTeam());
+			System.out.println("Away Team: " + ug.getAwayTeam());
+			System.out.println("Exceptions: " + ug.getExceptionsNumber());
+			//System.out.println("Is game scheduled: " + ug.getTimeSlot().isSelected());
+		}
+		return unscheduledGames;
+	}
+
+	/**
+	 *
+	 * @param game
+	 * @param timeslot
+	 * @return
+	 */
+	public boolean canGameBeScheduled(Game game, TimeSlot timeslot){
+		ArrayList<Exception> totalExceptions = new ArrayList<>();
+		for(int i = 0; i < game.getHomeTeam().getExceptions().size(); i++){
+			// Add all home team exceptions
+			totalExceptions.add(game.getHomeTeam().getExceptions().get(i));
+
+			// Add all away team exceptions
+			totalExceptions.add(game.getAwayTeam().getExceptions().get(i));
+		}
+
+		// Check all exceptions to determine if they overlap with timeslot
+		for(Exception e: totalExceptions){
+			if(e.getStart() == timeslot.getStartDateTime()){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Temporary method to check if team can play at an arena as a home team
+	 *
+	 * Note: this should be changed to use location as a check
+	 * @author Brady Norton
+	 * @param team
+	 * @param arena
+	 * @return
+	 */
+	public boolean canTeamPlay(Team team, Arena arena) {
+		/*
+		 * Check if given arena is in list of home arenas
+		 */
+		for(Arena a: team.getHomeArenas()) {
+			if(arena != a) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Method to match the unscheduled Games to available TimeSlots
+	 *
+	 * @param games unscheduled games from scheduled Rounds
+	 * @param timeslots available TimeSlots for this league
+	 */
+	public void matchEmptyGamesToTimeslots(ArrayList<Game> games, ArrayList<TimeSlot> timeslots) {
+		for(Game g: games){
+			for(TimeSlot t: timeslots){
+				if(canGameBeScheduled(g, t)){ // checking time exceptions
+					if(canTeamPlay(g.getHomeTeam(), t.getArena())) // checking home arena exceptions
+						// Set the TimeSlot for the Game
+						g.setTimeSlot(t);
+
+						// Set the TimeSlot as unavailable
+						t.useTimeslot();
+
+						// Remove Game and Timeslot from the unscheduled lists
+						games.remove(g);
+						timeslots.remove(t);
+				}
+			}
+		}
+
+		// Print remaining unscheduled data
+		System.out.println("Unscheduled games remaining: " + games.size());
+		System.out.println("Available TimeSlots remaining: " + timeslots.size());
+	}
 	
 
 	/**
@@ -316,7 +435,7 @@ public class League {
 	 * Creates Leagues
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		ExcelImport excelImport = new ExcelImport();
 
         /*
@@ -338,10 +457,15 @@ public class League {
 				s.createSchedule();
 			}
 		}
-		
+
+
+		// Excel Export
+		ExcelExport export = new ExcelExport(league);
+		export.printLeagueData();
+		export.exportSchedule();
+
 	}
-	
-	
+
 	/*
 	 * Getters and Setters
 	 */
@@ -365,9 +489,6 @@ public class League {
 	public ArrayList<Schedule> getSchedules() {
 		return schedules;
 	}
-	
-
-	
 	
 
 }

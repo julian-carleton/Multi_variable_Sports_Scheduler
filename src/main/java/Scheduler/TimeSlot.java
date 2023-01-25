@@ -68,7 +68,7 @@ public class TimeSlot {
 	}
 	
 	public String toString() {
-		return "Time Slot at: "+this.arena.getName()+" and is available: " + this.isAvailable;
+		return "Time Slot at: "+this.arena.getName()+"		is available: " + this.isAvailable;
 	}
 
 	

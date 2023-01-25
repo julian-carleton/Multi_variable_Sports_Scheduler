@@ -104,13 +104,4 @@ public class Game {
 	public int getExceptionsNumber() {
 		return this.exceptionsNum;
 	}
-
-	public void setTimeSlot(TimeSlot timeSlot) {
-		this.timeSlot = timeSlot;
-	}
-	
-	
-	
-	
-
 }

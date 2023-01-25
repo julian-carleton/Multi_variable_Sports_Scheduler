@@ -589,22 +589,7 @@ public class ExcelImport {
             System.out.println("Rank: " + sheetArray.get(3).get(i));
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
-
-    
-
-    
-    
-    
 
     public static void main(String[] args) throws IOException {
         // Create test run
