@@ -1,4 +1,4 @@
-package main.java.Scheduler;
+package Scheduler;
 
 import java.io.IOException;
 import java.io.IOException.*;
@@ -8,10 +8,13 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
-//import main.java.Excel_Import_Export.CreateDataStrucs;
-import main.java.Excel_Import_Export.CreateDataStrucs;
-import main.java.Excel_Import_Export.ExcelExport;
-import main.java.Excel_Import_Export.ExcelImport;
+import Excel_Import_Export.CreateDataStrucs;
+import Excel_Import_Export.ExcelExport;
+import Excel_Import_Export.ExcelImport;
+import Optimization.NeighbourSelector;
+import Optimization.StopCondition;
+import Optimization.TabuList;
+import Optimization.TabuSearch;
 //import main.java.Excel_Import_Export.ExcelImport;
 
 
@@ -464,6 +467,9 @@ public class League {
 		export.printLeagueData();
 		export.exportSchedule();
 
+		// Optimization testing
+		TabuSearch ts = new TabuSearch(league.getSchedules().get(1));
+		ts.analyzeSchedule(league.getSchedules().get(1));
 	}
 
 	/*

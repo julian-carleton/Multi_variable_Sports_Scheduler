@@ -1,4 +1,4 @@
-package main.java.Scheduler;
+package Scheduler;
 
 /**
  * Enum for the tier as there will never be more than 0-4 tiers
