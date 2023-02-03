@@ -1,4 +1,4 @@
-package Optimization;
+package main.java.Optimization;
 
 /**
  * NeighbourSelector is a class used to choose the next possible Move during optimization of a Schedule

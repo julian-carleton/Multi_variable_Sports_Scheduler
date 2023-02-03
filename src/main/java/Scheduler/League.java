@@ -1,4 +1,4 @@
-package Scheduler;
+package main.java.Scheduler;
 
 import java.io.IOException;
 import java.io.IOException.*;
@@ -8,13 +8,13 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
-import Excel_Import_Export.CreateDataStrucs;
-import Excel_Import_Export.ExcelExport;
-import Excel_Import_Export.ExcelImport;
-import Optimization.NeighbourSelector;
-import Optimization.StopCondition;
-import Optimization.TabuList;
-import Optimization.TabuSearch;
+import main.java.Excel_Import_Export.CreateDataStrucs;
+import main.java.Excel_Import_Export.ExcelExport;
+import main.java.Excel_Import_Export.ExcelImport;
+import main.java.Optimization.NeighbourSelector;
+import main.java.Optimization.StopCondition;
+import main.java.Optimization.TabuList;
+import main.java.Optimization.TabuSearch;
 //import main.java.Excel_Import_Export.ExcelImport;
 
 

@@ -1,6 +1,6 @@
-package Optimization;
+package main.java.Optimization;
 
-import Scheduler.*;
+import main.java.Scheduler.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

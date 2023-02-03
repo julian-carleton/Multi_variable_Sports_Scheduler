@@ -1,6 +1,6 @@
-package Optimization;
+package main.java.Optimization;
 
-import Scheduler.Schedule;
+import main.java.Scheduler.Schedule;
 
 /**
  * This class takes a Schedule (or neighboring Schedule) and assigns it a Quality factor
