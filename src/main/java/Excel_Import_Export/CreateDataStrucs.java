@@ -1,11 +1,11 @@
-package main.java.Excel_Import_Export;
+package Excel_Import_Export;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.java.Scheduler.*;
-import main.java.Scheduler.Exception;
+import Scheduler.*;
+import Scheduler.Exception;
 
 /**
  * Converts the Excel imported ArrayList to their Respective Data Types
