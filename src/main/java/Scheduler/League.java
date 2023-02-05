@@ -51,7 +51,9 @@ public class League {
 		Arena a = new Arena("null", 0, 0);
 		LocalDateTime time; 
 		time = LocalDateTime.of(0, 1, 1, 0, 0);
-		this.emptySlot = new TimeSlot(time,a, this.divisions.get(0));
+		ArrayList<Division> divs = new ArrayList<Division>();
+		divs.add(this.divisions.get(0));
+		this.emptySlot = new TimeSlot(time,a, divs);
 
 	}
 	
@@ -126,7 +128,7 @@ public class League {
         	   int point = curSlot+ j*(availableSlotsPerWk/slotsPerWeek);
         	   TimeSlot slot = timeslots.get(point);
         	   
-        	   while(!arenas.contains(slot.getArena())| slot.isSelected()) {
+        	   while(!arenas.contains(slot.getArena())| slot.isSelected()| !checkDivision(slot, team.get(0).getDivision())) {
         		   if  ( point < (availableSlotsPerWk+curSlot)) {
         			   point++;
         			   slot = timeslots.get(point);
@@ -166,7 +168,9 @@ public class League {
        return tempTimeSlots;
    }
 
-   /**
+
+
+/**
     * returns how many time slots there are between curSlot and end of the week
     * 
     * @param curSlot
@@ -222,6 +226,16 @@ public class League {
        return false;
 
    }
+   
+   /**
+    * Checks to make sure timeslot is a valid division
+    * @param slot
+    * @return
+    */
+   private boolean checkDivision(TimeSlot slot, Division div) {
+		// TODO Auto-generated method stub
+		return slot.getDivisions().contains(div);
+	}
 	
 
 	/**

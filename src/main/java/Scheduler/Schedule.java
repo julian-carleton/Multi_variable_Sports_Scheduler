@@ -357,7 +357,9 @@ public class Schedule {
 		int numTimeSlots = 40;
 		for (int i = 0; i < numTimeSlots; i++) {
 			//The arenas are wrapped around
-			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % arenas.size()), new Division("Div Test"));
+			ArrayList<Division> divs = new ArrayList<Division>();
+			divs.add(new Division("Div Test"));
+			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % arenas.size()), divs);
 			timeSlots.add(tempTimeSlot);
 		}
 		
