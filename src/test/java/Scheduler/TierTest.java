@@ -1,8 +1,8 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import main.java.Scheduler.*;
+import Scheduler.*;
 
 public class TierTest {
     @Test

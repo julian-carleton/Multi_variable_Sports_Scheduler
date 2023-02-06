@@ -1,10 +1,10 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import java.time.LocalDateTime;
-import main.java.Scheduler.Exception;
+import Scheduler.Exception;
 
 public class ExceptionTest {
     Exception exception;

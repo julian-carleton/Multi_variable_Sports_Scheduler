@@ -1,8 +1,11 @@
-package test.java.Scheduler;
+package Scheduler;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-import main.java.Scheduler.*;
+import org.junit.*;
+import org.testng.annotations.Test;
+import Scheduler.*;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class ArenaTest {
     @Test
