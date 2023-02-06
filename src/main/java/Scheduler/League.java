@@ -468,12 +468,17 @@ public class League {
 
 		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
 		league.generateSchedules();
-		
 		for (Schedule s: league.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
 				s.createSchedule();
+				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots());
+				ArrayList<Game> tempGames = tempTabuSearch.optimize();
+				s.setGames(tempGames);
+				
+				
 			}
 		}
+		
 
 
 		// Excel Export

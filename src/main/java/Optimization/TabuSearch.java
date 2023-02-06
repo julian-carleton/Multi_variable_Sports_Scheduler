@@ -36,14 +36,13 @@ public class TabuSearch {
     public TabuSearch(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots) {
         tabuList = new TabuList();
         stopCondition = new StopCondition();
-        
+        qualityChecker = new QualityChecker();
         
         currentSchedule = games;
         remakeneighbourSchedule();
         
         this.timeSlots = timeSlots;
         
-        neighbourSelector = new NeighbourSelector(this.timeSlots, currentSchedule, tabuList);
     }
 
 
@@ -58,7 +57,7 @@ public class TabuSearch {
         // Iteration counter
     	int x = 100000;
         int iteration = 0;
-        while ( x >= iteration) { // stop condition --> iteration and quality check
+        while ( x > iteration) { // stop condition --> iteration and quality check
         	ArrayList<Move> tempMoves;
         	if (iteration <= x/2) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
@@ -75,7 +74,6 @@ public class TabuSearch {
         		break;
         	}
         	
-        	ArrayList<Game> tempGames =  new ArrayList<Game>();
         	for (Move m: tempMoves) {
         		Game tempGame = new Game(m.getGame().getHomeTeam(), m.getGame().getAwayTeam());
     			tempGame.setTimeSlot(m.getTimeSlot());
@@ -96,6 +94,7 @@ public class TabuSearch {
         		currentSchedule = neighbourSchedule;
         		remakeneighbourSchedule();
         	}
+        	iteration++;
         	
         }
         /*

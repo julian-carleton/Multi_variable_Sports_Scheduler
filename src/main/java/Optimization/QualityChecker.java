@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import main.java.Scheduler.Game;
 import main.java.Scheduler.Schedule;
+import main.java.Scheduler.TimeSlot;
 
 /**
  * This class takes a Schedule (or neighboring Schedule) and assigns it a Quality factor
@@ -22,7 +23,8 @@ import main.java.Scheduler.Schedule;
  */
 public class QualityChecker {
     // Schedule variables
-    private Schedule schedule;
+	private ArrayList<Game> games;
+	private ArrayList<TimeSlot> timeSlots;
     
     
 
@@ -31,11 +33,18 @@ public class QualityChecker {
      *
      * @param schedule the Schedule to be checked
      */
-    public QualityChecker(Schedule schedule) {
-        this.schedule = schedule;
+    public QualityChecker(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots) {
+        this.games = games;
+        this.timeSlots = timeSlots;
     }
 
     /**
+     * Default Constructor
+     */
+    public QualityChecker() {
+	}
+
+	/**
      * Checks the quality of a schedule based on:
      *
      * 1. Total unscheduled matchups
@@ -112,7 +121,7 @@ public class QualityChecker {
      * @param current 
      * @return return float of weighted Quality
      */
-    public float getQuality(ArrayList<Game> current) {
+    public float getQuality(ArrayList<Game> current, ArrayList<TimeSlot> timeSlots) {
     	return 0;
     }
     

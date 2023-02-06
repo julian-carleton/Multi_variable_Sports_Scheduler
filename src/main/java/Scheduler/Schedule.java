@@ -246,6 +246,10 @@ public class Schedule {
 		return this.games;
 	}
 
+	public void setGames(ArrayList<Game> games) {
+		this.games = games;
+	}
+
 	public int getActualNumRounds() {
 		return actualNumRounds;
 	}
