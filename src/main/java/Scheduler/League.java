@@ -8,13 +8,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
-import main.java.Excel_Import_Export.CreateDataStrucs;
-import main.java.Excel_Import_Export.ExcelExport;
-import main.java.Excel_Import_Export.ExcelImport;
-import main.java.Optimization.NeighbourSelector;
-import main.java.Optimization.StopCondition;
-import main.java.Optimization.TabuList;
-import main.java.Optimization.TabuSearch;
+import Excel_Import_Export.CreateDataStrucs;
+import Excel_Import_Export.ExcelExport;
+import Excel_Import_Export.ExcelImport;
+import Optimization.*;
 //import main.java.Excel_Import_Export.ExcelImport;
 
 
@@ -471,7 +468,7 @@ public class League {
 		for (Schedule s: league.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
 				s.createSchedule();
-				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots());
+				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
 				ArrayList<Game> tempGames = tempTabuSearch.optimize();
 				s.setGames(tempGames);
 				
@@ -486,9 +483,11 @@ public class League {
 		export.printLeagueData();
 		export.exportSchedule();
 
-		// Optimization testing
-		TabuSearch ts = new TabuSearch(league.getSchedules().get(1).getGames(),league.getSchedules().get(1).getTimeSlots());
-		ts.analyzeSchedule(league.getSchedules().get(1));
+		TabuSearch ts = new TabuSearch(league.getSchedules().get(1));
+		//ts.analyzeSchedule(league.getSchedules().get(1));
+		Schedule testSchedule = league.getSchedules().get(1);
+		QualityChecker qualityChecker = new QualityChecker(testSchedule.getGames(), testSchedule.getTimeSlots(), testSchedule.getTeams());
+		qualityChecker.getQuality();
 	}
 
 	/*

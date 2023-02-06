@@ -118,39 +118,42 @@ public class TabuSearch {
     
     
     
+    /**
+     * Compares the quality of the neighbouring Schedule against the quality of the current best Schedule
+     *
+     * @param current the current best Schedule
+     * @param nGames arraylist of games for neighbouring Schedule
+     * @param nTimeSlots arraylist of TimeSlots for neighbouring Schedule
+     * @param nTeams arraylist of teams for the neighbouring Schedule
+     *
+     * @return true if neighbouring Schedule has better quality than current Schedule, false if not
+     */
+    public boolean compareSchedules(Schedule current, ArrayList<Game> nGames, ArrayList<TimeSlot> nTimeSlots, ArrayList<Team> nTeams) {
+        QualityChecker checkCurrent = new QualityChecker(current.getGames(), current.getTimeSlots(), current.getTeams());
+        QualityChecker checkNeighbour = new QualityChecker(nGames, nTimeSlots, nTeams);
+
+        double currentPenalty = checkCurrent.getQuality();
+        double neighbourPenalty = checkNeighbour.getQuality();
+
+        // Current schedule has lower penalty value than neighbour Schedule
+        if(currentPenalty < neighbourPenalty) {
+            return true;
+        }
+        // Current Schedule has larger penalty value than neighbour Schedule
+        else if(currentPenalty > neighbourPenalty) {
+            return false;
+        }
+
+        // In the case that they're equal penalty: we stick with the current best Schedule
+        return false;
+    }
     
     
     
     
 
     public static void main(String[] args) {
-    	
-    	
-
-    	ArrayList<Division> test = new ArrayList();
-        for (int i = 0; i < 10; i++) {
-        	Division temp = new Division( ""+ i);
-            test.add(temp);
-        }
-
-        ArrayList<Division> test1 = new ArrayList();
-        for (int j = 0; j < test.size(); j++) {
-            test1.add(test.get(j));
-        }
-        
-        Division div = new Division("200");
-        Division d = test1.get(3);
-        //d.setName("200");
-        test1.set(3, div);
-
-        for (int i = 0; i < 10; i++) {
-        	System.out.print(test.get(i).getName() + ", ");
-        }
-        System.out.println();
-        for (int i = 0; i < 10; i++) {
-            System.out.print(test1.get(i).getName()+ ", ");
-        }
-        
+    	      
     	
     }
     
@@ -231,26 +234,7 @@ public class TabuSearch {
             System.out.println("Remaining unscheduled games: " + counter);
         }
     }
-    
-    
-    
-    
-//	/**
-//	 * Helper function that creates copy of games
-//	 * @param games
-//	 * @return new copy of games list
-//	 * @author Quinn Sondermeyer
-//	 */
-//	private ArrayList<Game> copyGames(ArrayList<Game> games) {
-//		ArrayList<Game> tempGames = new ArrayList<Game>();
-//		for (Game g: games) {
-//			Game tempGame = new Game(g.getHomeTeam(), g.getAwayTeam());
-//			tempGame.setTimeSlot(g.getTimeSlot());
-//			tempGames.add(tempGame);
-//		}
-//		
-//		return tempGames;
-//	}
-    
-    
+
+
+
 }
