@@ -1,10 +1,10 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import main.java.Scheduler.Division;
-import main.java.Scheduler.Team;
+import Scheduler.Division;
+import Scheduler.Team;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,13 @@
 package Optimization;
 
+import Scheduler.Game;
 import Scheduler.Schedule;
+import Scheduler.Team;
+import Scheduler.TimeSlot;
+
+import java.util.ArrayList;
+
+import static org.apache.commons.math3.util.Precision.round;
 
 /**
  * This class takes a Schedule (or neighboring Schedule) and assigns it a Quality factor
@@ -19,15 +26,25 @@ import Scheduler.Schedule;
  */
 public class QualityChecker {
     // Schedule variables
-    private Schedule schedule;
+    private ArrayList<Game> games; // Games in Schedule
+    private ArrayList<TimeSlot> timeSlots; // Timeslots allotted to Schedule
+    private ArrayList<Team> teams; // Teams in Schedule
+
+    // Quality Attribute Weights
+    private double timeSlotUsageWeight = 3.0;
+    private double homeAwayImbalanceWeight = 1.0;
+    private double travelDifferenceWeight = 1.0;
+    private double restDaysWeight = 2.0;
+    private double gameCountWeight = 3.0;
 
     /**
      * Constructor for QualityChecker class
      *
-     * @param schedule the Schedule to be checked
      */
-    public QualityChecker(Schedule schedule) {
-        this.schedule = schedule;
+    public QualityChecker(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots, ArrayList<Team> teams) {
+        this.games = games;
+        this.timeSlots = timeSlots;
+        this.teams = teams;
     }
 
     /**
@@ -38,8 +55,26 @@ public class QualityChecker {
      * 3. Total unused timeslots
      *
      */
-    public void checkTimeslotUsage(Schedule schedule) {
+    public double checkTimeslotUsage() {
+        int usedTimeslots = 0;
+        int totalTimeslots = timeSlots.size();
 
+        // Iterate over allotted TimeSlots and count how many are unused
+        for(TimeSlot t : timeSlots) {
+            if(!t.isAvailable()) {
+                usedTimeslots++;
+            }
+        }
+
+        double usage = (double) usedTimeslots / totalTimeslots;
+        double penalty = round(timeSlotUsageWeight * (1.0 - usage) * 100, 2);
+
+        System.out.println("\n--- Checking TimeSlot Usage Quality ---");
+        System.out.println("Total Allotted TimeSlots: " + totalTimeslots);
+        System.out.println("Total TimeSlots Used: " + usedTimeslots);
+        System.out.println("TimeSlot usage penalty: " + penalty);
+
+        return penalty;
     }
 
     /**
@@ -47,8 +82,44 @@ public class QualityChecker {
      *  1. Ratio of scheduled home/away games per team
      *  2. Difference in H/A ratio compared to other teams in Schedule
      */
-    public void checkHomeAwayEquality(Schedule schedule) {
+    public double checkHomeAwayEquality() {
+        double penalty = 0;
 
+        System.out.println("\n--- Checking Home/Away Imbalance Quality ---");
+
+        // Iterate over all teams in Schedule
+        for(Team t : teams) {
+            int homeGames = 0;
+            int awayGames = 0;
+            double tempPenalty = 0;
+
+            // Find amount of Home/Away games for Team
+            for (Game g : games) {
+                if (g.getTimeSlot() != null) {
+                    if(g.getHomeTeam() == t) {
+                        homeGames++;
+                    }
+                    else if(g.getAwayTeam() == t) {
+                        awayGames++;
+                    }
+                }
+            }
+
+            int totalGames = homeGames + awayGames;
+            int imbalance = Math.abs(homeGames - (totalGames / 2));
+
+            tempPenalty = homeAwayImbalanceWeight * imbalance;
+            penalty += tempPenalty;
+
+            System.out.println("Team: " + t.getName());
+            System.out.println("Home Games: " + homeGames);
+            System.out.println("Away Games: " + awayGames);
+            System.out.println("Imbalance: " + imbalance);
+            System.out.println("Penalty applied to " + t.getName() + " : " + tempPenalty +"\n");
+        }
+
+        System.out.println("Total H/A Equality Penalty: " + penalty);
+        return penalty;
     }
 
     /**
@@ -56,8 +127,10 @@ public class QualityChecker {
      *  1. Teams avg. travel distance per week
      *  2. Teams avg. travel distance compared to other teams in Schedule
      */
-    public void checkAvgTravelDistance(Schedule schedule) {
+    public double checkAvgTravelDistance() {
+        double penalty = 0;
 
+        return penalty;
     }
 
     /**
@@ -67,8 +140,10 @@ public class QualityChecker {
      *  3. Teams avg. rest days (total) compared to other teams in Schedule
      *  4. Teams avg. rest days (away games) compared to other teams in Schedule
      */
-    public void checkRestDayEquality(Schedule schedule) {
+    public double checkRestDayEquality() {
+        double penalty = 0;
 
+        return penalty;
     }
 
     /**
@@ -76,28 +151,54 @@ public class QualityChecker {
      *  1. Teams total scheduled matches for season compared to other teams in the Schedule
      *  2. Does each team play the same amount of games?
      *
-     * @param schedule
      */
-    public void checkScheduledMatchEquality(Schedule schedule) {
+    public double checkScheduledMatchEquality() {
+        double penalty = 0;
+        int desiredGames = (games.size() / teams.size()) * 2;
 
+        System.out.println("\n--- Checking Total Scheduled Matches Quality ---");
+
+        // Iterate over each team in schedule
+        for(Team t : teams) {
+            int gamesScheduled = 0;
+            double tempPenalty = 0;
+
+            // Count total amount of scheduled games for team
+            for(Game g : games) {
+                if(g.getTimeSlot() != null) {
+                    if(g.getHomeTeam().equals(t) || g.getAwayTeam().equals(t)) {
+                        gamesScheduled++;
+                    }
+                }
+            }
+
+            int imbalance = Math.abs(gamesScheduled - desiredGames);
+            tempPenalty = gameCountWeight * imbalance;
+            penalty += tempPenalty;
+
+            System.out.println("Total Scheduled Games for " + t.getName() + ": " + gamesScheduled);
+            System.out.println("Desired Games: " + desiredGames);
+            System.out.println("Imbalance for " + t.getName() + ": " + tempPenalty + "\n");
+        }
+
+        System.out.println("Match Equality Penalty: " + penalty);
+        return penalty;
     }
 
     /**
      * Compares the current Schedule to a newly generated neighbour Schedule
      *
-     * How-to:
-     *  - If
-     *
-     * @param current the current "best" Schedule
-     * @param neighbour the newly generated neighbour Schedule
-     *
      * @return the best Schedule after comparison
      */
-    public Schedule compareSchedules(Schedule current, Schedule neighbour) {
-        // Compare quality of the two schedules using quality parameters
+    public double getQuality() {
+        double quality = 0;
 
-        // Return the schedule with better overall quality
-        // NOTE: At the moment it just returns the current schedule
-        return current;
+        quality += checkTimeslotUsage();
+        quality += checkHomeAwayEquality();
+        quality += checkScheduledMatchEquality();
+
+        System.out.println("\n--- Total Quality of Schedule ---");
+        System.out.println("Schedule Penalty: " + round(quality, 2));
+        return quality;
     }
 }

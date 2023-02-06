@@ -1,9 +1,9 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.time.LocalDateTime;
-import main.java.Scheduler.*; 
+import Scheduler.*;
 
 public class TimeSlotTest {
     @Test

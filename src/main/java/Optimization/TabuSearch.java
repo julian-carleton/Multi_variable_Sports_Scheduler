@@ -104,6 +104,36 @@ public class TabuSearch {
     }
 
     /**
+     * Compares the quality of the neighbouring Schedule against the quality of the current best Schedule
+     *
+     * @param current the current best Schedule
+     * @param nGames arraylist of games for neighbouring Schedule
+     * @param nTimeSlots arraylist of TimeSlots for neighbouring Schedule
+     * @param nTeams arraylist of teams for the neighbouring Schedule
+     *
+     * @return true if neighbouring Schedule has better quality than current Schedule, false if not
+     */
+    public boolean compareSchedules(Schedule current, ArrayList<Game> nGames, ArrayList<TimeSlot> nTimeSlots, ArrayList<Team> nTeams) {
+        QualityChecker checkCurrent = new QualityChecker(current.getGames(), current.getTimeSlots(), current.getTeams());
+        QualityChecker checkNeighbour = new QualityChecker(nGames, nTimeSlots, nTeams);
+
+        double currentPenalty = checkCurrent.getQuality();
+        double neighbourPenalty = checkNeighbour.getQuality();
+
+        // Current schedule has lower penalty value than neighbour Schedule
+        if(currentPenalty < neighbourPenalty) {
+            return true;
+        }
+        // Current Schedule has larger penalty value than neighbour Schedule
+        else if(currentPenalty > neighbourPenalty) {
+            return false;
+        }
+
+        // In the case that they're equal penalty: we stick with the current best Schedule
+        return false;
+    }
+
+    /**
      * Run the Tabu Search algorithm on the current schedule
      *
      * @return best schedule after optimization

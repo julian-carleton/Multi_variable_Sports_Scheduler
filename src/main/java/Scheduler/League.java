@@ -11,10 +11,7 @@ import java.util.ArrayList;
 import Excel_Import_Export.CreateDataStrucs;
 import Excel_Import_Export.ExcelExport;
 import Excel_Import_Export.ExcelImport;
-import Optimization.NeighbourSelector;
-import Optimization.StopCondition;
-import Optimization.TabuList;
-import Optimization.TabuSearch;
+import Optimization.*;
 //import main.java.Excel_Import_Export.ExcelImport;
 
 
@@ -469,7 +466,10 @@ public class League {
 
 		// Optimization testing
 		TabuSearch ts = new TabuSearch(league.getSchedules().get(1));
-		ts.analyzeSchedule(league.getSchedules().get(1));
+		//ts.analyzeSchedule(league.getSchedules().get(1));
+		Schedule testSchedule = league.getSchedules().get(1);
+		QualityChecker qualityChecker = new QualityChecker(testSchedule.getGames(), testSchedule.getTimeSlots(), testSchedule.getTeams());
+		qualityChecker.getQuality();
 	}
 
 	/*
