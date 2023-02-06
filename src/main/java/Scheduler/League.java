@@ -482,7 +482,7 @@ public class League {
 		export.exportSchedule();
 
 		// Optimization testing
-		TabuSearch ts = new TabuSearch(league.getSchedules().get(1));
+		TabuSearch ts = new TabuSearch(league.getSchedules().get(1).getGames(),league.getSchedules().get(1).getTimeSlots());
 		ts.analyzeSchedule(league.getSchedules().get(1));
 	}
 

@@ -1,5 +1,8 @@
 package main.java.Optimization;
 
+import java.util.ArrayList;
+
+import main.java.Scheduler.Game;
 import main.java.Scheduler.Schedule;
 
 /**
@@ -20,6 +23,8 @@ import main.java.Scheduler.Schedule;
 public class QualityChecker {
     // Schedule variables
     private Schedule schedule;
+    
+    
 
     /**
      * Constructor for QualityChecker class
@@ -91,13 +96,25 @@ public class QualityChecker {
      * @param current the current "best" Schedule
      * @param neighbour the newly generated neighbour Schedule
      *
-     * @return the best Schedule after comparison
+     * @return 1 if current is better, 0 if same, -1 if worse
      */
-    public Schedule compareSchedules(Schedule current, Schedule neighbour) {
+    public int compareSchedules(ArrayList<Game> current, ArrayList<Game> neighbour) {
         // Compare quality of the two schedules using quality parameters
 
         // Return the schedule with better overall quality
         // NOTE: At the moment it just returns the current schedule
-        return current;
+        return 0;
     }
+    
+    /**
+     * Get weighted Quality of Schedule
+     * 
+     * @param current 
+     * @return return float of weighted Quality
+     */
+    public float getQuality(ArrayList<Game> current) {
+    	return 0;
+    }
+    
+    
 }

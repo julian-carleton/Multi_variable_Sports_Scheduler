@@ -46,4 +46,12 @@ public class Division {
 	public ArrayList<Team> getTeams() {
 		return teams;
 	}
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 }
