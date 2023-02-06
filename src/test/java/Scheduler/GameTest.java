@@ -1,4 +1,4 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import static org.junit.Assert.*;
 
@@ -6,10 +6,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.time.LocalDateTime;
-import main.java.Scheduler.Game;
-import main.java.Scheduler.Team;
-import main.java.Scheduler.Exception;
-import main.java.Scheduler.TimeSlot;
+import Scheduler.Game;
+import Scheduler.Team;
+import Scheduler.Exception;
+import Scheduler.TimeSlot;
 
 public class GameTest {
     private Team homeTeam;

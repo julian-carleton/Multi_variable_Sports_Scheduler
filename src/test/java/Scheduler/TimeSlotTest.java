@@ -1,4 +1,4 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

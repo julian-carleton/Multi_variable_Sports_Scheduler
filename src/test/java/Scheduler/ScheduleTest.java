@@ -1,4 +1,4 @@
-package test.java.Scheduler;
+package Scheduler;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import main.java.Scheduler.*;
-import main.java.Scheduler.Exception;
+import Scheduler.*;
+import Scheduler.Exception;
 
 class ScheduleTest {
 
