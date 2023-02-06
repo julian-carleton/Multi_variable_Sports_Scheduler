@@ -78,6 +78,34 @@ public class Team {
 		
 	}
 	
+	
+	
+	/**
+	 * Checks if team is available 
+	 * 
+     * @author Faris
+     * @param team
+     * @param timeSlot
+     * @return
+     */
+    public boolean exceptionCheck(TimeSlot timeSlot ) {
+        int lengthofTimeSlot = 3;
+        ArrayList<Exception> exceptions = this.getExceptions();                 // get exceptions
+        for (Exception e: exceptions) {                                        // Loop Through all exceptions
+
+            if (e.getStart().compareTo(timeSlot.getStartDateTime()) < 0) {     // check of start is earlier than exception
+                if (e.getEnd().compareTo(timeSlot.getStartDateTime()) > 0) { // check of end is later than exception
+                    return false;
+                }
+            }else if(e.getStart().compareTo(timeSlot.getStartDateTime().plusHours(lengthofTimeSlot)) < 0) {// check of start is earlier than exception - given timeslot length
+                    return false;
+
+            }
+        }
+        return true;
+
+    }
+	
 	/*
 	 * Getters and setters
 	 */

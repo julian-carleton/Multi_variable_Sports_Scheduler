@@ -71,6 +71,10 @@ public class TabuSearch {
         		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         	}
         	
+        	if (tempMoves.contains(null)||tempMoves.isEmpty()) {  // no more possible moves
+        		break;
+        	}
+        	
         	ArrayList<Game> tempGames =  new ArrayList<Game>();
         	for (Move m: tempMoves) {
         		Game tempGame = new Game(m.getGame().getHomeTeam(), m.getGame().getAwayTeam());
@@ -93,9 +97,6 @@ public class TabuSearch {
         		remakeneighbourSchedule();
         	}
         	
-        	if (tempMoves.isEmpty()) { // no more possible moves
-        		break;
-        	}
         }
         /*
         Algorithm

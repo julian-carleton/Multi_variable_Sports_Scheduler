@@ -213,7 +213,7 @@ public class Schedule {
 			for (int j = 0; j < this.timeSlots.size(); j++) {
 				currTimeSlot = this.timeSlots.get(j);
 				if(currTimeSlot.isAvailable()) {
-					if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot) && currGame.getHomeTeam().getHomeArenas().contains(currTimeSlot.getArena())) {
+					if ( currGame.getHomeTeam().exceptionCheck(currTimeSlot) && (currGame.getAwayTeam().exceptionCheck(currTimeSlot)) && currGame.getHomeTeam().getHomeArenas().contains(currTimeSlot.getArena())) {
 						currGame.setTimeSlot(currTimeSlot);
 						currTimeSlot.useTimeslot();     //Update availability of timeSlot
 						break;		//Go to next game
@@ -225,31 +225,7 @@ public class Schedule {
 
 	
 	
-	/**
-	 * Checks if team is available 
-	 * 
-     * @author Faris
-     * @param team
-     * @param timeSlot
-     * @return
-     */
-    private boolean exceptionCheck(Team team, TimeSlot timeSlot ) {
-        int lengthofTimeSlot = 3;
-        ArrayList<Exception> exceptions = team.getExceptions();                 // get exceptions
-        for (Exception e: exceptions) {                                        // Loop Through all exceptions
-
-            if (e.getStart().compareTo(timeSlot.getStartDateTime()) < 0) {     // check of start is earlier than exception
-                if (e.getEnd().compareTo(timeSlot.getStartDateTime()) > 0) { // check of end is later than exception
-                    return false;
-                }
-            }else if(e.getStart().compareTo(timeSlot.getStartDateTime().plusHours(lengthofTimeSlot)) < 0) {// check of start is earlier than exception - given timeslot length
-                    return false;
-
-            }
-        }
-        return true;
-
-    }
+	
 	
 	/*
 	 * Getters and Setters

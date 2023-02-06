@@ -5,6 +5,7 @@ import java.util.Random;
 
 import main.java.Scheduler.Game;
 import main.java.Scheduler.League;
+import main.java.Scheduler.Schedule;
 import main.java.Scheduler.TimeSlot;
 
 /**
@@ -33,6 +34,7 @@ import main.java.Scheduler.TimeSlot;
  *  
  */
 public class NeighbourSelector {
+	private Schedule schedule;
 	private ArrayList<Game> UnschduledGames;
 	private ArrayList<Game> games;
 	//private ArrayList<TimeSlot> usedTimeslots;
@@ -89,12 +91,14 @@ public class NeighbourSelector {
 		
 		ArrayList<Move> moves = new ArrayList<Move>();
 		Move tempMove = newMove(UnschduledGames, timeSlots);
-		moves.add(tempMove);
-		if (!move.getTimeSlot().isAvailable()) {
-			for (Game g: games) {
-				if (g.getTimeSlot().equals(move.getTimeSlot())) {
-					tempMove = new Move(g,availalbeTimeslots.get(selectRandom(availalbeTimeslots.size())));
-					moves.add(tempMove);
+		if (!(tempMove == null)) {
+			moves.add(tempMove);
+			if (!move.getTimeSlot().isAvailable()) {
+				for (Game g: games) {
+					if (g.getTimeSlot().equals(move.getTimeSlot())) {
+						tempMove = new Move(g,availalbeTimeslots.get(selectRandom(availalbeTimeslots.size())));
+						moves.add(tempMove);
+					}
 				}
 			}
 		}
@@ -119,10 +123,13 @@ public class NeighbourSelector {
 		}
 		Move tempMove = new Move( games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size())));
 		int count = 0;
-		while(tabuList.isTabu(tempMove)) {
-			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size())));
+		while(tabuList.isTabu(tempMove)&& !tempMove.getGame().getHomeTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Home team
+										  !tempMove.getGame().getAwayTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Away team
+										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision())) {	// Checks timeSlot is the right division
+			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
 			if (count > 1000000000) {
 				System.out.println("No more possible moves");
+				tempMove = null;
 				break;
 			}
 			
