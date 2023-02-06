@@ -1,11 +1,11 @@
-package Excel_Import_Export;
+package main.java.Excel_Import_Export;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import Scheduler.*;
-import Scheduler.Exception;
+import main.java.Scheduler.*;
+import main.java.Scheduler.Exception;
 
 /**
  * Converts the Excel imported ArrayList to their Respective Data Types
@@ -198,9 +198,9 @@ public class CreateDataStrucs {
 			/*
 			 * get Division
 			 */
-			Division div = getDiv((String)timeSlotsStr.get(3).get(i));
+			ArrayList<Division> divs = getDiv((String)timeSlotsStr.get(3).get(i));
 			
-			timeslots.add(new TimeSlot(dateTime, arena, div));
+			timeslots.add(new TimeSlot(dateTime, arena, divs));
 		}
 		
 	}
@@ -276,11 +276,16 @@ public class CreateDataStrucs {
 	 * @param string
 	 * @return Division from name provided
 	 */
-	private Division getDiv(String name) {
-		Division temp = null;
+	private ArrayList<Division> getDiv(String name) {
+		ArrayList<Division> temp = new ArrayList<Division>();
+		String[] divs = name.split(",");
+		ArrayList<String> divsArrLst = new ArrayList<String>();
+		for (int i = 0; i < divs.length; i ++) {
+			divsArrLst.add(divs[i]);
+		}
 		for (Division d:divisions) {
-			if (d.getName() == name) {
-				temp = d;
+			if (divsArrLst.contains(d.getName())) {
+				temp.add(d);
 			}
 		}
 		return temp;

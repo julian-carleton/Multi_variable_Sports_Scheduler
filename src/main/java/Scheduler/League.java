@@ -1,4 +1,4 @@
-package Scheduler;
+package main.java.Scheduler;
 
 import java.io.IOException;
 import java.io.IOException.*;
@@ -48,7 +48,9 @@ public class League {
 		Arena a = new Arena("null", 0, 0);
 		LocalDateTime time; 
 		time = LocalDateTime.of(0, 1, 1, 0, 0);
-		this.emptySlot = new TimeSlot(time,a, this.divisions.get(0));
+		ArrayList<Division> divs = new ArrayList<Division>();
+		divs.add(this.divisions.get(0));
+		this.emptySlot = new TimeSlot(time,a, divs);
 
 	}
 	
@@ -123,7 +125,7 @@ public class League {
         	   int point = curSlot+ j*(availableSlotsPerWk/slotsPerWeek);
         	   TimeSlot slot = timeslots.get(point);
         	   
-        	   while(!arenas.contains(slot.getArena())| slot.isSelected()) {
+        	   while(!arenas.contains(slot.getArena())| slot.isSelected()| !checkDivision(slot, team.get(0).getDivision())) {
         		   if  ( point < (availableSlotsPerWk+curSlot)) {
         			   point++;
         			   slot = timeslots.get(point);
@@ -163,7 +165,9 @@ public class League {
        return tempTimeSlots;
    }
 
-   /**
+
+
+/**
     * returns how many time slots there are between curSlot and end of the week
     * 
     * @param curSlot
@@ -219,6 +223,16 @@ public class League {
        return false;
 
    }
+   
+   /**
+    * Checks to make sure timeslot is a valid division
+    * @param slot
+    * @return
+    */
+   private boolean checkDivision(TimeSlot slot, Division div) {
+		// TODO Auto-generated method stub
+		return slot.getDivisions().contains(div);
+	}
 	
 
 	/**
@@ -451,12 +465,17 @@ public class League {
 
 		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
 		league.generateSchedules();
-		
 		for (Schedule s: league.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
 				s.createSchedule();
+				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
+				ArrayList<Game> tempGames = tempTabuSearch.optimize();
+				s.setGames(tempGames);
+				
+				
 			}
 		}
+		
 
 
 		// Excel Export
@@ -464,7 +483,6 @@ public class League {
 		export.printLeagueData();
 		export.exportSchedule();
 
-		// Optimization testing
 		TabuSearch ts = new TabuSearch(league.getSchedules().get(1));
 		//ts.analyzeSchedule(league.getSchedules().get(1));
 		Schedule testSchedule = league.getSchedules().get(1);

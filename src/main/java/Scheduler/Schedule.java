@@ -1,6 +1,6 @@
-package Scheduler;
+package main.java.Scheduler;
 
-import Excel_Import_Export.ExcelExport;
+import main.java.Excel_Import_Export.ExcelExport;
 
 
 import java.io.IOException;
@@ -213,7 +213,7 @@ public class Schedule {
 			for (int j = 0; j < this.timeSlots.size(); j++) {
 				currTimeSlot = this.timeSlots.get(j);
 				if(currTimeSlot.isAvailable()) {
-					if (exceptionCheck(currGame.getHomeTeam(), currTimeSlot) && exceptionCheck(currGame.getAwayTeam(), currTimeSlot) && currGame.getHomeTeam().getHomeArenas().contains(currTimeSlot.getArena())) {
+					if ( currGame.getHomeTeam().exceptionCheck(currTimeSlot) && (currGame.getAwayTeam().exceptionCheck(currTimeSlot)) && currGame.getHomeTeam().getHomeArenas().contains(currTimeSlot.getArena())) {
 						currGame.setTimeSlot(currTimeSlot);
 						currTimeSlot.useTimeslot();     //Update availability of timeSlot
 						break;		//Go to next game
@@ -225,31 +225,7 @@ public class Schedule {
 
 	
 	
-	/**
-	 * Checks if team is available 
-	 * 
-     * @author Faris
-     * @param team
-     * @param timeSlot
-     * @return
-     */
-    private boolean exceptionCheck(Team team, TimeSlot timeSlot ) {
-        int lengthofTimeSlot = 3;
-        ArrayList<Exception> exceptions = team.getExceptions();                 // get exceptions
-        for (Exception e: exceptions) {                                        // Loop Through all exceptions
-
-            if (e.getStart().compareTo(timeSlot.getStartDateTime()) < 0) {     // check of start is earlier than exception
-                if (e.getEnd().compareTo(timeSlot.getStartDateTime()) > 0) { // check of end is later than exception
-                    return false;
-                }
-            }else if(e.getStart().compareTo(timeSlot.getStartDateTime().plusHours(lengthofTimeSlot)) < 0) {// check of start is earlier than exception - given timeslot length
-                    return false;
-
-            }
-        }
-        return true;
-
-    }
+	
 	
 	/*
 	 * Getters and Setters
@@ -268,6 +244,10 @@ public class Schedule {
 	
 	public ArrayList<Game> getGames() {
 		return this.games;
+	}
+
+	public void setGames(ArrayList<Game> games) {
+		this.games = games;
 	}
 
 	public int getActualNumRounds() {
@@ -357,7 +337,9 @@ public class Schedule {
 		int numTimeSlots = 40;
 		for (int i = 0; i < numTimeSlots; i++) {
 			//The arenas are wrapped around
-			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % arenas.size()), new Division("Div Test"));
+			ArrayList<Division> divs = new ArrayList<Division>();
+			divs.add(new Division("Div Test"));
+			TimeSlot tempTimeSlot = new TimeSlot(LocalDateTime.now(), arenas.get(i % arenas.size()), divs);
 			timeSlots.add(tempTimeSlot);
 		}
 		

@@ -1,4 +1,4 @@
-package Scheduler;
+package main.java.Scheduler;
 
 import java.util.ArrayList;
 
@@ -46,4 +46,12 @@ public class Division {
 	public ArrayList<Team> getTeams() {
 		return teams;
 	}
+
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 }

@@ -1,5 +1,6 @@
-package Scheduler;
+package main.java.Scheduler;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Data Type for the time slots provided in the excel sheet
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 public class TimeSlot {
 	private LocalDateTime startDateTime;
 	private Arena arena;
-	private Division division;
+	private ArrayList<Division> divisions;
 	private boolean isAvailable;	// whether it has been given a game
 	private boolean isSelected; 	// Assigned to division to be given a game
 	
@@ -21,9 +22,9 @@ public class TimeSlot {
 	 * @param arena
 	 * @param division
 	 */
-	public TimeSlot(LocalDateTime start, Arena arena, Division division) {
+	public TimeSlot(LocalDateTime start, Arena arena, ArrayList<Division> division) {
 		this.arena = arena;
-		this.division = division;
+		this.divisions = division;
 		this.startDateTime = start;
 		this.isAvailable = true;
 		this.isSelected = false;
@@ -55,8 +56,8 @@ public class TimeSlot {
 		return arena;
 	}
 
-	public Division getDivision() {
-		return division;
+	public ArrayList<Division> getDivisions() {
+		return divisions;
 	}
 
 	public boolean isAvailable() {

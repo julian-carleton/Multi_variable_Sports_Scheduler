@@ -1,4 +1,4 @@
-package Optimization;
+package main.java.Optimization;
 
 /**
  * This class is used to determine when the Tabu Search algorithm must stop iterating

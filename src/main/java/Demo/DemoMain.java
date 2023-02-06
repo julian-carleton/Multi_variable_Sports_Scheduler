@@ -1,21 +1,14 @@
-package Demo;
+package main.java.Demo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ArrayList;
 
-import Excel_Import_Export.CreateDataStrucs;
-import Excel_Import_Export.ExcelImport;
-import Scheduler.League;
-import Scheduler.Schedule;
-import Scheduler.Team;
-import Scheduler.TimeSlot;
-import Scheduler.Arena;
-import Scheduler.Division;
-import Scheduler.Exception;
-import Scheduler.Game;
+import main.java.Excel_Import_Export.*;
+import main.java.Scheduler.*;
+import main.java.Scheduler.Exception;
 
-import Demo.DemoMain;
+import main.java.Demo.DemoMain;
 
 public class DemoMain {
     public static void main(String[] args) {

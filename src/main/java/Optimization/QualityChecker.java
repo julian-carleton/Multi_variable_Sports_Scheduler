@@ -1,13 +1,17 @@
-package Optimization;
+package main.java.Optimization;
 
-import Scheduler.Game;
-import Scheduler.Schedule;
-import Scheduler.Team;
-import Scheduler.TimeSlot;
+
+import java.util.ArrayList;
+
+import main.java.Scheduler.Game;
+import main.java.Scheduler.Schedule;
+import main.java.Scheduler.TimeSlot;
+
 
 import java.util.ArrayList;
 
 import static org.apache.commons.math3.util.Precision.round;
+
 
 /**
  * This class takes a Schedule (or neighboring Schedule) and assigns it a Quality factor
@@ -37,10 +41,12 @@ public class QualityChecker {
     private double restDaysWeight = 2.0;
     private double gameCountWeight = 3.0;
 
+
     /**
      * Constructor for QualityChecker class
      *
      */
+
     public QualityChecker(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots, ArrayList<Team> teams) {
         this.games = games;
         this.timeSlots = timeSlots;
@@ -48,6 +54,12 @@ public class QualityChecker {
     }
 
     /**
+     * Default Constructor
+     */
+    public QualityChecker() {
+	}
+
+	/**
      * Checks the quality of a schedule based on:
      *
      * 1. Total unscheduled matchups
@@ -185,9 +197,11 @@ public class QualityChecker {
         return penalty;
     }
 
+    
     /**
-     * Compares the current Schedule to a newly generated neighbour Schedule
-     *
+     * Get weighted Quality of Schedule
+     * 
+     * @param current 
      * @return the best Schedule after comparison
      */
     public double getQuality() {
@@ -201,4 +215,6 @@ public class QualityChecker {
         System.out.println("Schedule Penalty: " + round(quality, 2));
         return quality;
     }
+    
+    
 }
