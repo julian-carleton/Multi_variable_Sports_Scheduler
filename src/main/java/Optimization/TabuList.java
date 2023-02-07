@@ -1,4 +1,4 @@
-package main.java.Optimization;
+package Optimization;
 
 import java.util.ArrayList;
 

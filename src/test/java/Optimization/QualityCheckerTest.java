@@ -1,5 +1,6 @@
 package Optimization;
 
+import Optimization.QualityChecker;
 import Scheduler.*;
 import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
@@ -68,12 +69,14 @@ public class QualityCheckerTest {
         teams = new ArrayList<>();
 
         // Create Teams
-        Division test = new Division("Test");
+        Division tempTest = new Division("Test");
+        ArrayList<Division> test = new ArrayList<Division>();
+        test.add(tempTest);
 
-        Team a = new Team("a", 1.0, 1.0, test, Tier.ZERO);
-        Team b = new Team("b", 1.0, 1.0, test, Tier.ZERO);
-        Team c = new Team("c", 1.0, 1.0, test, Tier.ZERO);
-        Team d = new Team("d", 1.0, 1.0, test, Tier.ZERO);
+        Team a = new Team("a", 1.0, 1.0, tempTest, Tier.ZERO);
+        Team b = new Team("b", 1.0, 1.0, tempTest, Tier.ZERO);
+        Team c = new Team("c", 1.0, 1.0, tempTest, Tier.ZERO);
+        Team d = new Team("d", 1.0, 1.0, tempTest, Tier.ZERO);
 
         teams.add(a);
         teams.add(b);

@@ -1,6 +1,6 @@
-package main.java.Scheduler;
+package Scheduler;
 
-import main.java.Excel_Import_Export.ExcelExport;
+import Excel_Import_Export.ExcelExport;
 
 
 import java.io.IOException;

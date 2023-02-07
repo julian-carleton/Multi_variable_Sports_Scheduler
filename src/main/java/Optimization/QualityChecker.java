@@ -1,11 +1,9 @@
-package main.java.Optimization;
+package Optimization;
 
 
 import java.util.ArrayList;
 
-import main.java.Scheduler.Game;
-import main.java.Scheduler.Schedule;
-import main.java.Scheduler.TimeSlot;
+import Scheduler.*;
 
 
 import java.util.ArrayList;

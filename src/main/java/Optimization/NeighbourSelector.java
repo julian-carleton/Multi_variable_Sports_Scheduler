@@ -1,12 +1,9 @@
-package main.java.Optimization;
+package Optimization;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.java.Scheduler.Game;
-import main.java.Scheduler.League;
-import main.java.Scheduler.Schedule;
-import main.java.Scheduler.TimeSlot;
+import Scheduler.*;
 
 /**
  * NeighbourSelector is a class used to choose the next possible Move during optimization of a Schedule
@@ -125,7 +122,8 @@ public class NeighbourSelector {
 		int count = 0;
 		while(tabuList.isTabu(tempMove)&& !tempMove.getGame().getHomeTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Home team
 										  !tempMove.getGame().getAwayTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Away team
-										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision())) {	// Checks timeSlot is the right division
+										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision()) && // Checks timeSlot is the right division
+										  !tempMove.getGame().getHomeTeam().isHomeArena(tempMove.getTimeSlot().getArena())) {	
 			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
 			if (count > 1000000000) {
 				System.out.println("No more possible moves");
@@ -186,8 +184,11 @@ public class NeighbourSelector {
      * @author Julian Obando
      * */
     private int selectRandom(int size) {
-        Random rand = new Random();
-        return rand.nextInt(size);
+    	if (size > 0) {
+    		Random rand = new Random();
+            return rand.nextInt(size);
+    	}
+        return 0;
     }
 	
     
