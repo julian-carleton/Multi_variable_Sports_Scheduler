@@ -13,13 +13,14 @@ public class TimeSlotTest {
         LocalDateTime start = LocalDateTime.of(2022, 1, 1, 12, 0);
         Arena arena = new Arena("...", 0, 0);
         Division division = new Division("East");
-        ArrayList<Division> div = new ArrayList<>();
+        ArrayList<Division> divs = new ArrayList<Division>();
+        divs.add(division);
         
-        TimeSlot slot = new TimeSlot(start, arena, div);
+        TimeSlot slot = new TimeSlot(start, arena, divs);
         
         assertEquals(start, slot.getStartDateTime());
         assertEquals(arena, slot.getArena());
-        assertEquals(div, slot.getDivisions());
+        assertEquals(divs, slot.getDivisions());
         assertTrue(slot.isAvailable());
         assertFalse(slot.isSelected());
         

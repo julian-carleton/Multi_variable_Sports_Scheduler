@@ -8,8 +8,6 @@ package Optimization;
  *  2. Iteration maximum reached
  */
 public class StopCondition {
-<<<<<<< Updated upstream
-=======
     private float quialityLimit;
     private int iterationLimit;
 
@@ -22,8 +20,6 @@ public class StopCondition {
     public StopCondition(int iterationLimit, float quialityLimit) {
     	this.quialityLimit = quialityLimit;
     	this.iterationLimit = iterationLimit;
-    	
-    }
 
     public boolean checkCondition(int iteration, float quality) {
         return checkIteration(iteration)&&checkQuality(quality);
@@ -61,7 +57,4 @@ public class StopCondition {
     	return false;
 
     }
-
-
->>>>>>> Stashed changes
 }
