@@ -38,6 +38,10 @@ public class TimeSlot {
 		this.isAvailable = false;
 	}
 	
+	public void freeUptimeslot() {
+		this.isAvailable = true;
+	}
+	
 	/**
 	 * Sets Whether it is selected to true
 	 */

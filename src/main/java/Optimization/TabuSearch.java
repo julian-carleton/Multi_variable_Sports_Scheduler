@@ -64,12 +64,17 @@ public class TabuSearch {
         // Iteration counter
     	int x = 100000;
         int iteration = 0;
-        while ( x > iteration) { // stop condition --> iteration and quality check
+        while (stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
         	ArrayList<Move> tempMoves;
         	if (iteration <= x/2) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
         		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
         		tempMoves.add(neighbourSelector.makeNeighbourScheduleFirst());
+        		if (tempMoves.contains(null)) {  // no more possible moves
+        			neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
+            		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
+        		}
+        		
         		
         	}else {
         		
@@ -98,7 +103,11 @@ public class TabuSearch {
         		remakeneighbourSchedule(); // maybe change later
         		
         	}else {
-        		currentSchedule = neighbourSchedule; // set availability change game object
+        		for (Move m: tempMoves) {
+        			m.getGame().getTimeSlot().freeUptimeslot();
+        			m.getGame().setTimeSlot(m.getTimeSlot());
+        			m.getTimeSlot().useTimeslot();
+        		}
         		remakeneighbourSchedule();
         	}
         	iteration++;
