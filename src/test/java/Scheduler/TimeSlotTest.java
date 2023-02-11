@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import main.java.Scheduler.*; 
+import Scheduler.*; 
 
 public class TimeSlotTest {
     @Test

@@ -1,7 +1,6 @@
 package Scheduler;
 
 import org.junit.*;
-import org.testng.annotations.Test;
 import Scheduler.*;
 
 import static junit.framework.Assert.assertEquals;

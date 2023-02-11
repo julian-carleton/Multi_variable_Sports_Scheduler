@@ -1,7 +1,7 @@
-package main.java.Optimization;
+package Optimization;
 
-import main.java.Scheduler.Game;
-import main.java.Scheduler.TimeSlot;
+import Scheduler.Game;
+import Scheduler.TimeSlot;
 
 /**
  *  Move class represents the moving of a Game object to a TimeSlot object

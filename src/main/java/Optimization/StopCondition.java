@@ -1,4 +1,4 @@
-package main.java.Optimization;
+package Optimization;
 
 /**
  * This class is used to determine when the Tabu Search algorithm must stop iterating
@@ -8,7 +8,7 @@ package main.java.Optimization;
  *  2. Iteration maximum reached
  */
 public class StopCondition {
-    private float quialityLimit;
+    private double quialityLimit;
     private int iterationLimit;
 
 
@@ -17,12 +17,12 @@ public class StopCondition {
      * @param iteration
      * @param quality
      */
-    public StopCondition() {
-
-    	
+    public StopCondition(int iterationLimit, double quialityLimit) {    
+    	this.quialityLimit = quialityLimit;
+    	this.iterationLimit = iterationLimit;
     }
 
-    public boolean checkCondition(int iteration, float quality) {
+    public boolean checkCondition(int iteration, double quality) {
         return checkIteration(iteration)&&checkQuality(quality);
     }
 
@@ -50,14 +50,12 @@ public class StopCondition {
  * @param quality
  * @return if bigger or equal to limit than return true
  */
-    public boolean checkQuality(float quality) {
+    public boolean checkQuality(double quality) {
     	
-    	if (quality >= quialityLimit) {
+    	if (quality <= quialityLimit) {
     		return true;
     	}
     	return false;
 
     }
-
-
 }

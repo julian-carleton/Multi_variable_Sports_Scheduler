@@ -1,14 +1,14 @@
-package main.java.Demo;
+package Demo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ArrayList;
 
-import main.java.Excel_Import_Export.*;
-import main.java.Scheduler.*;
-import main.java.Scheduler.Exception;
+import Excel_Import_Export.*;
+import Scheduler.*;
+import Scheduler.Exception;
 
-import main.java.Demo.DemoMain;
+import Demo.DemoMain;
 
 public class DemoMain {
     public static void main(String[] args) {

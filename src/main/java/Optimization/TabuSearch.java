@@ -1,6 +1,6 @@
-package main.java.Optimization;
+package Optimization;
 
-import main.java.Scheduler.*;
+import Scheduler.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -17,15 +17,21 @@ import java.util.Objects;
  */
 public class TabuSearch {
     // Tabu Variables
+	private static final int iterationLimit = 1000000;
+	private static final float quialityLimit = 100; 			// based on sample data 100 should be around 95% games scheduled
+	
     private TabuList tabuList;
     private StopCondition stopCondition;
     private QualityChecker qualityChecker;
     private NeighbourSelector neighbourSelector;
+    
+    private float curQuiality;
 
     // Games
     private ArrayList<Game> neighbourSchedule;
     private ArrayList<Game> currentSchedule;
     
+    private ArrayList<Team> teams;
     private ArrayList<TimeSlot> timeSlots;
 
     /**
@@ -33,15 +39,16 @@ public class TabuSearch {
      *
      * @param schedule the Schedule being optimized
      */
-    public TabuSearch(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots) {
+    public TabuSearch(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots, ArrayList<Team> teams) {
         tabuList = new TabuList();
-        stopCondition = new StopCondition();
+        stopCondition = new StopCondition(iterationLimit,quialityLimit);
         qualityChecker = new QualityChecker();
         
         currentSchedule = games;
         remakeneighbourSchedule();
         
         this.timeSlots = timeSlots;
+        this.teams = teams;
         
     }
 
@@ -57,12 +64,17 @@ public class TabuSearch {
         // Iteration counter
     	int x = 100000;
         int iteration = 0;
-        while ( x > iteration) { // stop condition --> iteration and quality check
+        while (stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
         	ArrayList<Move> tempMoves;
         	if (iteration <= x/2) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
         		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
         		tempMoves.add(neighbourSelector.makeNeighbourScheduleFirst());
+        		if (tempMoves.contains(null)) {  // no more possible moves
+        			neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
+            		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
+        		}
+        		
         		
         	}else {
         		
@@ -81,17 +93,21 @@ public class TabuSearch {
     			this.neighbourSchedule.set(index, tempGame);
         	}
         	
-        	if (0 < qualityChecker.compareSchedules(currentSchedule, neighbourSchedule)) {
+        	if (0 < compareSchedules()) {
         		remakeneighbourSchedule();
         		for (Move m: tempMoves) {
         			this.tabuList.addMove(m);
         		}
         		
-        	}else if ( 0 == qualityChecker.compareSchedules(currentSchedule, neighbourSchedule)) {
+        	}else if ( 0 == compareSchedules()) {
         		remakeneighbourSchedule(); // maybe change later
         		
         	}else {
-        		currentSchedule = neighbourSchedule;
+        		for (Move m: tempMoves) {
+        			m.getGame().getTimeSlot().freeUptimeslot();
+        			m.getGame().setTimeSlot(m.getTimeSlot());
+        			m.getTimeSlot().useTimeslot();
+        		}
         		remakeneighbourSchedule();
         	}
         	iteration++;
@@ -128,24 +144,24 @@ public class TabuSearch {
      *
      * @return true if neighbouring Schedule has better quality than current Schedule, false if not
      */
-    public boolean compareSchedules(Schedule current, ArrayList<Game> nGames, ArrayList<TimeSlot> nTimeSlots, ArrayList<Team> nTeams) {
-        QualityChecker checkCurrent = new QualityChecker(current.getGames(), current.getTimeSlots(), current.getTeams());
-        QualityChecker checkNeighbour = new QualityChecker(nGames, nTimeSlots, nTeams);
+    public int compareSchedules() {
+        QualityChecker checkCurrent = new QualityChecker(currentSchedule, timeSlots, teams);
+        QualityChecker checkNeighbour = new QualityChecker(neighbourSchedule, timeSlots, teams);
 
         double currentPenalty = checkCurrent.getQuality();
         double neighbourPenalty = checkNeighbour.getQuality();
 
         // Current schedule has lower penalty value than neighbour Schedule
         if(currentPenalty < neighbourPenalty) {
-            return true;
+            return 1;
         }
         // Current Schedule has larger penalty value than neighbour Schedule
         else if(currentPenalty > neighbourPenalty) {
-            return false;
+            return -1;
         }
 
         // In the case that they're equal penalty: we stick with the current best Schedule
-        return false;
+        return 0;
     }
     
     

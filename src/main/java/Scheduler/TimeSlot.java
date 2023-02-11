@@ -1,4 +1,4 @@
-package main.java.Scheduler;
+package Scheduler;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -36,6 +36,10 @@ public class TimeSlot {
 	 */
 	public void useTimeslot() {
 		this.isAvailable = false;
+	}
+	
+	public void freeUptimeslot() {
+		this.isAvailable = true;
 	}
 	
 	/**
