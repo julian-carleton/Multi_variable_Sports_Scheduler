@@ -467,8 +467,10 @@ public class League {
 			if (!s.getTimeSlots().isEmpty()) {
 				s.createSchedule();
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
-				ArrayList<Game> tempGames = tempTabuSearch.optimize();
-				s.setGames(tempGames);
+				if (s.getTeams().size()>0) {
+					ArrayList<Game> tempGames = tempTabuSearch.optimize();
+					s.setGames(tempGames);
+				}
 				/*
 				 * add 
 				 */

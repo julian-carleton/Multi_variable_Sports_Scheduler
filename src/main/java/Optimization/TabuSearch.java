@@ -42,7 +42,7 @@ public class TabuSearch {
     public TabuSearch(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots, ArrayList<Team> teams) {
         tabuList = new TabuList();
         stopCondition = new StopCondition(iterationLimit,quialityLimit);
-        qualityChecker = new QualityChecker();
+        qualityChecker = new QualityChecker(games,timeSlots,teams);
         
         currentSchedule = games;
         remakeneighbourSchedule();
