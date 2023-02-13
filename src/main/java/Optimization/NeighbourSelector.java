@@ -78,11 +78,11 @@ public class NeighbourSelector {
 	
 	
 	/**
-	 * Makes Move with non Scheduled games and all timeslots 
+	 * Makes Moves with all games and all timeslots
 	 * 
-	 * @return move made
+	 * @return move(s) made
 	 * 
-	 * @author Quinn Sondermeyer, Julian Obando
+	 * @author Quinn Sondermeyer, Julian Obando, Brady Norton
 	 */
 	public ArrayList<Move> makeNeighbourScheduleSecond() {
 		ArrayList<Move> moves = new ArrayList<Move>(); // pair of moves
@@ -101,6 +101,7 @@ public class NeighbourSelector {
 			}
 		}
 		**/
+
 		// Create Move from full list of games and timeslots
 		Move move1 = newMove(games, timeSlots);
 		Game game1 = move1.getGame();
@@ -144,7 +145,7 @@ public class NeighbourSelector {
 		Returns:
 		1. Moves = (Game1, Timeslot1), (Game2, unusedTimeSlot)
 		2. Moves = (Game1, TimeSlot2), (Game2, TimeSlot1)
-		3. Moves = (Game1, TimeSlot1)
+		3. Moves = (Game1, TimeSlot1), null
 		 */
 		return moves; // return list of moves
 	}
