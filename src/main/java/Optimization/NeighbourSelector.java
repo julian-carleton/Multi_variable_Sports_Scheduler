@@ -121,14 +121,17 @@ public class NeighbourSelector {
 						// Try again with all timeslots
 						move2 = newMove(game2, timeSlots);
 
+						// Timeslot2 for Move2 already has a game scheduled
 						if(!move2.getTimeSlot().isAvailable()) {
 							if(game1.getTimeSlot() == move2.getTimeSlot()) { // swap
 								Move swap = new Move(move2.getGame(), game1.getTimeSlot());
+								moves.add(move1);
 								moves.add(swap);
 							}
 						}
 					}
 					else { // no conflict with move2
+						moves.add(move1);
 						moves.add(move2);
 					}
 				}
@@ -137,6 +140,12 @@ public class NeighbourSelector {
 			moves.add(move1);
 		}
 
+		/*
+		Returns:
+		1. Moves = (Game1, Timeslot1), (Game2, unusedTimeSlot)
+		2. Moves = (Game1, TimeSlot2), (Game2, TimeSlot1)
+		3. Moves = (Game1, TimeSlot1)
+		 */
 		return moves; // return list of moves
 	}
 
