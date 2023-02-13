@@ -112,30 +112,29 @@ public class NeighbourSelector {
 		if(!timeslot1.isAvailable()) {
 			for(Game g : games) {
 				if(g.getTimeSlot().equals(move1.getTimeSlot())){
+					// Try to pair game2 (originally paired with timeslot1) with an availableTimeslot
 					game2.add(g);
+					Move move2 = newMove(game2, availalbeTimeslots);
+
+					// Check if Move2 can't be created with availableTimeslots
+					if(move2 == null) {
+						// Try again with all timeslots
+						move2 = newMove(game2, timeSlots);
+
+						if(!move2.getTimeSlot().isAvailable()) {
+							if(game1.getTimeSlot() == move2.getTimeSlot()) { // swap
+								Move swap = new Move(move2.getGame(), game1.getTimeSlot());
+								moves.add(swap);
+							}
+						}
+					}
+					else { // no conflict with move2
+						moves.add(move2);
+					}
 				}
 			}
 		}else {
 			moves.add(move1);
-		}
-
-		// Try to pair game2 (originally paired with timeslot1) with an availableTimeslot
-		Move move2 = newMove(game2, availalbeTimeslots);
-
-		// Check if Move2 can't be created with availableTimeslots
-		if(move2 == null) {
-			// Try again with all timeslots
-			move2 = newMove(game2, timeSlots);
-
-			if(!move2.getTimeSlot().isAvailable()) {
-				if(game1.getTimeSlot() == move2.getTimeSlot()) { // swap
-					Move swap = new Move(move2.getGame(), game1.getTimeSlot());
-					moves.add(swap);
-				}
-			}
-		}
-		else { // no conflict with move2
-			moves.add(move2);
 		}
 
 		return moves; // return list of moves
