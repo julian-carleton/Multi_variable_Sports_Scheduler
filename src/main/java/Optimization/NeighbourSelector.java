@@ -78,7 +78,7 @@ public class NeighbourSelector {
 	
 	
 	/**
-	 * Makes Moves with all games and all timeslots
+	 * Makes Move with non Scheduled games and all timeslots
 	 * 
 	 * @return move(s) made
 	 * 
