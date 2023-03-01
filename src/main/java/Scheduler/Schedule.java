@@ -62,7 +62,11 @@ public class Schedule {
 		} else {
 			matchRR();
 			shuffleRounds();
-			doubleRounds();
+			//Duplicating for even number of teams
+			if (this.teams.size() % 2 == 0) {
+				doubleRounds();
+				System.out.print("doubled");
+			}
 			orderExceptionNumber();	//Ordering rounds based on the number of exceptions
 			makeListGames();   		//Concatenates the rounds that will be used
 			assignGames();
@@ -323,8 +327,11 @@ public class Schedule {
 		matchRR();
 		printRounds();		
 		shuffleRounds();
-		doubleRounds();
-		orderExceptionNumber();			//Ordering rounds based on the number of exceptions
+		//Duplicating for even number of teams
+		if (this.teams.size() % 2 == 0) {
+			doubleRounds();
+		}
+		//orderExceptionNumber();			//Ordering rounds based on the number of exceptions
 		System.out.print("After ordering...\n");
 		printRounds();
 		
@@ -373,7 +380,7 @@ public class Schedule {
 		
 		//Making list of teams with home arena in form Arena numArenas%
 		System.out.print("Assume that each team has as many exceptions as its team number\n");
-		int numTeams = 4;
+		int numTeams = 7;
 		for (int i = 0; i < numTeams; i++) {
 			Team tempTeam = new Team("Team " + (i+1));
 			tempTeam.addArena(arenas.get(i % numArenas));    //The home arenas wrap around based on the available ones.
