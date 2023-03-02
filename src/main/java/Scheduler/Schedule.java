@@ -61,47 +61,20 @@ public class Schedule {
 			printSchedule();
 		} else {
 			matchRR();
+			shuffleRounds();
+			//Duplicating for even number of teams
+			if (this.teams.size() % 2 == 0) {
+				doubleRounds();
+				System.out.print("doubled");
+			}
 			orderExceptionNumber();	//Ordering rounds based on the number of exceptions
 			makeListGames();   		//Concatenates the rounds that will be used
 			assignGames();
 		}
 	}
 	
-	/*
-	 * Creates and prints the information of the schedule
-	 */
-	public void printSchedule() {
-		
-		//Round Robin 
-		matchRR();
-		printRounds();		
-		orderExceptionNumber();			//Ordering rounds based on the number of exceptions
-		System.out.print("After ordering...\n");
-		printRounds();
-		
-		//Getting the list of games in schedule
-		makeListGames();	
-		System.out.print("Before scheduling...\n");
-		printGames();
-		
-		System.out.print("\n");
-		System.out.print("The timeSlots BEFORE scheduling are as follows: \n");
-		printTimeSlots();
-		
-		//Assigning the Games
-		assignGames();
-		
-		//Showing the assigning of games to timeSlots
-		System.out.print("After scheduling...\n");
-		printGames();
-		
-		System.out.print("\n");
-		System.out.print("The timeSlots AFTER scheduling are as follows: \n");
-		printTimeSlots();
-	}
-	
 	/**
-	 * Makes mathcups based on teams provided in constructor
+	 * Makes matchups using round robin
 	 *
 	 * @author Julian Obando
 	 **/
@@ -124,7 +97,12 @@ public class Schedule {
 			for (int i = 0; i < Math.floorDiv(numTeams, 2); i++) {
 				Team currHomeTeam = teams.get(currX);
 				Team currAwayTeam;
-				if(even && i == 0) {
+				if(even && i == 0 && j%2 == 1) {
+					//Swap home and away for special case of last team not playing as home
+					//Swaps every second round
+					currHomeTeam = teams.get(numTeams - 1);
+					currAwayTeam = teams.get(currX); 
+				} else if (even && i == 0 && j%2 == 0) {
 					currAwayTeam = teams.get(numTeams - 1);
 				} else {
 					currAwayTeam = teams.get(currY);
@@ -135,12 +113,54 @@ public class Schedule {
 				if (currY < 0) {
 					currY += this.numRounds;
 				}
-
 			}
 			this.rounds.add(currRound);
 		}
 	}
 
+	/**
+	 * Shuffle the rounds to eliminate home and away teams bias towards the first teams in the list.
+	 * How? Interleaves one round from beginning and one from middle of rounds list.
+	 * 
+	 * @author Julian Obando
+	 * */
+	public void shuffleRounds() {
+		ArrayList<Round> tempRounds = new ArrayList<Round>();
+		
+		int halfOffset = Math.floorDiv(this.rounds.size(), 2) + 1;
+		for (int i = 0; i < Math.floorDiv(this.rounds.size() + 1, 2); i++) {
+			tempRounds.add(this.rounds.get(i));
+			if (i < halfOffset - 1) {
+				tempRounds.add(this.rounds.get(i + halfOffset));
+			}
+		}
+		this.rounds = tempRounds;
+	}
+	
+	/**
+	 * Double rounds, where the duplicated have home and away swapped
+	 * 
+	 * @author Julian Obando
+	 * */
+	public void doubleRounds() {
+
+		int initialRoundsNum = this.rounds.size(); 
+		for (int i = initialRoundsNum - 1; i >= 0; i--) {    //Reverse loop to double from bottom to top
+			ArrayList<Game> tempRoundMatchups = this.rounds.get(i).getMatchups();
+			int initialMatchupsNumber = tempRoundMatchups.size();
+			Round newRound = new Round();
+			for (int j = 0; j < initialMatchupsNumber; j++) {
+				Game tempGame = tempRoundMatchups.get(j);
+				Game newGame = new Game(tempGame.getAwayTeam(), tempGame.getHomeTeam());   //new game with home and away swapped
+				newRound.add(newGame);
+			}
+			this.rounds.add(newRound);
+		}
+		
+		//update number of rounds
+		this.numRounds *= 2;
+	 }
+	
 	/**
 	 * Orders the rounds so that the games with matchups with most exceptions are ordered first.
 	 * 
@@ -260,7 +280,7 @@ public class Schedule {
 	public void printRounds() {
 		
 		System.out.print("The following matchups are possible for the given teams:\n");
-		for (int j = 0; j < this.numRounds; j++) {
+		for (int j = 0; j < this.rounds.size(); j++) {
 			Round curr_round = this.rounds.get(j);
 			for (int i = 0; i <  Math.floorDiv(teams.size(), 2); i++) {
 				System.out.print("	");
@@ -299,13 +319,51 @@ public class Schedule {
 	}
 	
 	/*
+	 * Creates and prints the information of the schedule
+	 */
+	public void printSchedule() {
+		
+		//Round Robin 
+		matchRR();
+		printRounds();		
+		shuffleRounds();
+		//Duplicating for even number of teams
+		if (this.teams.size() % 2 == 0) {
+			doubleRounds();
+		}
+		//orderExceptionNumber();			//Ordering rounds based on the number of exceptions
+		System.out.print("After ordering...\n");
+		printRounds();
+		
+		//Getting the list of games in schedule
+		makeListGames();	
+		System.out.print("Before scheduling...\n");
+		printGames();
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots BEFORE scheduling are as follows: \n");
+		printTimeSlots();
+		
+		//Assigning the Games
+		assignGames();
+		
+		//Showing the assigning of games to timeSlots
+		System.out.print("After scheduling...\n");
+		printGames();
+		
+		System.out.print("\n");
+		System.out.print("The timeSlots AFTER scheduling are as follows: \n");
+		printTimeSlots();
+	}
+	
+	/*
 	 * Demo with simulated data
 	 */
 	public static void demo() {
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
 		ArrayList<Team> teams = new ArrayList<Team>();
 		ArrayList<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-		int actualNumRounds = 10;
+		int actualNumRounds = 22;
 		
 		//Making list of Arenas
 		int numArenas = 7;
@@ -322,7 +380,7 @@ public class Schedule {
 		
 		//Making list of teams with home arena in form Arena numArenas%
 		System.out.print("Assume that each team has as many exceptions as its team number\n");
-		int numTeams = 8;
+		int numTeams = 7;
 		for (int i = 0; i < numTeams; i++) {
 			Team tempTeam = new Team("Team " + (i+1));
 			tempTeam.addArena(arenas.get(i % numArenas));    //The home arenas wrap around based on the available ones.
