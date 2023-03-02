@@ -463,23 +463,22 @@ public class League {
 
 		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
 		league.generateSchedules();
+		ArrayList<TabuSearch> tabuSearches = new ArrayList<TabuSearch>();
 		for (Schedule s: league.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
 				s.createSchedule();
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
-				if (s.getTeams().size()>0) {
-					ArrayList<Game> tempGames = tempTabuSearch.optimize();
-					s.setGames(tempGames);
-				}
-				/*
-				 * add 
-				 */
+				tempTabuSearch.optimize();
+				tabuSearches.add(tempTabuSearch);
 				
 				
 			}
 		}
-
-
+		
+		TabuSearch tempTabuSearch = new TabuSearch(league.getGames(),league.getTimeslots(), league.getTeams());
+		tempTabuSearch.optimize();
+		tabuSearches.add(tempTabuSearch); 
+		
 		// Excel Export
 		ExcelExport export = new ExcelExport(league);
 		export.printLeagueData();
@@ -490,11 +489,37 @@ public class League {
 		Schedule testSchedule = league.getSchedules().get(3);
 		QualityChecker qualityChecker = new QualityChecker(testSchedule.getGames(), testSchedule.getTimeSlots(), testSchedule.getTeams());
 		qualityChecker.getQuality();
+		
+		
 	}
+
+	
 
 	/*
 	 * Getters and Setters
 	 */
+	
+	public ArrayList<Game> getGames() {
+		ArrayList<Game> tempGames = new ArrayList<Game>();
+		for (Schedule s: this.schedules) {
+			for (Game g: s.getGames()) {
+				tempGames.add(g);
+			}
+		}
+		return tempGames;
+	}
+	
+	
+	public ArrayList<Team> getTeams() {
+		ArrayList<Team> tempTeams = new ArrayList<Team>();
+		for (Division d: this.divisions) {
+			for (Team t: d.getTeams()) {
+				tempTeams.add(t);
+			}
+		}
+		return tempTeams;
+	}
+	
 
 	public String getName() {
 		return name;
@@ -515,6 +540,11 @@ public class League {
 	public ArrayList<Schedule> getSchedules() {
 		return schedules;
 	}
+
+	public ArrayList<TimeSlot> getTimeslots() {
+		return timeslots;
+	}
+	
 	
 
 }
