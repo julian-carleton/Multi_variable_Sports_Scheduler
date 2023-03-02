@@ -32,11 +32,11 @@ import Scheduler.*;
  */
 public class NeighbourSelector {
 	private Schedule schedule;
-	private ArrayList<Game> UnschduledGames;
-	private ArrayList<Game> games;
+	private ArrayList<Game> UnschduledGames; // list of all unscheduled games
+	private ArrayList<Game> games; // list of ALL games (scheduled & unscheduled)
 	//private ArrayList<TimeSlot> usedTimeslots;
-	private ArrayList<TimeSlot> timeSlots;
-	private ArrayList<TimeSlot> availalbeTimeslots;
+	private ArrayList<TimeSlot> timeSlots; // list of all Timeslots
+	private ArrayList<TimeSlot> availalbeTimeslots; // list of available timeslots
 	private Move move;
 	private TabuList tabuList;
 	
@@ -78,33 +78,77 @@ public class NeighbourSelector {
 	
 	
 	/**
-	 * Makes Move with non Scheduled games and all timeslots 
+	 * Makes Move with non Scheduled games and all timeslots
 	 * 
-	 * @return move made
+	 * @return move(s) made
 	 * 
-	 * @author Quinn Sondermeyer, Julian Obando
+	 * @author Quinn Sondermeyer, Julian Obando, Brady Norton
 	 */
 	public ArrayList<Move> makeNeighbourScheduleSecond() {
-		
-		ArrayList<Move> moves = new ArrayList<Move>();
-		Move tempMove = newMove(UnschduledGames, timeSlots);
-		if (!(tempMove == null)) {
-			moves.add(tempMove);
-			if (!move.getTimeSlot().isAvailable()) {
-				for (Game g: games) {
-					if (g.getTimeSlot().equals(move.getTimeSlot())) {
-						tempMove = new Move(g,availalbeTimeslots.get(selectRandom(availalbeTimeslots.size())));
-						moves.add(tempMove);
+		ArrayList<Move> moves = new ArrayList<Move>(); // pair of moves
+
+		/**
+		Move tempMove = newMove(UnschduledGames, timeSlots); // create new move from unscheduled games and list of ALL timeslots
+		if (!(tempMove == null)) { // If Move was created (unscheduled game matched with a timeslot)
+			moves.add(tempMove); // add Move to pair of moves
+			if (!move.getTimeSlot().isAvailable()) { // check if the timeslot has a Game assigned to it already
+				for (Game g: games) { // iterate over full list of games
+					if (g.getTimeSlot().equals(move.getTimeSlot())) { // find game that already has the timeslot now being used by Move for different game
+						tempMove = new Move(g,availalbeTimeslots.get(selectRandom(availalbeTimeslots.size()))); // create second move using the Game originally in first timeslot and a timeslot from available timeslots
+						moves.add(tempMove); // add second move to the pair of moves
 					}
 				}
 			}
 		}
-		
-		return moves;
+		**/
+
+		// Create Move from full list of games and timeslots
+		Move move1 = newMove(games, timeSlots);
+		Game game1 = move1.getGame();
+		TimeSlot timeslot1 = move1.getTimeSlot();
+
+		ArrayList<Game> game2 = new ArrayList<>();
+
+		// check if timeslot1 has a Game
+		if(!timeslot1.isAvailable()) {
+			for(Game g : games) {
+				if(g.getTimeSlot().equals(move1.getTimeSlot())){
+					// Try to pair game2 (originally paired with timeslot1) with an availableTimeslot
+					game2.add(g);
+					Move move2 = newMove(game2, availalbeTimeslots);
+
+					// Check if Move2 can't be created with availableTimeslots
+					if(move2 == null) {
+						// Try again with all timeslots
+						move2 = newMove(game2, timeSlots);
+
+						// Timeslot2 for Move2 already has a game scheduled
+						if(!move2.getTimeSlot().isAvailable()) {
+							if(game1.getTimeSlot() == move2.getTimeSlot()) { // swap
+								Move swap = new Move(move2.getGame(), game1.getTimeSlot());
+								moves.add(move1);
+								moves.add(swap);
+							}
+						}
+					}
+					else { // no conflict with move2
+						moves.add(move1);
+						moves.add(move2);
+					}
+				}
+			}
+		}else {
+			moves.add(move1);
+		}
+
+		/*
+		Returns:
+		1. Moves = (Game1, Timeslot1), (Game2, unusedTimeSlot)
+		2. Moves = (Game1, TimeSlot2), (Game2, TimeSlot1)
+		3. Moves = (Game1, TimeSlot1), null
+		 */
+		return moves; // return list of moves
 	}
-
-
-
 
 
 	/**
@@ -178,7 +222,7 @@ public class NeighbourSelector {
 	/**
      * Returns a random object from the a list of objects
      * 
-     * @param object list, list of objects
+     * @param
      * @return return a random object
      * @author Julian Obando
      * */
