@@ -64,7 +64,9 @@ public class TabuSearch {
         // Iteration counter
     	int x = 100000;
         int iteration = 0;
-        while (stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
+        System.out.println(qualityChecker.getQuality());
+        System.out.println();
+        while (!stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
         	ArrayList<Move> tempMoves;
         	if (iteration <= x/2) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
@@ -82,42 +84,47 @@ public class TabuSearch {
         		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         	}
         	
-        	if (tempMoves.contains(null)||tempMoves.isEmpty()) {  // no more possible moves
-        		break;
-        	}
-        	
-        	for (Move m: tempMoves) {
-        		Game tempGame = new Game(m.getGame().getHomeTeam(), m.getGame().getAwayTeam());
-    			tempGame.setTimeSlot(m.getTimeSlot());
-    			int index = currentSchedule.indexOf(m.getGame());
-    			this.neighbourSchedule.set(index, tempGame);
-        	}
-        	
-        	if (0 < compareSchedules()) {
-        		remakeneighbourSchedule();
-        		for (Move m: tempMoves) {
-        			this.tabuList.addMove(m);
-        		}
-        		
-        	}else if ( 0 == compareSchedules()) {
-        		remakeneighbourSchedule(); // maybe change later
-        		
-        	}else {
-        		for (Move m: tempMoves) {
-        			m.getGame().getTimeSlot().freeUptimeslot();
-        			m.getGame().setTimeSlot(m.getTimeSlot());
-        			m.getTimeSlot().useTimeslot();
-        		}
-        		remakeneighbourSchedule();
+        	if (!(tempMoves.contains(null)||tempMoves.isEmpty())) {  // no more possible moves
+        		        	
+	        	for (Move m: tempMoves) {
+	        		Game tempGame = new Game(m.getGame().getHomeTeam(), m.getGame().getAwayTeam());
+	    			tempGame.setTimeSlot(m.getTimeSlot());
+	    			int index = currentSchedule.indexOf(m.getGame());
+	    			this.neighbourSchedule.set(index, tempGame);
+	        	}
+	        	
+	        	if (0 < compareSchedules()) {
+	        		remakeneighbourSchedule();
+	        		for (Move m: tempMoves) {
+	        			this.tabuList.addMove(m);
+	        		}
+	        		
+	        	}else if ( 0 == compareSchedules()) {
+	        		remakeneighbourSchedule(); // maybe change later
+	        		
+	        	}else {
+	        		for (Move m: tempMoves) {
+	        			if (m.getGame().getTimeSlot() != null) {
+	        				m.getGame().getTimeSlot().freeUptimeslot();
+	        			}
+	        			
+	        			m.getGame().setTimeSlot(m.getTimeSlot());
+	        			m.getTimeSlot().useTimeslot();
+	        			
+	        			//for alternate version of selecting moves:
+	        			m.getGame().getTimeSlot().deSelectTimeslot();
+	        			m.getTimeSlot().deSelectTimeslot();
+	        		}
+	        		remakeneighbourSchedule();
+	        	}
         	}
         	iteration++;
         	
         }
-        /*
-        Algorithm
-         */
-
+        
+        System.out.println(qualityChecker.getQuality());
         return currentSchedule;
+        
     }
     
     

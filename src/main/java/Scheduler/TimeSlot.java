@@ -76,6 +76,11 @@ public class TimeSlot {
 		return "Time Slot at: "+this.arena.getName()+"		is available: " + this.isAvailable;
 	}
 
+	public void deSelectTimeslot() {
+		this.isSelected = false;
+		
+	}
+
 	
 
 	

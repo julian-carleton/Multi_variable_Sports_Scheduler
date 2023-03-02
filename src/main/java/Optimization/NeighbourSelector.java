@@ -114,10 +114,9 @@ public class NeighbourSelector {
 	 * @author Quinn Sondermeyer, Julian Obando
 	 */
 	private Move newMove(ArrayList<Game> games, ArrayList<TimeSlot> timeslotList) {
-		ArrayList<Object> tempGames= new ArrayList<Object>();
-		for (Game g: games) {
-			tempGames.add(g);
-		}
+		ArrayList<Game> tempGames= games;
+		System.out.println(games);
+		System.out.println(timeslotList);
 		Move tempMove = new Move( games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size())));
 		int count = 0;
 		while(tabuList.isTabu(tempMove)&& !tempMove.getGame().getHomeTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Home team
