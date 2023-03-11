@@ -489,8 +489,9 @@ public class League {
 		Schedule testSchedule = league.getSchedules().get(3);
 		QualityChecker qualityChecker = new QualityChecker(testSchedule.getGames(), testSchedule.getTimeSlots(), testSchedule.getTeams());
 		qualityChecker.getQuality();
-		
-		
+
+		// Pass TabuSearch results to ExcelExport
+		export.getStats(tabuSearches);
 	}
 
 	

@@ -1,6 +1,7 @@
 package Excel_Import_Export;
 
 
+import Optimization.TabuSearch;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
 import Scheduler.*;
@@ -256,6 +257,63 @@ public class ExcelExport {
      */
     public void printScheduleData(Division division, Tier tier) {
 
+    }
+
+    /**
+     * Prints the following stats for all Schedules post-optimization:
+     *  - Initial Quality (pre-optimization)
+     *  - Final Quality (post-optimization)
+     *  - Total Quality increase
+     *  - Total Moves Attempted
+     *  - Total Moves deemed Tabu
+     *  - Total Moves made to Schedule
+     *  - Initial amount of Scheduled Games
+     *  - Final amount of Scheduled Games
+     *  - Total Scheduled Games added by Optimization
+     *  - Total Optimization time
+     *
+     *  TO-DO: Update method to print these stats to an Excel sheet instead of printing to console
+     *
+     * @param tabuSearches list of TabuSearch objects that each represent the optimization of a Schedule (one-to-one)
+     */
+    public void getStats(ArrayList<TabuSearch> tabuSearches) {
+        for(TabuSearch ts : tabuSearches) {
+            // Schedule Div/Tier
+            String scheduleName = ts.getScheduleName();
+            System.out.println("Schedule: " + ts.getScheduleName());
+
+            // Quality Stats
+            double initialQuality = ts.getInitialQuality();
+            double finalQuality = ts.getFinalQuality();
+            double qualityIncrease = finalQuality - initialQuality;
+
+            System.out.println("Initial Score: " + ts.getInitialQuality());
+            System.out.println("Final Score: " + ts.getFinalQuality());
+            System.out.println("Total Quality Increase: " + (ts.getFinalQuality() - ts.getInitialQuality()));
+
+            // Move Stats
+            int totalMoves = ts.getTotalMoves();
+            int tabuMoves = ts.getTabuMovesTotal();
+            int improvingMoves = totalMoves - tabuMoves;
+
+            System.out.println("Total Moves: " + ts.getTotalMoves());
+            System.out.println("Total Tabu (forbidden) Moves: " + ts.getTabuMovesTotal());
+            System.out.println("Total Improvement Moves: " + (ts.getTotalMoves() - ts.getTabuMovesTotal()));
+
+            // Scheduled Game Stats
+            int initialScheduledGames = ts.getInitialGamesScheduled();
+            int finalScheduledGames = ts.getFinalGamesScheduled();
+            int additionalScheduledGames = finalScheduledGames - initialScheduledGames;
+
+            System.out.println("Initial Games Scheduled: " + ts.getInitialGamesScheduled());
+            System.out.println("Final Games Scheduled: " + ts.getFinalGamesScheduled());
+            System.out.println("Total Additional Games Scheduled Post-Optimization: " + (ts.getFinalGamesScheduled() - ts.getInitialGamesScheduled()));
+
+            // Execution time
+            double executionTime = ts.getExecutionTime();
+
+            System.out.println("Total Optimization Time: " + ts.getExecutionTime()+ "\n");
+        }
     }
 
     /**

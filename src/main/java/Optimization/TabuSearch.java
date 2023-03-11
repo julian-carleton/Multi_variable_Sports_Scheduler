@@ -34,10 +34,20 @@ public class TabuSearch {
     private ArrayList<Team> teams;
     private ArrayList<TimeSlot> timeSlots;
 
+    // Stats
+    private double initialQuality;
+    private double finalQuality;
+    private int totalMoves;
+    private int initialGamesScheduled;
+    private int finalGamesScheduled;
+    private double executionTime;
+
     /**
-     * Constructor for TabuSearch
+     * TabuSearch constructor
      *
-     * @param schedule the Schedule being optimized
+     * @param games the list of games for the Schedule being optimized
+     * @param timeSlots the list of TimeSlots this Schedule is allotted
+     * @param teams the list of Teams that follow this Schedule
      */
     public TabuSearch(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots, ArrayList<Team> teams) {
         tabuList = new TabuList();
@@ -49,7 +59,6 @@ public class TabuSearch {
         
         this.timeSlots = timeSlots;
         this.teams = teams;
-        
     }
 
 
@@ -64,8 +73,18 @@ public class TabuSearch {
         // Iteration counter
     	int x = 100000;
         int iteration = 0;
+
+        // Set initial Quality
         System.out.println(qualityChecker.getQuality());
+        setInitialQuality(qualityChecker.getQuality());
         System.out.println();
+
+        // Store amount of games scheduled pre-optimization
+        setInitialGamesScheduled(currentSchedule);
+
+        // Begin Timer
+        long startTime = System.currentTimeMillis();
+
         while (!stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
         	ArrayList<Move> tempMoves;
         	if (iteration <= x/2) {		//Change how games are selected to be more optimal
@@ -121,16 +140,27 @@ public class TabuSearch {
         	iteration++;
         	
         }
-        
+
+        // Stop timer
+        long endTime = System.currentTimeMillis();
+        setExecutionTime(startTime, endTime);
+
+        // Set total moves
+        setTotalMoves(iteration);
+
+        // Set final amount of Scheduled Games
+        setFinalGamesScheduled(currentSchedule);
+
+        // Set final quality
         System.out.println(qualityChecker.getQuality());
+        setFinalQuality(qualityChecker.getQuality());
         return currentSchedule;
         
     }
-    
-    
-    
-    
 
+    /**
+     * Optimize() helper method for populating a Neighbouring Schedule
+     */
     private void remakeneighbourSchedule() {
     	neighbourSchedule = new ArrayList<Game>();
         for (Game g : currentSchedule) {
@@ -138,16 +168,9 @@ public class TabuSearch {
         }
         
     }
-    
-    
-    
+
     /**
      * Compares the quality of the neighbouring Schedule against the quality of the current best Schedule
-     *
-     * @param current the current best Schedule
-     * @param nGames arraylist of games for neighbouring Schedule
-     * @param nTimeSlots arraylist of TimeSlots for neighbouring Schedule
-     * @param nTeams arraylist of teams for the neighbouring Schedule
      *
      * @return true if neighbouring Schedule has better quality than current Schedule, false if not
      */
@@ -170,25 +193,18 @@ public class TabuSearch {
         // In the case that they're equal penalty: we stick with the current best Schedule
         return 0;
     }
-    
-    
-    
-    
 
+    /**
+     * Main method for TabuSearch
+     *
+     * NOTE: May be safe to remove(?)
+     *
+     * @param args
+     */
     public static void main(String[] args) {
     	      
     	
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Prints out the data to be optimized for the given schedule
@@ -258,6 +274,84 @@ public class TabuSearch {
         }
     }
 
+    /**
+     * Getters/Setters
+     */
+    public double getInitialQuality() {
+        return this.initialQuality;
+    }
 
+    public void setInitialQuality(double quality) {
+        this.initialQuality = quality;
+    }
+
+    public double getFinalQuality() {
+        return this.finalQuality;
+    }
+
+    public void setFinalQuality(double finalQuality) {
+        this.finalQuality = finalQuality;
+    }
+
+    public void setTotalMoves(int iteration) {
+        this.totalMoves = iteration;
+    }
+
+    public int getTotalMoves() {
+        return this.totalMoves;
+    }
+
+    public void setExecutionTime(long startTime, long endTime) {
+        this.executionTime = endTime - startTime;
+    }
+
+    public double getExecutionTime() {
+        return executionTime;
+    }
+
+    public String getScheduleName() {
+        String division = currentSchedule.get(1).getHomeTeam().getDivision().getName();
+        String tier = currentSchedule.get(1).getHomeTeam().getTier().toString();
+
+        return "Division: " + division + "(tier: " + tier + ")";
+    }
+
+    public int getTabuMovesTotal() {
+        return tabuList.getTabuSize();
+    }
+
+    public void setInitialGamesScheduled(ArrayList<Game> games) {
+        // Initialize scheduled game counter
+        int counter = 0;
+
+        // Iterate over games & count amount of games w/TimeSlot
+        for(Game g : games) {
+            if(g.getTimeSlot() != null) {
+                counter++;
+            }
+        }
+        initialGamesScheduled = counter;
+    }
+
+    public int getInitialGamesScheduled() {
+        return this.initialGamesScheduled;
+    }
+
+    public void setFinalGamesScheduled(ArrayList<Game> games) {
+        // Initialize scheduled game counter
+        int counter = 0;
+
+        // Iterate over games & count all games w/TimeSlot
+        for(Game g : games) {
+            if(g.getTimeSlot() != null) {
+                counter++;
+            }
+        }
+        finalGamesScheduled = counter;
+    }
+
+    public int getFinalGamesScheduled() {
+        return this.finalGamesScheduled;
+    }
 
 }
