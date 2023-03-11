@@ -173,7 +173,7 @@ public class NeighbourSelector {
 				tempMove = null;
 				break;
 			}
-			
+			count++;
 		}
 		return tempMove;
 	}

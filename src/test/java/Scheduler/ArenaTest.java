@@ -1,8 +1,6 @@
 package Scheduler;
 
-import org.junit.*;
-import Scheduler.*;
-
+import org.junit.jupiter.api.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
