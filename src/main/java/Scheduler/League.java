@@ -448,7 +448,7 @@ public class League {
 	 * @param args
 	 */
 	public static void main(String[] args) throws IOException {
-		ExcelImport excelImport = new ExcelImport();
+		ExcelImport excelImport = new ExcelImport("/Input_Proposal.xlsx");
 
         /*
          * Import sheets

@@ -175,7 +175,7 @@ public class NeighbourSelector {
 				break;
 			}
 			count++;
-			
+
 		}
 		return tempMove;
 	}

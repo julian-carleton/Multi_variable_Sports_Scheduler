@@ -44,12 +44,12 @@ public class ExcelImport {
     /**
      * Constructor for Excel_Import class
      */
-    public ExcelImport() {
+    public ExcelImport(String filename) {
         try {
             /*
              *  InputStream
              */
-            InputStream schedulingData = ExcelImport.class.getResourceAsStream("/Input_Proposal.xlsx");
+            InputStream schedulingData = ExcelImport.class.getResourceAsStream(filename);
 
             /*
              *  Input_Proposal Workbook
@@ -592,7 +592,7 @@ public class ExcelImport {
 
     public static void main(String[] args) throws IOException {
         // Create test run
-        ExcelImport test = new ExcelImport();
+        ExcelImport test = new ExcelImport("/Input_Proposal.xlsx");
 
         // Import sheets
         test.importTeams();
