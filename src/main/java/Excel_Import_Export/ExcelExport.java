@@ -34,10 +34,13 @@ public class ExcelExport {
     private ArrayList<Team> teams;
     private ArrayList<TimeSlot> timeSlots;
 
-    // Excel Variables
+    // Excel Variables (Output_Schedule)
     private XSSFWorkbook wb;
     private CellStyle style;
     private CellStyle headers;
+
+    // Excel Variables (Optimization_Stats)
+    private  XSSFWorkbook statsBook;
 
     // Scheduling Variables
     private League league;
@@ -260,6 +263,27 @@ public class ExcelExport {
     }
 
     /**
+     * Method called to create the workbook file containing schedule info
+     */
+    public void exportSchedule() throws IOException {
+        // Print league info
+        printLeagueInfo();
+
+        // Process Rounds
+        //System.out.println("Number of sheets: " + wb.getNumberOfSheets());
+        processLeague();
+
+        // Format workbook sheets
+        formatSheet();
+
+        // Output the workbook file
+        String fp = "Output_Schedule.xlsx";
+        FileOutputStream out = new FileOutputStream(fp);
+        wb.write(out);
+        out.close();
+    }
+
+    /**
      * Prints the following stats for all Schedules post-optimization:
      *  - Initial Quality (pre-optimization)
      *  - Final Quality (post-optimization)
@@ -277,6 +301,9 @@ public class ExcelExport {
      * @param tabuSearches list of TabuSearch objects that each represent the optimization of a Schedule (one-to-one)
      */
     public void getStats(ArrayList<TabuSearch> tabuSearches) {
+        // Create 2D ArrayList for Optimization Stats
+        //ArrayList<ArrayList<>>
+
         for(TabuSearch ts : tabuSearches) {
             // Schedule Div/Tier
             String scheduleName = ts.getScheduleName();
@@ -285,11 +312,11 @@ public class ExcelExport {
             // Quality Stats
             double initialQuality = ts.getInitialQuality();
             double finalQuality = ts.getFinalQuality();
-            double qualityIncrease = finalQuality - initialQuality;
+            double qualityIncrease = initialQuality - finalQuality; // NOTE: Quality = Penalty (final should be lower than initial)
 
-            System.out.println("Initial Score: " + ts.getInitialQuality());
-            System.out.println("Final Score: " + ts.getFinalQuality());
-            System.out.println("Total Quality Increase: " + (ts.getFinalQuality() - ts.getInitialQuality()));
+            System.out.println("Initial Score: " + initialQuality);
+            System.out.println("Final Score: " + finalQuality);
+            System.out.println("Total Quality Increase: " + qualityIncrease);
 
             // Move Stats
             int totalMoves = ts.getTotalMoves();
@@ -297,7 +324,7 @@ public class ExcelExport {
             int improvingMoves = totalMoves - tabuMoves;
 
             System.out.println("Total Moves: " + ts.getTotalMoves());
-            System.out.println("Total Tabu (forbidden) Moves: " + ts.getTabuMovesTotal());
+            System.out.println("Total Tabu Moves: " + ts.getTabuMovesTotal());
             System.out.println("Total Improvement Moves: " + (ts.getTotalMoves() - ts.getTabuMovesTotal()));
 
             // Scheduled Game Stats
@@ -317,23 +344,40 @@ public class ExcelExport {
     }
 
     /**
-     * Method called to create the workbook file containing schedule info
+     * Exports the Optimization stats to an Excel File (Different sheet for each Schedule)
+     *
+     * @throws IOException handles I/O Exception for Optimization_Stats.xlsx
      */
-    public void exportSchedule() throws IOException {
-        // Print league info
-        printLeagueInfo();
+    public void exportStats() throws IOException {
+        // Print Optimization Stats
 
-        // Process Rounds
-        //System.out.println("Number of sheets: " + wb.getNumberOfSheets());
-        processLeague();
 
-        // Format workbook sheets
-        formatSheet();
+        // Process Stats (Populate Workbook)
 
-        // Output the workbook file
-        String fp = "Output_Schedule.xlsx";
-        FileOutputStream out = new FileOutputStream(fp);
-        wb.write(out);
-        out.close();
+
+        // Format Workbook
+
+
+        // Export Workbook
+
+    }
+
+    /**
+     * Exports the Optimization stats to a compact Excel File (1 sheet for all Schedules)
+     *
+     * @throws IOException handles I/O Exception for Compact_Optimization_Stats.xlsx
+     */
+    public void exportCompactStats() throws IOException {
+        // Print Optimization Stats
+
+
+        // Process Stats
+
+
+        // Format Workbook
+
+
+        // Export Workbook
+
     }
 }
