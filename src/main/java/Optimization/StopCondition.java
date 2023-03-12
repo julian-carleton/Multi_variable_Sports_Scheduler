@@ -23,7 +23,13 @@ public class StopCondition {
     }
 
     public boolean checkCondition(int iteration, double quality) {
-        return checkIteration(iteration)&&checkQuality(quality);
+    	if (!checkIteration(iteration)) {
+    		System.out.print(checkIteration(iteration));
+    	}
+    	if (!checkQuality(quality)) {
+    	System.out.println(checkQuality(quality));
+    	}
+    	return checkIteration(iteration)&&checkQuality(quality);
     }
 
     // For both if iteration => iterationLimit ; return true otherwise false
@@ -38,10 +44,10 @@ public class StopCondition {
     public boolean checkIteration(int iteration) {
 
     	if (iteration >= iterationLimit) {
-    		return true;
+    		return false;
     	}
     	
-        return false;
+        return true;
 
     }
 /**
@@ -53,9 +59,9 @@ public class StopCondition {
     public boolean checkQuality(double quality) {
     	
     	if (quality <= quialityLimit) {
-    		return true;
+    		return false;
     	}
-    	return false;
+    	return true;
 
     }
 }
