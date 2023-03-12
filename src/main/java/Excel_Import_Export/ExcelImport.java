@@ -36,7 +36,7 @@ public class ExcelImport {
 	private XSSFSheet teamsSheet;
 	private XSSFSheet timeExceptionsSheet;
 	private XSSFSheet dateExceptionsSheet;
-	private  XSSFSheet arenasSheet;
+	private XSSFSheet arenasSheet;
 	private XSSFSheet timeSlotsSheet;
 	private XSSFSheet homeArenasSheet;
 	private XSSFSheet extraInfoSheet;
