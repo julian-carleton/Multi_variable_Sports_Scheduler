@@ -112,7 +112,10 @@ public class NeighbourSelector {
 		// check if timeslot1 has a Game
 		if(!timeslot1.isAvailable()) {
 			for(Game g : games) {
-				if(g.getTimeSlot().equals(move1.getTimeSlot())){
+				if (g.getTimeSlot() == null) {
+
+				}
+				else if(g.getTimeSlot().equals(move1.getTimeSlot())){
 					// Try to pair game2 (originally paired with timeslot1) with an availableTimeslot
 					game2.add(g);
 					Move move2 = newMove(game2, availalbeTimeslots);
@@ -159,21 +162,20 @@ public class NeighbourSelector {
 	 */
 	private Move newMove(ArrayList<Game> games, ArrayList<TimeSlot> timeslotList) {
 		ArrayList<Game> tempGames= games;
-		System.out.println(games);
-		System.out.println(timeslotList);
 		Move tempMove = new Move( games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size())));
 		int count = 0;
-		while(tabuList.isTabu(tempMove)&& !tempMove.getGame().getHomeTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Home team
-										  !tempMove.getGame().getAwayTeam().exceptionCheck(tempMove.getTimeSlot()) &&	// Checks exceptions for Away team
-										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision()) && // Checks timeSlot is the right division
+		while(tabuList.isTabu(tempMove)|| !tempMove.getGame().getHomeTeam().exceptionCheck(tempMove.getTimeSlot()) ||	// Checks exceptions for Home team
+										  !tempMove.getGame().getAwayTeam().exceptionCheck(tempMove.getTimeSlot()) ||	// Checks exceptions for Away team
+										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision()) || // Checks timeSlot is the right division
 										  !tempMove.getGame().getHomeTeam().isHomeArena(tempMove.getTimeSlot().getArena())) {	
 			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
-			if (count > 1000000000) {
+			if (count > 1000) {
 				System.out.println("No more possible moves");
 				tempMove = null;
 				break;
 			}
 			count++;
+
 		}
 		return tempMove;
 	}
