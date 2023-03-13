@@ -1,6 +1,7 @@
 package Excel_Import_Export;
 
 
+import Optimization.QualityChecker;
 import Optimization.TabuSearch;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.*;
@@ -243,23 +244,13 @@ public class ExcelExport {
             System.out.println("Total Scheduled Games: " + tsg);
             System.out.println("Total allotted timeslots: " + tsTotal);
             System.out.println("Remaining available timeslots: " + atsTotal);
-            System.out.println("Scheduling Success Rate: " + round(ssr,2) + "%" + "\n");
+            System.out.println("Scheduling Success Rate: " + round(ssr,2) + "%");
 
         }
         System.out.println("Total timeslots allotted to league: " + leagueTimeslots);
         System.out.println("Total timeslots used by league: " + leagueUsedTimeslots);
         System.out.println("Remaining timeslots: " + (leagueTimeslots - leagueUsedTimeslots));
-        System.out.println("Program Scheduling Rate: " + ((leagueUsedTimeslots/leagueTimeslots) * 100) + "%");
-    }
-
-    /**
-     * Prints the schedule data for a specific division and tier
-     *
-     * @param division
-     * @param tier
-     */
-    public void printScheduleData(Division division, Tier tier) {
-
+        System.out.println("Program Scheduling Rate: " + round(((leagueUsedTimeslots/leagueTimeslots) * 100),2) + "%\n");
     }
 
     /**
@@ -284,6 +275,25 @@ public class ExcelExport {
     }
 
     /**
+     * Prints the schedule data for a specific division and tier
+     *
+     */
+    public void printScheduleData(Schedule schedule) {
+        int scheduledGameCount = 0;
+        for(Game g : schedule.getGames()) {
+            if(g.getTimeSlot() != null) {
+                scheduledGameCount++;
+            }
+        }
+        System.out.println(schedule.getScheduleName() + " (pre-optimization)");
+        System.out.println("TimeSlots: " + schedule.getTimeSlots().size());
+        System.out.println("Total Potential Matchups: " + schedule.getGames());
+        System.out.println("Scheduled Games: " + scheduledGameCount);
+        System.out.println("Unscheduled Games: " + (schedule.getGames().size() - scheduledGameCount));
+        System.out.println("Scheduling Rate: " + (scheduledGameCount/schedule.getGames().size()*100));
+    }
+
+    /**
      * Prints the following stats for all Schedules post-optimization:
      *  - Initial Quality (pre-optimization)
      *  - Final Quality (post-optimization)
@@ -298,49 +308,39 @@ public class ExcelExport {
      *
      *  TO-DO: Update method to print these stats to an Excel sheet instead of printing to console
      *
-     * @param tabuSearches list of TabuSearch objects that each represent the optimization of a Schedule (one-to-one)
+     * @param
      */
-    public void getStats(ArrayList<TabuSearch> tabuSearches) {
-        // Create 2D ArrayList for Optimization Stats
-        //ArrayList<ArrayList<>>
+    public void getStats(TabuSearch ts, Schedule s) {
+        int scheduledGames = ts.getFinalGamesScheduled();
+        int remainingGames = ts.getRemainingGames();
+        int potentialGames = ts.getCurrentSchedule().size();
+        double schedulingRate = round(100.0 * scheduledGames / potentialGames, 2);
 
-        for(TabuSearch ts : tabuSearches) {
-            // Schedule Div/Tier
-            String scheduleName = ts.getScheduleName();
-            System.out.println("Schedule: " + ts.getScheduleName());
+        int totalTimeslots = ts.getTimeSlots().size();
+        int remainingTimeSlots = ts.getRemainingTimeSlots();
+        int usedTimeslots = totalTimeslots - remainingTimeSlots;
+        double timeslotRate = round(100.0 * usedTimeslots / totalTimeslots, 2);
 
-            // Quality Stats
-            double initialQuality = ts.getInitialQuality();
-            double finalQuality = ts.getFinalQuality();
-            double qualityIncrease = initialQuality - finalQuality; // NOTE: Quality = Penalty (final should be lower than initial)
+        // Printing
+        System.out.println("\n" + ts.getScheduleName());
 
-            System.out.println("Initial Score: " + initialQuality);
-            System.out.println("Final Score: " + finalQuality);
-            System.out.println("Total Quality Increase: " + qualityIncrease);
+        System.out.println("Initial Quality: " + ts.getInitialQuality());
+        System.out.println("Final Quality: " + ts.getFinalQuality() + " (increased by: " + round(ts.getInitialQuality() - ts.getFinalQuality(), 2) + ")");
 
-            // Move Stats
-            int totalMoves = ts.getTotalMoves();
-            int tabuMoves = ts.getTabuMovesTotal();
-            int improvingMoves = totalMoves - tabuMoves;
+        System.out.println("Total Games: " + ts.getCurrentSchedule().size());
+        System.out.println("Initial Scheduled Games: " + ts.getInitialGamesScheduled());
+        System.out.println("Final Scheduled Games: " + ts.getFinalGamesScheduled() + " (added: " + (ts.getFinalGamesScheduled() - ts.getInitialGamesScheduled()) + " games)");
+        System.out.println("Unscheduled Games: " + remainingGames);
+        System.out.println("Scheduling Rate: " + schedulingRate + "%");
 
-            System.out.println("Total Moves: " + ts.getTotalMoves());
-            System.out.println("Total Tabu Moves: " + ts.getTabuMovesTotal());
-            System.out.println("Total Improvement Moves: " + (ts.getTotalMoves() - ts.getTabuMovesTotal()));
+        System.out.println("Total Allotted TimeSlots: " + totalTimeslots);
+        System.out.println("TimeSlots Used: " + usedTimeslots + " (remaining timeslots: " + remainingTimeSlots +")" );
+        System.out.println("TimeSlot Usage Rate: " + timeslotRate + "%");
 
-            // Scheduled Game Stats
-            int initialScheduledGames = ts.getInitialGamesScheduled();
-            int finalScheduledGames = ts.getFinalGamesScheduled();
-            int additionalScheduledGames = finalScheduledGames - initialScheduledGames;
+        System.out.println("Total Moves: " + ts.getTotalMoves());
+        System.out.println("Tabu Moves: " + ts.getTabuMovesTotal());
 
-            System.out.println("Initial Games Scheduled: " + ts.getInitialGamesScheduled());
-            System.out.println("Final Games Scheduled: " + ts.getFinalGamesScheduled());
-            System.out.println("Total Additional Games Scheduled Post-Optimization: " + (ts.getFinalGamesScheduled() - ts.getInitialGamesScheduled()));
-
-            // Execution time
-            double executionTime = ts.getExecutionTime();
-
-            System.out.println("Total Optimization Time: " + ts.getExecutionTime()+ "\n");
-        }
+        System.out.println("Total Optimization Time: " + ts.executionTimeToString());
     }
 
     /**

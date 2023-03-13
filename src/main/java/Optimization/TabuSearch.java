@@ -5,6 +5,9 @@ import Scheduler.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import static org.apache.commons.math3.util.Precision.round;
 
 /**
  * Main class of the Optimization package
@@ -17,7 +20,7 @@ import java.util.Objects;
  */
 public class TabuSearch {
     // Tabu Variables
-	private static final int iterationLimit = 10000;
+	private static final int iterationLimit = 50000;
 	private static final float quialityLimit = 100; 			// based on sample data 100 should be around 95% games scheduled
 	
     private TabuList tabuList;
@@ -30,17 +33,19 @@ public class TabuSearch {
     // Games
     private ArrayList<Game> neighbourSchedule;
     private ArrayList<Game> currentSchedule;
-    
+
     private ArrayList<Team> teams;
     private ArrayList<TimeSlot> timeSlots;
 
     // Stats
     private double initialQuality;
     private double finalQuality;
+    private int tabuMoves;
     private int totalMoves;
     private int initialGamesScheduled;
     private int finalGamesScheduled;
-    private double executionTime;
+    private int remainingGames;
+    private long executionTime;
 
     /**
      * TabuSearch constructor
@@ -59,7 +64,6 @@ public class TabuSearch {
         
         this.timeSlots = timeSlots;
         this.teams = teams;
-        
     }
 
 
@@ -74,40 +78,35 @@ public class TabuSearch {
         // Iteration counter
     	int x = iterationLimit;
         int iteration = 0;
+
+        // Stats
+        setInitialGamesScheduled();
+        QualityChecker tempqc = new QualityChecker(currentSchedule, timeSlots, teams);
+        initialQuality = tempqc.getQuality();
         ArrayList<Game> aviableGames = getAvailableGames(currentSchedule);
 
-        // Set initial Quality
-        System.out.println(qualityChecker.getQuality());
-        setInitialQuality(qualityChecker.getQuality());
-        System.out.println();
-
-        // Store amount of games scheduled pre-optimization
-        setInitialGamesScheduled(currentSchedule);
 
         // Begin Timer
         long startTime = System.currentTimeMillis();
 
         while (stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
-
         	ArrayList<Move> tempMoves;
-        	if (aviableGames.size() / this.currentSchedule.size() > 0.1) {		//Change how games are selected to be more optimal
+        	if ((double)aviableGames.size() / (double)this.currentSchedule.size() > 0.1) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
         		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
         		tempMoves.add(neighbourSelector.makeNeighbourScheduleFirst());
-        		if (tempMoves.contains(null)) {  // no more possible moves
+
+                if (tempMoves.contains(null)) {  // no more possible moves
         			neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
             		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         		}
-        		
-        		
+
         	}else {
-        		
         		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
         		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         	}
-        	
+
         	if (!(tempMoves.contains(null)||tempMoves.isEmpty())) {  // no more possible moves
-        		        	
 	        	for (Move m: tempMoves) {
 	        		Game tempGame = new Game(m.getGame().getHomeTeam(), m.getGame().getAwayTeam());
 	    			tempGame.setTimeSlot(m.getTimeSlot());
@@ -119,6 +118,7 @@ public class TabuSearch {
 	        		remakeneighbourSchedule();
 	        		for (Move m: tempMoves) {
 	        			this.tabuList.addMove(m);
+                        tabuMoves++;
 	        		}
 	        		
 	        	}else if ( 0 == compareSchedules()) {
@@ -145,24 +145,17 @@ public class TabuSearch {
 	        	}
         	}
         	iteration++;
-        	
         }
-
         // Stop timer
         long endTime = System.currentTimeMillis();
         setExecutionTime(startTime, endTime);
 
-        // Set total moves
-        setTotalMoves(iteration);
+        // Stats
+        setFinalGamesScheduled();
+        setFinalQuality();
+        remainingGames = getAvailableGames(currentSchedule).size();
 
-        // Set final amount of Scheduled Games
-        setFinalGamesScheduled(currentSchedule);
-
-        // Set final quality
-        System.out.println(qualityChecker.getQuality());
-        setFinalQuality(qualityChecker.getQuality());
         return currentSchedule;
-        
     }
 
     /**
@@ -173,7 +166,7 @@ public class TabuSearch {
         for (Game g : currentSchedule) {
         	neighbourSchedule.add(g);
         }
-        
+        totalMoves++;
     }
 
     /**
@@ -217,10 +210,6 @@ public class TabuSearch {
 		}
 		return tempGames;
 	}
-
-
-
-    
 
     /**
      * Main method for TabuSearch
@@ -302,58 +291,31 @@ public class TabuSearch {
         }
     }
 
-    /**
-     * Getters/Setters
+    /*
+    Getters and Setters
      */
-    public double getInitialQuality() {
-        return this.initialQuality;
-    }
-
-    public void setInitialQuality(double quality) {
-        this.initialQuality = quality;
-    }
-
-    public double getFinalQuality() {
-        return this.finalQuality;
-    }
-
-    public void setFinalQuality(double finalQuality) {
-        this.finalQuality = finalQuality;
-    }
-
-    public void setTotalMoves(int iteration) {
-        this.totalMoves = iteration;
-    }
-
-    public int getTotalMoves() {
-        return this.totalMoves;
-    }
-
-    public void setExecutionTime(long startTime, long endTime) {
-        this.executionTime = endTime - startTime;
-    }
-
-    public double getExecutionTime() {
-        return executionTime;
-    }
-
     public String getScheduleName() {
         String division = currentSchedule.get(1).getHomeTeam().getDivision().getName();
         String tier = currentSchedule.get(1).getHomeTeam().getTier().toString();
 
-        return "Division: " + division + "(tier: " + tier + ")";
+        return "Division: " + division + " (tier: " + tier + ")";
     }
 
-    public int getTabuMovesTotal() {
-        return tabuList.getTabuSize();
+    public ArrayList<TimeSlot> getTimeSlots() {
+        return timeSlots;
     }
 
-    public void setInitialGamesScheduled(ArrayList<Game> games) {
+    public ArrayList<Team> getTeams() {
+        return teams;
+    }
+
+    // Scheduled Games Stats
+    public void setInitialGamesScheduled() {
         // Initialize scheduled game counter
         int counter = 0;
 
         // Iterate over games & count amount of games w/TimeSlot
-        for(Game g : games) {
+        for(Game g : currentSchedule) {
             if(g.getTimeSlot() != null) {
                 counter++;
             }
@@ -362,15 +324,15 @@ public class TabuSearch {
     }
 
     public int getInitialGamesScheduled() {
-        return this.initialGamesScheduled;
+        return initialGamesScheduled;
     }
 
-    public void setFinalGamesScheduled(ArrayList<Game> games) {
+    public void setFinalGamesScheduled() {
         // Initialize scheduled game counter
         int counter = 0;
 
         // Iterate over games & count all games w/TimeSlot
-        for(Game g : games) {
+        for(Game g : currentSchedule) {
             if(g.getTimeSlot() != null) {
                 counter++;
             }
@@ -379,7 +341,77 @@ public class TabuSearch {
     }
 
     public int getFinalGamesScheduled() {
-        return this.finalGamesScheduled;
+        return finalGamesScheduled;
     }
 
+    public ArrayList<Game> getCurrentSchedule() {
+        return currentSchedule;
+    }
+
+    public int getRemainingGames() {
+        return remainingGames;
+    }
+
+    // TimeSlot stats
+    public int getRemainingTimeSlots() {
+        int counter = 0;
+        for(TimeSlot t : timeSlots) {
+            if(t.isAvailable()) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public double getTimeSlotUsage() {
+        int usedTimeslots = 0;
+        int availableTimeslots = 0;
+
+        for(TimeSlot t: timeSlots) {
+            if(t.isAvailable()) {
+                availableTimeslots++;
+            }
+            else{
+                usedTimeslots++;
+            }
+        }
+        int scheduleRate = (usedTimeslots / timeSlots.size()) * 100;
+        return round(scheduleRate,2);
+    }
+
+    // Quality Stats
+    public double getInitialQuality() {
+        return initialQuality;
+    }
+
+    public void setInitialQuality() {
+
+    }
+
+    public double getFinalQuality() {
+        return finalQuality;
+    }
+
+    public void setFinalQuality() {
+        finalQuality = qualityChecker.getQuality();
+    }
+
+    // Moves Stats
+    public int getTotalMoves() {
+        return totalMoves;
+    }
+
+    public int getTabuMovesTotal() {
+        return tabuMoves;
+    }
+
+    // Execution Time Stat
+    public void setExecutionTime(long startTime, long endTime) {
+        this.executionTime = endTime - startTime;
+    }
+
+    public String executionTimeToString() {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(executionTime);
+        return (executionTime + "ms (" + seconds + " seconds)");
+    }
 }

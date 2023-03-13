@@ -37,7 +37,7 @@ public class QualityChecker {
     private double homeAwayImbalanceWeight = 1.0;
     private double travelDifferenceWeight = 1.0;
     private double restDaysWeight = 2.0;
-    private double gameCountWeight = 3.0; 
+    private double gameCountWeight = 3.0;
 
 
     /**
@@ -213,6 +213,4 @@ public class QualityChecker {
 //        System.out.println("Schedule Penalty: " + round(quality, 2));
         return quality;
     }
-    
-    
 }

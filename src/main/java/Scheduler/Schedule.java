@@ -274,6 +274,15 @@ public class Schedule {
 		return actualNumRounds;
 	}
 
+	public String getScheduleName() {
+		if(teams.size() > 1) {
+			String division = teams.get(1).getDivision().getName();
+			String tier = teams.get(1).getTier().toString();
+			return "Division: " + division + " (Tier: " + tier + ")";
+		}
+		return "All Schedules in League";
+	}
+
 	/*
 	 * Print Functions
 	 */

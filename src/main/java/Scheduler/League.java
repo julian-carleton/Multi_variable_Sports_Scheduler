@@ -2,11 +2,13 @@ package Scheduler;
 
 import java.io.IOException;
 import java.io.IOException.*;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import Excel_Import_Export.*;
 import Optimization.*;
@@ -28,6 +30,7 @@ public class League {
 	private ArrayList<Schedule> schedules;
 	private double gamesPerWeek = 1;
 	private TimeSlot emptySlot;
+	private double optimizationTime;
 
 	
 	/**
@@ -448,7 +451,8 @@ public class League {
 	 * @param args
 	 */
 	public static void main(String[] args) throws IOException {
-		ExcelImport excelImport = new ExcelImport("/Input_Proposal.xlsx");
+		InputStream is = League.class.getResourceAsStream("/Input_Proposal.xlsx");
+		ExcelImport excelImport = new ExcelImport(League.class.getResourceAsStream("/Input_Proposal.xlsx"));
 
         /*
          * Import sheets
@@ -463,35 +467,40 @@ public class League {
 
 		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
 		league.generateSchedules();
+
 		ArrayList<TabuSearch> tabuSearches = new ArrayList<TabuSearch>();
+
+		long start = System.currentTimeMillis();
+
 		for (Schedule s: league.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
 				s.createSchedule();
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
+				System.out.println("\nOptimizing: " + tempTabuSearch.getScheduleName());
 				tempTabuSearch.optimize();
 				tabuSearches.add(tempTabuSearch);
-				
-				
 			}
 		}
-		
-		TabuSearch tempTabuSearch = new TabuSearch(league.getGames(),league.getTimeslots(), league.getTeams());
-		tempTabuSearch.optimize();
-		tabuSearches.add(tempTabuSearch); 
+
+		long end = System.currentTimeMillis();
+		long total = (end - start);
+
+		// Perform Optimization for entire League
+		//TabuSearch entireLeague = new TabuSearch(league.getGames(),league.getTimeslots(), league.getTeams());
+		//entireLeague.optimize();
+		//tabuSearches.add(tempTabuSearch);
 		
 		// Excel Export
 		ExcelExport export = new ExcelExport(league);
 		export.printLeagueData();
 		export.exportSchedule();
 
-		TabuSearch ts = new TabuSearch(league.getSchedules().get(3).getGames(), league.getSchedules().get(3).getTimeSlots(), league.getSchedules().get(3).getTeams() );
-		//ts.analyzeSchedule(league.getSchedules().get(1));
-		Schedule testSchedule = league.getSchedules().get(3);
-		QualityChecker qualityChecker = new QualityChecker(testSchedule.getGames(), testSchedule.getTimeSlots(), testSchedule.getTeams());
-		qualityChecker.getQuality();
+		for(int i = 0; i < tabuSearches.size(); ++i) {
+			export.getStats(tabuSearches.get(i), league.getSchedules().get(i));
+		}
 
-		// Pass TabuSearch results to ExcelExport
-		export.getStats(tabuSearches);
+
+		System.out.println("Total Optimization Time: " + TimeUnit.SECONDS.toSeconds(total));
 	}
 
 	
@@ -546,6 +555,12 @@ public class League {
 		return timeslots;
 	}
 	
-	
+	public double getOptimizationTime() {
+		return optimizationTime;
+	}
+
+	public void setOptimizationTime(double time) {
+		optimizationTime = time;
+	}
 
 }
