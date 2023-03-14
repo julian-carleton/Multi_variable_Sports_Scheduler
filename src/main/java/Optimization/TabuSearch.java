@@ -125,7 +125,6 @@ public class TabuSearch {
 	        		remakeneighbourSchedule(); // maybe change later
 	        		
 	        	}else {
-	        		System.out.println();
 	        		for (Move m: tempMoves) {
 	        			if (m.getGame().getTimeSlot() != null) {
 	        				m.getGame().getTimeSlot().freeUptimeslot();

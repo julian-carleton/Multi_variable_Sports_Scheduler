@@ -79,10 +79,6 @@ public class QualityChecker {
         double usage = (double) usedTimeslots / totalTimeslots;
         double penalty = round(timeSlotUsageWeight * (1.0 - usage) * 100, 2);
 
-//        System.out.println("\n--- Checking TimeSlot Usage Quality ---");
-//        System.out.println("Total Allotted TimeSlots: " + totalTimeslots);
-//        System.out.println("Total TimeSlots Used: " + usedTimeslots);
-//        System.out.println("TimeSlot usage penalty: " + penalty);
 
         return penalty;
     }
@@ -94,8 +90,6 @@ public class QualityChecker {
      */
     public double checkHomeAwayEquality() {
         double penalty = 0;
-
-//        System.out.println("\n--- Checking Home/Away Imbalance Quality ---");
 
         // Iterate over all teams in Schedule
         for(Team t : teams) {
@@ -120,15 +114,8 @@ public class QualityChecker {
 
             tempPenalty = homeAwayImbalanceWeight * imbalance;
             penalty += tempPenalty;
-
-//            System.out.println("Team: " + t.getName());
-//            System.out.println("Home Games: " + homeGames);
-//            System.out.println("Away Games: " + awayGames);
-//            System.out.println("Imbalance: " + imbalance);
-//            System.out.println("Penalty applied to " + t.getName() + " : " + tempPenalty +"\n");
         }
 
-//        System.out.println("Total H/A Equality Penalty: " + penalty);
         return penalty;
     }
 
@@ -166,8 +153,6 @@ public class QualityChecker {
         double penalty = 0;
         int desiredGames = (games.size() / teams.size()) * 2;
 
-//        System.out.println("\n--- Checking Total Scheduled Matches Quality ---");
-
         // Iterate over each team in schedule
         for(Team t : teams) {
             int gamesScheduled = 0;
@@ -185,13 +170,7 @@ public class QualityChecker {
             int imbalance = Math.abs(gamesScheduled - desiredGames);
             tempPenalty = gameCountWeight * imbalance;
             penalty += tempPenalty;
-
-//            System.out.println("Total Scheduled Games for " + t.getName() + ": " + gamesScheduled);
-//            System.out.println("Desired Games: " + desiredGames);
-//            System.out.println("Imbalance for " + t.getName() + ": " + tempPenalty + "\n");
         }
-//
-//        System.out.println("Match Equality Penalty: " + penalty);
         return penalty;
     }
 
@@ -209,8 +188,6 @@ public class QualityChecker {
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
 
-//        System.out.println("\n--- Total Quality of Schedule ---");
-//        System.out.println("Schedule Penalty: " + round(quality, 2));
         return quality;
     }
 }

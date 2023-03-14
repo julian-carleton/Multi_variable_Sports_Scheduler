@@ -65,6 +65,20 @@ public class Team {
 	}
 	
 	/**
+	 * Generates radius based on home the arenas Longitude and Latitude values
+	 */
+	public void generateRad() {
+		double rad = 0;
+		for (Arena a: this.getHomeArenas()) {					
+			if ( rad < ((latitude - a.getLatitude()) * (longitude - a.getLongitude())) / 2) {		// find longest distance between center point and home arena and set to radius
+				rad = ((latitude - a.getLatitude()) * (longitude - a.getLongitude())) / 2;
+			}
+		}
+		this.radius = rad;
+	}
+	
+	
+	/**
 	 * Check if Team has arena in home arena List
 	 * 
 	 * @param arena

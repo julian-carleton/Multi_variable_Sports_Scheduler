@@ -65,7 +65,6 @@ public class Schedule {
 			//Duplicating for even number of teams
 			if (this.teams.size() % 2 == 0) {
 				doubleRounds();
-				System.out.print("doubled");
 			}
 			orderExceptionNumber();	//Ordering rounds based on the number of exceptions
 			makeListGames();   		//Concatenates the rounds that will be used

@@ -177,7 +177,6 @@ public class NeighbourSelector {
 										  !tempMove.getGame().getHomeTeam().isHomeArena(tempMove.getTimeSlot().getArena())) {	
 			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
 			if (count > 1000) {
-				//System.out.println("No more possible moves");
 				tempMove = null;
 				break;
 			}
