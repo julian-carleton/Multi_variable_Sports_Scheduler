@@ -155,7 +155,7 @@ public class Runner {
 
 
 
-/**
+   /**
     * returns how many time slots there are between curSlot and end of the week
     * 
     * @param curSlot
@@ -328,13 +328,15 @@ public class Runner {
 	public boolean canGameBeScheduled(Game game, TimeSlot timeslot){
 		ArrayList<Exception> totalExceptions = new ArrayList<>();
 		for(int i = 0; i < game.getHomeTeam().getExceptions().size(); i++){
-			
-			totalExceptions.add(game.getHomeTeam().getExceptions().get(i)); // Add all home team exceptions
+			// Add all home team exceptions
+			totalExceptions.add(game.getHomeTeam().getExceptions().get(i));
 
-			totalExceptions.add(game.getAwayTeam().getExceptions().get(i)); // Add all away team exceptions
+			// Add all away team exceptions
+			totalExceptions.add(game.getAwayTeam().getExceptions().get(i));
 		}
 
-		for(Exception e: totalExceptions){		// Check all exceptions to determine if they overlap with timeslot
+		// Check all exceptions to determine if they overlap with timeslot
+		for(Exception e: totalExceptions){
 			if(e.getStart() == timeslot.getStartDateTime()){
 				return false;
 			}
@@ -374,12 +376,14 @@ public class Runner {
 			for(TimeSlot t: timeslots){
 				if(canGameBeScheduled(g, t)){ // checking time exceptions
 					if(canTeamPlay(g.getHomeTeam(), t.getArena())) // checking home arena exceptions
-						
-						g.setTimeSlot(t);// Set the TimeSlot for the Game
+						// Set the TimeSlot for the Game
+						g.setTimeSlot(t);
 
-						t.useTimeslot();// Set the TimeSlot as unavailable
+						// Set the TimeSlot as unavailable
+						t.useTimeslot();
 
-						games.remove(g);// Remove Game and Timeslot from the unscheduled lists
+						// Remove Game and Timeslot from the unscheduled lists
+						games.remove(g);
 						timeslots.remove(t);
 				}
 			}
@@ -414,6 +418,7 @@ public class Runner {
 
 		Runner runner = new Runner("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
 		runner.generateSchedules();
+		ExcelExport export = new ExcelExport(runner);
 
 		ArrayList<TabuSearch> tabuSearches = new ArrayList<TabuSearch>();
 
@@ -421,6 +426,8 @@ public class Runner {
 
 		for (Schedule s: runner.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
+				System.out.println("\n--------------------------------------------------------");
+				System.out.println("\nCreating Schedule for: " + s.getScheduleName());
 				s.createSchedule();
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
 				System.out.println("\nOptimizing: " + tempTabuSearch.getScheduleName());
@@ -431,23 +438,26 @@ public class Runner {
 
 		long end = System.currentTimeMillis();
 		long total = (end - start);
+		long minute = TimeUnit.MILLISECONDS.toMinutes(total);
 
-		// Perform Optimization for entire League
+		// Optimization for entire League
 		TabuSearch entireLeague = new TabuSearch(runner.getGames(),runner.getTimeslots(), runner.getTeams());
+		System.out.println("\nLeague Stats: Pre-Optimization");
+		export.initializeLeagueStats();
+
+		System.out.println("--------------------------------------------------------");
+		System.out.println("Optimizing League");
+		System.out.println("--------------------------------------------------------");
 		entireLeague.optimize();
-		tabuSearches.add(entireLeague);
-		
-		// Excel Export
-		ExcelExport export = new ExcelExport(runner);
-		export.printLeagueData();
+
+		System.out.println("League Stats: Post-Optimization");
+		export.updateLeagueStats();
+		System.out.println("Total Optimization Time: " + minute + " minutes");
+
+		// Export Schedules and update Stats
 		export.exportSchedule(outputFile);
+		export.exportStats();
 
-		for(int i = 0; i < tabuSearches.size(); ++i) {
-			export.getStats(tabuSearches.get(i), runner.getSchedules().get(i));
-		}
-
-
-		System.out.println("Total Optimization Time: " + TimeUnit.SECONDS.toSeconds(total));
 	}
 
 	
