@@ -465,8 +465,9 @@ public class League {
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
 		
 
-		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
+		League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
 		league.generateSchedules();
+		ExcelExport export = new ExcelExport(league);
 
 		ArrayList<TabuSearch> tabuSearches = new ArrayList<TabuSearch>();
 
@@ -474,6 +475,8 @@ public class League {
 
 		for (Schedule s: league.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
+				System.out.println("\n--------------------------------------------------------");
+				System.out.println("\nCreating Schedule for: " + s.getScheduleName());
 				s.createSchedule();
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
 				System.out.println("\nOptimizing: " + tempTabuSearch.getScheduleName());
@@ -484,23 +487,25 @@ public class League {
 
 		long end = System.currentTimeMillis();
 		long total = (end - start);
+		long minute = TimeUnit.MILLISECONDS.toMinutes(total);
 
-		// Perform Optimization for entire League
-		//TabuSearch entireLeague = new TabuSearch(league.getGames(),league.getTimeslots(), league.getTeams());
-		//entireLeague.optimize();
-		//tabuSearches.add(tempTabuSearch);
-		
-		// Excel Export
-		ExcelExport export = new ExcelExport(league);
-		export.printLeagueData();
+		// Optimization for entire League
+		TabuSearch entireLeague = new TabuSearch(league.getGames(),league.getTimeslots(), league.getTeams());
+		System.out.println("\nLeague Stats: Pre-Optimization");
+		export.initializeLeagueStats();
+
+		System.out.println("--------------------------------------------------------");
+		System.out.println("Optimizing League");
+		System.out.println("--------------------------------------------------------");
+		entireLeague.optimize();
+
+		System.out.println("League Stats: Post-Optimization");
+		export.updateLeagueStats();
+		System.out.println("Total Optimization Time: " + minute + " minutes");
+
+		// Export Schedules and update Stats
 		export.exportSchedule();
-
-		for(int i = 0; i < tabuSearches.size(); ++i) {
-			export.getStats(tabuSearches.get(i), league.getSchedules().get(i));
-		}
-
-
-		System.out.println("Total Optimization Time: " + TimeUnit.SECONDS.toSeconds(total));
+		export.exportStats();
 	}
 
 	
@@ -554,13 +559,4 @@ public class League {
 	public ArrayList<TimeSlot> getTimeslots() {
 		return timeslots;
 	}
-	
-	public double getOptimizationTime() {
-		return optimizationTime;
-	}
-
-	public void setOptimizationTime(double time) {
-		optimizationTime = time;
-	}
-
 }

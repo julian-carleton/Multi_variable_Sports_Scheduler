@@ -145,12 +145,6 @@ public class NeighbourSelector {
 			moves.add(move1);
 		}
 
-		for(Move m: moves) {
-			if(m.getTimeSlot() != null) {
-				moveCounter++;
-			}
-		}
-
 		/*
 		Returns:
 		1. Moves = (Game1, Timeslot1), (Game2, unusedTimeSlot)

@@ -65,7 +65,7 @@ public class Schedule {
 			//Duplicating for even number of teams
 			if (this.teams.size() % 2 == 0) {
 				doubleRounds();
-				System.out.print("doubled");
+				System.out.println("doubled");
 			}
 			orderExceptionNumber();	//Ordering rounds based on the number of exceptions
 			makeListGames();   		//Concatenates the rounds that will be used
@@ -277,8 +277,8 @@ public class Schedule {
 	public String getScheduleName() {
 		if(teams.size() > 1) {
 			String division = teams.get(1).getDivision().getName();
-			String tier = teams.get(1).getTier().toString();
-			return "Division: " + division + " (Tier: " + tier + ")";
+			int tier = teams.get(1).getTier().ordinal();
+			return "Division " + division + " (Tier: " + tier + ")";
 		}
 		return "All Schedules in League";
 	}
