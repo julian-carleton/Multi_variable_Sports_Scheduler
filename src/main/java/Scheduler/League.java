@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 
 
+
 /**
  *  Stores the leagues in the schedule and keeps track of the teams, divisions, and time slots assigned to them
  * 
@@ -49,7 +50,6 @@ public class League {
 	public void addDivision(Division division) {
 		divisions.add(division);
 	}
-
 	
 
 	public String getName() {
@@ -75,7 +75,13 @@ public class League {
 	public ArrayList<TimeSlot> getTimeslots() {
 		return timeslots;
 	}
-	
-	
 
+
+	public ArrayList<Arena> getArenas() {
+		return arenas;
+	}
+	
+	
+	
+	
 }

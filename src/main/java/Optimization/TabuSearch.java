@@ -20,8 +20,8 @@ import static org.apache.commons.math3.util.Precision.round;
  */
 public class TabuSearch {
     // Tabu Variables
-	private static final int iterationLimit = 50000;
-	private static final float quialityLimit = 100; 			// based on sample data 100 should be around 95% games scheduled
+	private static final int iterationLimit = 10000;
+	private static final float quialityLimit = 50; 			// based on sample data 100 should be around 95% games scheduled
 	
     private TabuList tabuList;
     private StopCondition stopCondition;
@@ -81,8 +81,7 @@ public class TabuSearch {
 
         // Stats
         setInitialGamesScheduled();
-        QualityChecker tempqc = new QualityChecker(currentSchedule, timeSlots, teams);
-        initialQuality = tempqc.getQuality();
+        initialQuality = qualityChecker.getQuality();
         ArrayList<Game> aviableGames = getAvailableGames(currentSchedule);
 
 
@@ -91,18 +90,18 @@ public class TabuSearch {
 
         while (stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
         	ArrayList<Move> tempMoves;
-        	if ((double)aviableGames.size() / (double)this.currentSchedule.size() > 0.1) {		//Change how games are selected to be more optimal
+        	if (aviableGames.size() / this.currentSchedule.size() > 0.1) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
-        		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
+        		neighbourSelector = new NeighbourSelector(timeSlots, neighbourSchedule, tabuList);
         		tempMoves.add(neighbourSelector.makeNeighbourScheduleFirst());
 
                 if (tempMoves.contains(null)) {  // no more possible moves
-        			neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
+        			neighbourSelector = new NeighbourSelector(timeSlots, neighbourSchedule, tabuList);
             		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         		}
 
         	}else {
-        		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
+        		neighbourSelector = new NeighbourSelector(timeSlots, neighbourSchedule, tabuList);
         		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         	}
 
@@ -380,6 +379,9 @@ public class TabuSearch {
 
     // Quality Stats
     public double getInitialQuality() {
+        if(initialQuality == 0.0) {
+            initialQuality = qualityChecker.getQuality();
+        }
         return initialQuality;
     }
 
