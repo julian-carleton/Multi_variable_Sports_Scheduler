@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * 
  * @author Quinn Sondermeyer
  */
-public class TimeSlot {
+public class TimeSlot implements Comparable<TimeSlot>{
 	private LocalDateTime startDateTime;
 	private Arena arena;
 	private ArrayList<Division> divisions;
@@ -80,6 +80,11 @@ public class TimeSlot {
 		this.isSelected = false;
 		
 	}
+	
+    @Override
+    public int compareTo(TimeSlot otherTimeSlot) {
+        return startDateTime.compareTo(otherTimeSlot.getStartDateTime());
+    }
 
 	
 
