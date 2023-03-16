@@ -39,7 +39,7 @@ public class NeighbourSelector {
 	private ArrayList<TimeSlot> availalbeTimeslots; // list of available timeslots
 	private Move move;
 	private TabuList tabuList;
-	private int moveCounter;
+	private int newMoveLimit;
 	
 	
 	
@@ -170,7 +170,8 @@ public class NeighbourSelector {
 										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision()) || // Checks timeSlot is the right division
 										  !tempMove.getGame().getHomeTeam().isHomeArena(tempMove.getTimeSlot().getArena())) {	
 			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
-			if (count > 1000) {
+			newMoveLimit = 1000;
+			if (count > newMoveLimit) {
 				//System.out.println("No more possible moves");
 				tempMove = null;
 				break;
@@ -248,7 +249,7 @@ public class NeighbourSelector {
 		return move;
 	}
 	
-	public int getMoveCounter() {
-		return moveCounter;
+	public int getNewMoveLimit() {
+		return newMoveLimit;
 	}
 }
