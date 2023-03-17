@@ -20,8 +20,8 @@ import static org.apache.commons.math3.util.Precision.round;
  */
 public class TabuSearch {
     // Stop Conditions
-	private static final int iterationLimit = 5000;
-	private static final float quialityLimit = 100; 			// based on sample data 100 should be around 95% games scheduled
+	private static final int iterationLimit = 100000;
+	private static final float quialityLimit = 100;
 
     // Tabu Search Variables
     private TabuList tabuList;

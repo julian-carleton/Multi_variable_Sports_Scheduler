@@ -6,7 +6,6 @@ import Optimization.QualityChecker;
 import Optimization.TabuSearch;
 import Scheduler.*;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -18,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Objects;
 
 import static java.lang.Math.floor;
 import static org.apache.commons.math3.util.Precision.round;
@@ -325,23 +323,11 @@ public class ExcelExport {
         String sumAcceptedMoves = "SUM(D2:D12)";
         String sumTabuMoves = "SUM(E2:E12)";
 
-        //Name namedCell = tsBook.createName();
-        //String sname = "TabuStats";
-        //String cname = "TmpName";
-        //namedCell.setNameName(cname + "1");
-        //String reference = "TabuStats!$F$2:$F$12";
-        //namedCell.setRefersToFormula(reference);
-
-        //Name namedCel2 = tsBook.createName();
-        //namedCel2.setNameName("my_sum");
-        //namedCel2.setRefersToFormula("SUM(IF(ISNUMBER(LEFT("+ namedCell + ",1)+0),LEFT("+ namedCell +",1)+0))");
-
         sumStatsBeforeCombinedTS.createCell(0).setCellValue("Sums:");
         sumStatsBeforeCombinedTS.createCell(1).setCellFormula(sumQuality);
         sumStatsBeforeCombinedTS.createCell(2).setCellFormula(sumAttemptedMoves);
         sumStatsBeforeCombinedTS.createCell(3).setCellFormula(sumAcceptedMoves);
         sumStatsBeforeCombinedTS.createCell(4).setCellFormula(sumTabuMoves);
-        //sumStatsBeforeCombinedTS.createCell(5).setCellFormula("'"+namedCel2+"'");
 
         // Add stats from entire league TS
         TabuSearch ts = league.getLeagueTS();
@@ -396,18 +382,18 @@ public class ExcelExport {
         }
 
         // Sum each of the Tabu Stat columns
-        Row sumsAfterLeagueTS = sheet.createRow(27);
+        Row sumsAfterCombinedTS = sheet.createRow(26);
 
-        String sumQualityAfter = "SUM(B2:B12)";
-        String sumAttemptedMovesAfter = "SUM(C2:C12)";
-        String sumAcceptedMovesAfter = "SUM(D2:D12)";
-        String sumTabuMovesAfter = "SUM(E2:E12)";
+        String sumQualityAfter = "SUM(B16:B26)";
+        String sumAttemptedMovesAfter = "SUM(C16:C26)";
+        String sumAcceptedMovesAfter = "SUM(D16:D26)";
+        String sumTabuMovesAfter = "SUM(E16:E26)";
 
-        sumStatsBeforeCombinedTS.createCell(0).setCellValue("Sums:");
-        sumStatsBeforeCombinedTS.createCell(1).setCellFormula(sumQualityAfter);
-        sumStatsBeforeCombinedTS.createCell(2).setCellFormula(sumAttemptedMovesAfter);
-        sumStatsBeforeCombinedTS.createCell(3).setCellFormula(sumAcceptedMovesAfter);
-        sumStatsBeforeCombinedTS.createCell(4).setCellFormula(sumTabuMovesAfter);
+        sumsAfterCombinedTS.createCell(0).setCellValue("Sums:");
+        sumsAfterCombinedTS.createCell(1).setCellFormula(sumQualityAfter);
+        sumsAfterCombinedTS.createCell(2).setCellFormula(sumAttemptedMovesAfter);
+        sumsAfterCombinedTS.createCell(3).setCellFormula(sumAcceptedMovesAfter);
+        sumsAfterCombinedTS.createCell(4).setCellFormula(sumTabuMovesAfter);
 
         // Entire League TS Combined Stats
         Row overallHeaders = sheet.createRow(28);
@@ -438,50 +424,6 @@ public class ExcelExport {
             System.out.println(tmp.getScheduleName() + " current Accepted Moves: " + tmp.getAcceptedMoves().size());
             System.out.println(tmp.getScheduleName() + " current Tabu Moves: " + tmp.getTabuList().size());
             System.out.println(tmp.getScheduleName() + " current Attempted Moves: " + tmp.getAttemptedMoves().size());
-        }
-
-        /*
-        int counter = 0;
-        for(Move m : ts.getAcceptedMoves()) {
-            Team mTeam = m.getGame().getHomeTeam();
-            Division mDiv = mTeam.getDivision();
-            Tier mTier = mTeam.getTier();
-            String mSchedule = "Division " + mDiv.getName() + " (tier: " + mTier + ")"; // same form as column 0 strings
-
-            boolean moveAssigned = false;
-            for(int i = 0; i < tabuSearches.size() && !moveAssigned; ++i) {
-                TabuSearch tmpTS = tabuSearches.get(i);
-                Division tmpDiv = tmpTS.getTeams().get(tmpTS.getTeams().size() - 1).getDivision();
-                int tmpTier = tmpTS.getTeams().get(tmpTS.getTeams().size() - 1).getTier().ordinal();
-
-                if(tmpDiv == mDiv && tmpTier == mTier.ordinal()) {
-                    System.out.println("Move at row: " + (i+1) + " belongs to: " + mSchedule + "(" + mDiv.getName() +" - " + mTier+")");
-                    //double currAM = sheet.getRow(i+1).getCell(3).getNumericCellValue(); // Schedules current "Accepted Moves" value (Column 3)
-                    //sheet.getRow(i + 1).getCell(3).setCellValue(currAM + 1); // Increment cell by 1
-                    assignMove(tmpTS,m);
-                    int rowNum = i + 1;
-                    int cellValue = (int) sheet.getRow(rowNum).getCell(3).getNumericCellValue();
-                    int newValue = cellValue + 1;
-                    sheet.getRow(rowNum).getCell(3).setCellValue(newValue);
-                    counter++;
-                    moveAssigned = true;
-                }
-            }
-        }
-
-         */
-    }
-
-    public void assignMove(TabuSearch ts, Move m) {
-        boolean alreadyInList = false;
-        for(Move tmpMove : ts.getAcceptedMoves()) {
-            if(tmpMove == m) {
-                alreadyInList = true;
-                break;
-            }
-        }
-        if(!alreadyInList) {
-            ts.getAcceptedMoves().add(m);
         }
     }
 
@@ -579,7 +521,7 @@ public class ExcelExport {
                             c.setCellStyle(blueHighlighterStyle);
                         }
                     }
-                    else if(r.getRowNum() == 25 && sheet.getSheetName().equals("Tabu Stats")) {
+                    else if(r.getRowNum() == 26 && sheet.getSheetName().equals("Tabu Stats")) {
                         if(c.getColumnIndex() == 0) {
                             CellStyle orangeHeaderStyle = workbook.createCellStyle();
                             orangeHeaderStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -681,57 +623,6 @@ public class ExcelExport {
         System.out.println("Unscheduled Games: " + (schedule.getGames().size() - scheduledGameCount));
         System.out.println("Scheduling Rate: " + schedulingRate + "%");
         System.out.println("Quality: " + initialQuality);
-    }
-
-
-    /**
-     * Prints the following stats for all Schedules post-optimization:
-     *  - Initial Quality (pre-optimization)
-     *  - Final Quality (post-optimization)
-     *  - Total Quality increase
-     *  - Total Moves Attempted
-     *  - Total Moves deemed Tabu
-     *  - Total Moves made to Schedule
-     *  - Initial amount of Scheduled Games
-     *  - Final amount of Scheduled Games
-     *  - Total Scheduled Games added by Optimization
-     *  - Total Optimization time
-     *
-     *  TO-DO: Update method to print these stats to an Excel sheet instead of printing to console
-     *
-     * @param
-     */
-        public void getStats(TabuSearch ts) {
-        int scheduledGames = ts.getFinalGamesScheduled();
-        int remainingGames = ts.getRemainingGames();
-        int potentialGames = ts.getCurrentSchedule().size();
-        double schedulingRate = round(100.0 * scheduledGames / potentialGames, 2);
-
-        int totalTimeslots = ts.getTimeSlots().size();
-        int remainingTimeSlots = ts.getRemainingTimeSlots();
-        int usedTimeslots = totalTimeslots - remainingTimeSlots;
-        double timeslotRate = round(100.0 * usedTimeslots / totalTimeslots, 2);
-
-        // Printing
-        //System.out.println("\n" + ts.getScheduleName());
-
-        //System.out.println("Initial Quality: " + ts.getInitialQuality());
-        System.out.println("Final Quality: " + ts.getFinalQuality() + " (increased by: " + round(ts.getInitialQuality() - ts.getFinalQuality(), 2) + ")");
-
-        System.out.println("Total Games: " + ts.getCurrentSchedule().size());
-        //System.out.println("Initial Scheduled Games: " + ts.getInitialGamesScheduled());
-        System.out.println("Final Scheduled Games: " + ts.getFinalGamesScheduled() + " (added: " + (ts.getFinalGamesScheduled() - ts.getInitialGamesScheduled()) + " games)");
-        System.out.println("Unscheduled Games: " + remainingGames);
-        System.out.println("Scheduling Rate: " + schedulingRate + "%");
-
-        System.out.println("Total Allotted TimeSlots: " + totalTimeslots);
-        System.out.println("TimeSlots Used: " + usedTimeslots + " (remaining timeslots: " + remainingTimeSlots +")" );
-        System.out.println("TimeSlot Usage Rate: " + timeslotRate + "%");
-
-        //System.out.println("Total Moves: " + ts.getTotalMoves());
-        //System.out.println("Tabu Moves: " + ts.getTabuMovesTotal());
-
-        System.out.println("Total Optimization Time: " + ts.executionTimeToString());
     }
 
     /**
