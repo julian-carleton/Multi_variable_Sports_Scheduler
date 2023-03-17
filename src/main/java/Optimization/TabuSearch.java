@@ -5,6 +5,9 @@ import Scheduler.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import static org.apache.commons.math3.util.Precision.round;
 
 /**
  * Main class of the Optimization package
@@ -16,28 +19,40 @@ import java.util.Objects;
  *
  */
 public class TabuSearch {
-    // Tabu Variables
-	private static final int iterationLimit = 1000;
-	private static final float quialityLimit = 100; 			// based on sample data 100 should be around 95% games scheduled
-	
+    // Stop Conditions
+	private static final int iterationLimit = 100000;
+	private static final float quialityLimit = 100;
+
+    // Tabu Search Variables
     private TabuList tabuList;
     private StopCondition stopCondition;
     private QualityChecker qualityChecker;
     private NeighbourSelector neighbourSelector;
-    
-    private float curQuiality;
 
-    // Games
+    // Schedule Lists
     private ArrayList<Game> neighbourSchedule;
     private ArrayList<Game> currentSchedule;
-    
     private ArrayList<Team> teams;
     private ArrayList<TimeSlot> timeSlots;
 
+    // Stats
+    private String scheduleName;
+    private double initialQuality;
+    private double finalQuality;
+    private ArrayList<Move> acceptedMoves;
+    private ArrayList<Move> attemptedMoves;
+    private int initialGamesScheduled;
+    private int finalGamesScheduled;
+    private int remainingGames;
+    private long executionTime;
+
+
     /**
-     * Constructor for TabuSearch
+     * TabuSearch constructor
      *
-     * @param schedule the Schedule being optimized
+     * @param games the list of games for the Schedule being optimized
+     * @param timeSlots the list of TimeSlots this Schedule is allotted
+     * @param teams the list of Teams that follow this Schedule
      */
     public TabuSearch(ArrayList<Game> games, ArrayList<TimeSlot> timeSlots, ArrayList<Team> teams) {
         tabuList = new TabuList();
@@ -49,10 +64,10 @@ public class TabuSearch {
         
         this.timeSlots = timeSlots;
         this.teams = teams;
-        
+        acceptedMoves = new ArrayList<>();
+        attemptedMoves = new ArrayList<>();
+        setScheduleName();
     }
-
-
 
     /**
      * Run the Tabu Search algorithm on the current schedule
@@ -64,47 +79,67 @@ public class TabuSearch {
         // Iteration counter
     	int x = iterationLimit;
         int iteration = 0;
+
+        // Stats
+        setInitialGamesScheduled();
+        initialQuality = qualityChecker.getQuality();
         ArrayList<Game> aviableGames = getAvailableGames(currentSchedule);
+
+
+        // Begin Timer
+        long startTime = System.currentTimeMillis();
+
         while (stopCondition.checkCondition(iteration, qualityChecker.getQuality())) { // stop condition --> iteration and quality check
-        	
         	ArrayList<Move> tempMoves;
         	if (aviableGames.size() / this.currentSchedule.size() > 0.1) {		//Change how games are selected to be more optimal
         		tempMoves = new ArrayList<Move>();
-        		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
-        		tempMoves.add(neighbourSelector.makeNeighbourScheduleFirst());
-        		if (tempMoves.contains(null)) {  // no more possible moves
-        			neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
-            		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
+        		neighbourSelector = new NeighbourSelector(timeSlots, neighbourSchedule, tabuList);
+        		tempMoves.add(neighbourSelector.makeNeighbourScheduleFirst()); // Move: unscheduled game -> available ts
+
+                if (tempMoves.contains(null)) {  // no more possible moves
+        			neighbourSelector = new NeighbourSelector(timeSlots, neighbourSchedule, tabuList);
+            		tempMoves = neighbourSelector.makeNeighbourScheduleSecond(); // Move: unscheduled game -> all ts
         		}
-        		
-        		
+
         	}else {
-        		
-        		neighbourSelector = new NeighbourSelector(this.timeSlots, neighbourSchedule, tabuList);
+        		neighbourSelector = new NeighbourSelector(timeSlots, neighbourSchedule, tabuList);
         		tempMoves = neighbourSelector.makeNeighbourScheduleSecond();
         	}
-        	
+
         	if (!(tempMoves.contains(null)||tempMoves.isEmpty())) {  // no more possible moves
-        		        	
 	        	for (Move m: tempMoves) {
 	        		Game tempGame = new Game(m.getGame().getHomeTeam(), m.getGame().getAwayTeam());
 	    			tempGame.setTimeSlot(m.getTimeSlot());
 	    			int index = currentSchedule.indexOf(m.getGame());
 	    			this.neighbourSchedule.set(index, tempGame);
+                    attemptedMoves.add(m);
 	        	}
 	        	
 	        	if (0 < compareSchedules()) {
 	        		remakeneighbourSchedule();
-	        		for (Move m: tempMoves) {
-	        			this.tabuList.addMove(m);
+	        		// Quality isn't improved -> add Moves to TabuList
+                    for (Move m: tempMoves) {
+                        if(!tabuList.isTabu(m)){
+                            tabuList.addMove(m);
+                        }
 	        		}
 	        		
 	        	}else if ( 0 == compareSchedules()) {
 	        		remakeneighbourSchedule(); // maybe change later
+                    // Quality isn't improved -> add Moves to TabuList
+                    for (Move m: tempMoves) {
+                        if(!tabuList.isTabu(m)){
+                            tabuList.addMove(m);
+                        }
+                    }
 	        		
 	        	}else {
-	        		System.out.println();
-	        		for (Move m: tempMoves) {
+	        		//System.out.println();
+                    // Store these moves for stats
+                    //Move tmp = new Move(m.getGame(), m.getTimeSlot());
+                    acceptedMoves.addAll(tempMoves);
+
+                    for (Move m: tempMoves) {
 	        			if (m.getGame().getTimeSlot() != null) {
 	        				m.getGame().getTimeSlot().freeUptimeslot();
 	        				//for alternate version of selecting moves
@@ -114,7 +149,7 @@ public class TabuSearch {
 	        			//for alternate version of selecting moves:
 	        			m.getTimeSlot().deSelectTimeslot();
 	        		}
-	        		
+
 	        		for (Move m: tempMoves) {
 	        			m.getGame().setTimeSlot(m.getTimeSlot());
 	        			m.getTimeSlot().useTimeslot();
@@ -123,33 +158,32 @@ public class TabuSearch {
 	        	}
         	}
         	iteration++;
-        	
         }
-        return currentSchedule;
-        
-    }
-    
-    
-    
-    
+        // Stop timer
+        long endTime = System.currentTimeMillis();
+        long total = endTime - startTime;
+        setExecutionTime(total);
 
+        // Stats
+        setFinalGamesScheduled();
+        setFinalQuality();
+        remainingGames = getAvailableGames(currentSchedule).size();
+
+        return currentSchedule;
+    }
+
+    /**
+     * Optimize() helper method for populating a Neighbouring Schedule
+     */
     private void remakeneighbourSchedule() {
     	neighbourSchedule = new ArrayList<Game>();
         for (Game g : currentSchedule) {
         	neighbourSchedule.add(g);
         }
-        
     }
-    
-    
-    
+
     /**
      * Compares the quality of the neighbouring Schedule against the quality of the current best Schedule
-     *
-     * @param current the current best Schedule
-     * @param nGames arraylist of games for neighbouring Schedule
-     * @param nTimeSlots arraylist of TimeSlots for neighbouring Schedule
-     * @param nTeams arraylist of teams for the neighbouring Schedule
      *
      * @return true if neighbouring Schedule has better quality than current Schedule, false if not
      */
@@ -189,26 +223,18 @@ public class TabuSearch {
 		}
 		return tempGames;
 	}
-    
-    
-    
-    
 
+    /**
+     * Main method for TabuSearch
+     *
+     * NOTE: May be safe to remove(?)
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-    	      
-    	
+
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     /**
      * Prints out the data to be optimized for the given schedule
      *
@@ -277,6 +303,163 @@ public class TabuSearch {
         }
     }
 
+    /*
+    Getters and Setters
+     */
+    public void setScheduleName() {
+        String division = teams.get(0).getDivision().getName();
+        int tier = teams.get(0).getTier().ordinal();
 
+        // Sets Schedule name if all teams in Schedule have same div/tier
+        boolean allSameDivision = teams.stream().allMatch(x -> x.getDivision().getName().equals(division));
+        boolean allSameTier = teams.stream().allMatch(x -> x.getTier().ordinal() == tier);
 
+        if(allSameDivision && allSameTier) {
+            scheduleName = "Division " + division + " (tier: " + tier + ")";
+        }
+    }
+
+    public String getScheduleName() {
+        return scheduleName;
+    }
+
+    public ArrayList<TimeSlot> getTimeSlots() {
+        return timeSlots;
+    }
+
+    public ArrayList<Team> getTeams() {
+        return teams;
+    }
+
+    // Scheduled Games Stats
+    public void setInitialGamesScheduled() {
+        // Initialize scheduled game counter
+        int counter = 0;
+
+        // Iterate over games & count amount of games w/TimeSlot
+        for(Game g : currentSchedule) {
+            if(g.getTimeSlot() != null) {
+                counter++;
+            }
+        }
+        initialGamesScheduled = counter;
+    }
+
+    public int getInitialGamesScheduled() {
+        return initialGamesScheduled;
+    }
+
+    public void setFinalGamesScheduled() {
+        // Initialize scheduled game counter
+        int counter = 0;
+
+        // Iterate over games & count all games w/TimeSlot
+        for(Game g : currentSchedule) {
+            if(g.getTimeSlot() != null) {
+                counter++;
+            }
+        }
+        finalGamesScheduled = counter;
+    }
+
+    public int getFinalGamesScheduled() {
+        return finalGamesScheduled;
+    }
+
+    public ArrayList<Game> getCurrentSchedule() {
+        return currentSchedule;
+    }
+
+    public int getRemainingGames() {
+        return remainingGames;
+    }
+
+    // TimeSlot stats
+    public int getRemainingTimeSlots() {
+        int counter = 0;
+        for(TimeSlot t : timeSlots) {
+            if(t.isAvailable()) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public double getTimeSlotUsage() {
+        int usedTimeslots = 0;
+        int availableTimeslots = 0;
+
+        for(TimeSlot t: timeSlots) {
+            if(t.isAvailable()) {
+                availableTimeslots++;
+            }
+            else{
+                usedTimeslots++;
+            }
+        }
+        int scheduleRate = (usedTimeslots / timeSlots.size()) * 100;
+        return round(scheduleRate,2);
+    }
+
+    // Quality Stats
+    public double getInitialQuality() {
+        if(initialQuality == 0.0) {
+            initialQuality = qualityChecker.getQuality();
+        }
+        return initialQuality;
+    }
+
+    public void setInitialQuality() {
+
+    }
+
+    public double getFinalQuality() {
+        return finalQuality;
+    }
+
+    public void setFinalQuality() {
+        finalQuality = qualityChecker.getQuality();
+    }
+
+    public ArrayList<Move> getAcceptedMoves() {
+        return acceptedMoves;
+    }
+
+    public ArrayList<Move> getTabuList() {
+        return tabuList.getTabuMoves();
+    }
+
+    public ArrayList<Move> getAttemptedMoves() {
+        return attemptedMoves;
+    }
+
+    // Execution Time Stat
+    public void setExecutionTime(long time) {
+        executionTime = time;
+    }
+
+    public String executionTimeToString() {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(executionTime);
+        if(seconds < 60L) {
+            return seconds + " sec";
+        }
+
+        return String.format("%d min, %d sec, %d ms",
+                TimeUnit.MILLISECONDS.toMinutes(executionTime),
+                TimeUnit.MILLISECONDS.toSeconds(executionTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(executionTime)),
+                executionTime
+        );
+    }
+
+    public int getIterationLimit() {
+        return iterationLimit;
+    }
+
+    public float getQualityThreshold() {
+        return quialityLimit;
+    }
+
+    public int getNewMoveLimit() {
+        return neighbourSelector.getNewMoveLimit();
+    }
 }

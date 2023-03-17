@@ -12,7 +12,7 @@ import Demo.DemoMain;
 
 public class DemoMain {
     public static void main(String[] args) {
-        ExcelImport excelImport = new ExcelImport("/Input_Proposal.xlsx");
+        ExcelImport excelImport = new ExcelImport(ExcelImport.class.getResourceAsStream("Input_Proposal.xlsx"));
 
         /*
          * Import sheets
@@ -55,7 +55,7 @@ public class DemoMain {
      * Prints out the objects created from import
      */
     private void demoCreateDataStruc() {
-    	ExcelImport Import = new ExcelImport("/Input_Proposal.xlsx");
+    	ExcelImport Import = new ExcelImport(ExcelImport.class.getResourceAsStream("Input_Proposal.xlsx"));
         Import.importData();
         CreateDataStrucs data = new CreateDataStrucs(Import.getTeams(), Import.getTimeExceptions(),Import.getDateExceptions(), Import.getArenas(),Import.getTimeSlots(),Import.getHomeArenas());
         

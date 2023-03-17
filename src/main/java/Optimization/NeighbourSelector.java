@@ -39,6 +39,7 @@ public class NeighbourSelector {
 	private ArrayList<TimeSlot> availalbeTimeslots; // list of available timeslots
 	private Move move;
 	private TabuList tabuList;
+	private int newMoveLimit;
 	
 	
 	
@@ -58,7 +59,7 @@ public class NeighbourSelector {
 	public NeighbourSelector(ArrayList<TimeSlot> timeSlots, ArrayList<Game> games, TabuList tabuList) {
 		this.games = games;
 		this.timeSlots = timeSlots;
-		availalbeTimeslots = getAvailableTimeSlots(timeSlots);
+		availalbeTimeslots = getAvailableGames(timeSlots);
 		UnschduledGames = UnschduledGames(this.games);
 		this.tabuList = tabuList;
 		// Check Timelslot to make sure that you do not double book
@@ -113,7 +114,7 @@ public class NeighbourSelector {
 		if(!timeslot1.isAvailable()) {
 			for(Game g : games) {
 				if (g.getTimeSlot() == null) {
-					
+
 				}
 				else if(g.getTimeSlot().equals(move1.getTimeSlot())){
 					// Try to pair game2 (originally paired with timeslot1) with an availableTimeslot
@@ -169,8 +170,9 @@ public class NeighbourSelector {
 										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision()) || // Checks timeSlot is the right division
 										  !tempMove.getGame().getHomeTeam().isHomeArena(tempMove.getTimeSlot().getArena())) {	
 			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
-			if (count > 1000) {
-				System.out.println("No more possible moves");
+			newMoveLimit = 1000;
+			if (count > newMoveLimit) {
+				//System.out.println("No more possible moves");
 				tempMove = null;
 				break;
 			}
@@ -207,7 +209,7 @@ public class NeighbourSelector {
 	 * @return returns sublist of available timeslots
 	 * @author Quinn Sondermeyer
 	 */
-	private ArrayList<TimeSlot> getAvailableTimeSlots(ArrayList<TimeSlot> timeslots) {
+	private ArrayList<TimeSlot> getAvailableGames(ArrayList<TimeSlot> timeslots) {
 		ArrayList<TimeSlot> tempTimeSlot = new ArrayList<TimeSlot>();
 		for (TimeSlot t: timeslots) {
 			if (t.isAvailable()) {
@@ -247,7 +249,7 @@ public class NeighbourSelector {
 		return move;
 	}
 	
-	
-	
-	
+	public int getNewMoveLimit() {
+		return newMoveLimit;
+	}
 }

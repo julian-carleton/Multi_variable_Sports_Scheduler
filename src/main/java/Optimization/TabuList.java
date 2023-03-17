@@ -45,4 +45,13 @@ public class TabuList {
         }
         return false;
     }
+
+    /**
+     * Gets the size of the tabu list
+     *
+     * @return the number of moves in the tabu list as an int
+     */
+    public ArrayList<Move> getTabuMoves() {
+        return tabuList;
+    }
 }

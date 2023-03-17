@@ -1,7 +1,9 @@
 package Excel_Import_Export;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -30,13 +32,18 @@ public class ExcelImport {
 	private ArrayList<ArrayList<Object>> extraInfo = new ArrayList<ArrayList<Object>>();
 
     /*
+    3D ArrayList
+     */
+    private ArrayList<ArrayList<ArrayList<Object>>> sheets = new ArrayList<>();
+
+    /*
      * Excel Variables
      */
 	private  XSSFWorkbook wb;
 	private XSSFSheet teamsSheet;
 	private XSSFSheet timeExceptionsSheet;
 	private XSSFSheet dateExceptionsSheet;
-	private XSSFSheet arenasSheet;
+	private  XSSFSheet arenasSheet;
 	private XSSFSheet timeSlotsSheet;
 	private XSSFSheet homeArenasSheet;
 	private XSSFSheet extraInfoSheet;
@@ -44,17 +51,17 @@ public class ExcelImport {
     /**
      * Constructor for Excel_Import class
      */
-    public ExcelImport(String filename) {
+    public ExcelImport(InputStream inputStream) {
         try {
             /*
              *  InputStream
              */
-            InputStream schedulingData = ExcelImport.class.getResourceAsStream(filename);
+            //InputStream schedulingData = ExcelImport.class.getResourceAsStream(filename);
 
             /*
              *  Input_Proposal Workbook
              */
-            wb = new XSSFWorkbook(schedulingData); 
+            wb = new XSSFWorkbook(inputStream);
 
             /*
              * Sheets
@@ -68,6 +75,64 @@ public class ExcelImport {
             extraInfoSheet = wb.getSheetAt(6);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Iterates through all the sheets and rows and fills out a 3d ArrayList of objects
+     */
+    public void importAllData() {
+
+        Iterator<Sheet> sheetIterator = wb.sheetIterator();
+        sheets = new ArrayList<ArrayList<ArrayList<Object>>>();
+
+        int sheetCount = 0;
+        int rowCount = 0;
+        LocalDateTime compareTime = LocalDateTime.of(999, 1, 1, 0, 0);
+
+        while (sheetIterator.hasNext()) { 	// Iterate over data
+            sheets.add(new ArrayList<ArrayList<Object>>());
+
+            Sheet sheet = sheetIterator.next();	// Next Row
+
+            Iterator<Row> rowIterator = sheet.rowIterator(); // Iterator
+
+            rowCount = 0;
+
+            while (rowIterator.hasNext()) { 	// Iterate over data
+                sheets.get(sheetCount).add(new ArrayList<Object>());
+
+                Row row = rowIterator.next();	// Next Row
+
+                Iterator<Cell> cellIterator = row.cellIterator();	// Iterate over cells in row
+
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+
+                    switch (cell.getCellType()) {					// Based on type import Data
+                        case BOOLEAN:
+                            sheets.get(sheetCount).get(rowCount).add(cell.getBooleanCellValue());
+                            break;
+
+                        case NUMERIC:
+                            if(DateUtil.isCellDateFormatted(cell)){
+                                sheets.get(sheetCount).get(rowCount).add(cell.getLocalDateTimeCellValue());
+                                break;
+                            }else {
+                                sheets.get(sheetCount).get(rowCount).add(cell.getNumericCellValue());
+                                break;
+                            }
+                        case STRING:
+                            sheets.get(sheetCount).get(rowCount).add(cell.getStringCellValue());
+                            break;
+                    }
+
+
+
+                }
+                rowCount++;
+            }
+            sheetCount++;
         }
     }
     
@@ -592,7 +657,7 @@ public class ExcelImport {
 
     public static void main(String[] args) throws IOException {
         // Create test run
-        ExcelImport test = new ExcelImport("/Input_Proposal.xlsx");
+        ExcelImport test = new ExcelImport(ExcelImport.class.getResourceAsStream("Input_Proposal.xlsx"));
 
         // Import sheets
         test.importTeams();
