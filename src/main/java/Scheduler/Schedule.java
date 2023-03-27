@@ -184,7 +184,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 */
-	private void makeListGames() {
+	public void makeListGames() {
 		int currRoundIndex = 0;
 		for (int roundIndex = 0; roundIndex < this.actualNumRounds; roundIndex++) {
 			ArrayList<Game> currRoundGames = this.getRounds().get(currRoundIndex).getMatchups();
@@ -206,7 +206,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 */
-	private void assignGames() {
+	public void assignGames() {
 		Game currGame;
 		TimeSlot currTimeSlot;
 		for (int i = 0; i < this.games.size(); i++) {

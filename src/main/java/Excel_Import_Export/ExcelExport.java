@@ -43,7 +43,7 @@ public class ExcelExport {
     private CellStyle sums;
 
     // Scheduling Variables
-    private League league;
+    private Runner runner;
 
     // Demo mode
     boolean demo = false;
@@ -51,9 +51,9 @@ public class ExcelExport {
     /**
      *  Constructor for Excel_Export class
      */
-    public ExcelExport(League league) {
+    public ExcelExport(Runner runner) {
         // Initialize the league to be exported
-        this.league = league;
+        this.runner = runner;
 
         // Create workbook
         wb = new XSSFWorkbook();
@@ -63,9 +63,9 @@ public class ExcelExport {
      * Prints important league data (name/divisions in league/amount of schedules)
      */
     public void printLeagueInfo() {
-        System.out.println("League Name: " + league.getName());
-        System.out.println("Number of Divisions: " + league.getDivisions().size());
-        System.out.println("Number of Schedules: " + (league.getSchedules().size() - 1));
+        System.out.println("League Name: " + runner.getName());
+        System.out.println("Number of Divisions: " + runner.getDivisions().size());
+        System.out.println("Number of Schedules: " + (runner.getSchedules().size() - 1));
     }
 
     /**
@@ -73,13 +73,13 @@ public class ExcelExport {
      */
     public void processLeague() {
         // Get the amount of schedules for the league
-        int scheduleNum = league.getSchedules().size();
+        int scheduleNum = runner.getSchedules().size();
         System.out.println("Total rounds scheduled: " + rounds);
 
         // Iterate over each schedule (starts at 1 since schedule @ index 0 is an empty test schedule)
         for(int i = 1; i < scheduleNum; ++i) {
             // Current schedule info
-            Schedule schedule = league.getSchedules().get(i);
+            Schedule schedule = runner.getSchedules().get(i);
 
             // Create Sheet
             XSSFSheet sheet = wb.createSheet("Schedule " + (i));
@@ -162,8 +162,8 @@ public class ExcelExport {
         row.createCell(10).setCellValue("Quality");
 
         // Add Stats
-        for(int i = 1; i < league.getSchedules().size(); ++i) {
-            Schedule s = league.getSchedules().get(i);
+        for(int i = 1; i < runner.getSchedules().size(); ++i) {
+            Schedule s = runner.getSchedules().get(i);
             ArrayList<Game> scheduledGames = new ArrayList<>();
             ArrayList<TimeSlot> unusedTimeslots = new ArrayList<>();
 
@@ -211,7 +211,7 @@ public class ExcelExport {
     }
 
     /**
-     *
+     *	Updates League stats after running entire league optimization
      * @throws IOException
      */
     public void updateLeagueStats() throws IOException {
@@ -232,8 +232,8 @@ public class ExcelExport {
         row.createCell(10).setCellValue("Quality");
 
         // Add Stats
-        for(int i = 1; i < league.getSchedules().size(); ++i) {
-            Schedule s = league.getSchedules().get(i);
+        for(int i = 1; i < runner.getSchedules().size(); ++i) {
+            Schedule s = runner.getSchedules().get(i);
 
             // Finding all games with an assigned timeslot
             ArrayList<Game> scheduledGames = new ArrayList<>();
@@ -283,7 +283,7 @@ public class ExcelExport {
         optimiziationTime.createCell(0).setCellValue("Optimization Time");
 
         Row tmp = sheet.createRow(29);
-        tmp.createCell(0).setCellValue(league.getOptimizationTime());
+        tmp.createCell(0).setCellValue(runner.getOptimizationTime());
     }
 
     public void initializeTabuStats(ArrayList<TabuSearch> tabuSearches) {
@@ -330,7 +330,7 @@ public class ExcelExport {
         sumStatsBeforeCombinedTS.createCell(4).setCellFormula(sumTabuMoves);
 
         // Add stats from entire league TS
-        TabuSearch ts = league.getLeagueTS();
+        TabuSearch ts = runner.getLeagueTS();
 
         Row leagueHeaders = sheet.createRow(14);
         leagueHeaders.createCell(0).setCellValue("Schedule");
@@ -416,7 +416,7 @@ public class ExcelExport {
         overallStats.createCell(2).setCellValue(ts.getAttemptedMoves().size());
         overallStats.createCell(3).setCellValue(ts.getAcceptedMoves().size());
         overallStats.createCell(4).setCellValue(ts.getTabuList().size());
-        overallStats.createCell(5).setCellValue(league.getOptimizationTime());
+        overallStats.createCell(5).setCellValue(runner.getOptimizationTime());
         overallStats.createCell(6).setCellValue(ts.getIterationLimit() * ts.getNewMoveLimit());
         overallStats.createCell(7).setCellValue(ts.getQualityThreshold());
 
@@ -435,7 +435,7 @@ public class ExcelExport {
      * @param scheduleNum the schedule to be sorted
      */
     public ArrayList<Game> sortMatches(int scheduleNum) {
-        ArrayList<Game> games = league.getSchedules().get(scheduleNum).getGames();
+        ArrayList<Game> games = runner.getSchedules().get(scheduleNum).getGames();
         ArrayList<Game> scheduledGames = new ArrayList<>();
 
         // Create list of matches with timeslots
@@ -444,15 +444,7 @@ public class ExcelExport {
                 scheduledGames.add(g);
             }
         }
-
         Collections.sort(scheduledGames, Comparator.comparing(x -> x.getTimeSlot().getStartDateTime()));
-
-        /*
-        // Print dates in order
-        for(Game g : scheduledGames) {
-            System.out.println("Date: " + g.getTimeSlot().getStartDateTime().toString());
-        }
-         */
 
         return scheduledGames;
     }
@@ -553,7 +545,7 @@ public class ExcelExport {
      * for each division/tier schedule
      */
     public void printLeagueData() {
-        ArrayList<Schedule> schedules = league.getSchedules();
+        ArrayList<Schedule> schedules = runner.getSchedules();
         double leagueTimeslots = 0;
         double leagueUsedTimeslots = 0;
 
@@ -628,7 +620,7 @@ public class ExcelExport {
     /**
      * Method called to create the workbook file containing schedule info
      */
-    public void exportSchedule() throws IOException {
+    public void exportSchedule(String exportLocation) throws IOException {
         // Print league info
         printLeagueInfo();
 
@@ -639,7 +631,7 @@ public class ExcelExport {
         formatSheet(wb);
 
         // Output the workbook file
-        String fp = "Output_Schedule.xlsx";
+        String fp = exportLocation + "Output_Schedule.xlsx";
         FileOutputStream out = new FileOutputStream(fp);
         wb.write(out);
         out.close();
@@ -650,7 +642,7 @@ public class ExcelExport {
      *
      * @throws IOException handles I/O Exception for Optimization_Stats.xlsx
      */
-    public void exportStats() throws IOException {
+    public void exportStats(String exportLocation) throws IOException {
         // Print Optimization Stats
         printLeagueData();
 
@@ -658,7 +650,7 @@ public class ExcelExport {
         formatSheet(statsBook);
 
         // Export Workbook to Excel file
-        String fp = "Optimization_Stats.xlsx";
+        String fp = exportLocation + "Optimization_Stats.xlsx";
         FileOutputStream out = new FileOutputStream(fp);
         statsBook.write(out);
         out.close();
@@ -669,7 +661,7 @@ public class ExcelExport {
      *
      * @throws IOException handles I/O Exception for Compact_Optimization_Stats.xlsx
      */
-    public void exportTabuStats(ArrayList<TabuSearch> tabuSearches) throws IOException {
+    public void exportTabuStats(ArrayList<TabuSearch> tabuSearches, String exportLocation) throws IOException {
         // Process Stats
         initializeTabuStats(tabuSearches);
 
@@ -677,7 +669,7 @@ public class ExcelExport {
         formatSheet(tsBook);
 
         // Export Workbook
-        String fp = "TabuSearch_Stats.xlsx";
+        String fp = exportLocation + "TabuSearch_Stats.xlsx";
         FileOutputStream out = new FileOutputStream(fp);
         tsBook.write(out);
         out.close();

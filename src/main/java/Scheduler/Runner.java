@@ -20,7 +20,7 @@ import Scheduler.Exception;
  */
 public class Runner {
 	
-	private static final String outputFile = "./output/main/Output_Schedule.xlsx";
+	private static final String outputFile = "./output/main/";
 	private static final String inputFile = "/Input_Proposal.xlsx";
 	
 	private String name;
@@ -30,7 +30,8 @@ public class Runner {
 	private ArrayList<Schedule> schedules;
 	private double gamesPerWeek = 1;
 	private TimeSlot emptySlot;
-	private double optimizationTime;
+	private long optimizationTime;
+	private TabuSearch leagueTS;
 
 	
 	/**
@@ -152,8 +153,6 @@ public class Runner {
        }
        return tempTimeSlots;
    }
-
-
 
    /**
     * returns how many time slots there are between curSlot and end of the week
@@ -402,7 +401,7 @@ public class Runner {
 	 */
 	public static void main(String[] args) throws IOException {
 		InputStream is = League.class.getResourceAsStream(inputFile);
-		ExcelImport excelImport = new ExcelImport(is);
+		ExcelImport excelImport = new ExcelImport(League.class.getResourceAsStream(inputFile));
 
         /*
          * Import sheets
@@ -415,7 +414,7 @@ public class Runner {
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getSheets());
 		
 
-		Runner runner = new Runner("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());	
+		Runner runner = new Runner("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
 		runner.generateSchedules();
 		ExcelExport export = new ExcelExport(runner);
 
@@ -434,10 +433,11 @@ public class Runner {
 				tabuSearches.add(tempTabuSearch);
 			}
 		}
-
-		long end = System.currentTimeMillis();
-		long total = (end - start);
-		long minute = TimeUnit.MILLISECONDS.toMinutes(total);
+		int count = 0;
+		for(TabuSearch ts : tabuSearches) {
+			System.out.println("Index: " + count + " & Schedule: " + ts.getScheduleName());
+			count++;
+		}
 
 		// Optimization for entire League
 		TabuSearch entireLeague = new TabuSearch(runner.getGames(),runner.getTimeslots(), runner.getTeams());
@@ -449,14 +449,51 @@ public class Runner {
 		System.out.println("--------------------------------------------------------");
 		entireLeague.optimize();
 
+		long end = System.currentTimeMillis();
+		long total = (end - start);
+		runner.setOptimizationTime(total);
+
+		// Need to process entireLeague to get the following
+
+		int tsCount = 0;
+		for(TabuSearch ts : tabuSearches) {
+			// use schedule name to find division/tier
+			String divName = ts.getScheduleName().substring(9,11);
+			String tierName = ts.getScheduleName().substring(8,20);
+
+			boolean divLocated = false;
+			int divIndex = 0;
+			for(int i = 0; i < runner.getDivisions().size(); ++i) {
+				int index = 0;
+				if(divName.equals(runner.getDivisions().get(i).getName())) {
+					divLocated = true;
+					divIndex = i;
+				}
+			}
+			Division tmpDiv = runner.getDivisions().get(divIndex);
+			Tier tmpTier = tmpDiv.getTeams().get(tmpDiv.getTeams().size() - 1).getTier();
+
+			// Iterate over all Attempted Moves
+			for(Move m : entireLeague.getAttemptedMoves()) {
+				// Checking for Move object in both
+				boolean inList = false;
+				for(int i = 0; i < ts.getTabuList().size() && !inList; ++i) {
+					if(m == ts.getTabuList().get(i)) {
+						inList = true;
+					}
+				}
+			}
+			tsCount++;
+		}
+
 		System.out.println("League Stats: Post-Optimization");
 		export.updateLeagueStats();
-		System.out.println("Total Optimization Time: " + minute + " minutes");
 
 		// Export Schedules and update Stats
 		export.exportSchedule(outputFile);
-		export.exportStats();
-
+		export.exportStats(outputFile);
+		runner.setLeagueTS(entireLeague);
+		export.exportTabuStats(tabuSearches, outputFile);
 	}
 
 	
@@ -514,13 +551,25 @@ public class Runner {
 	public ArrayList<TimeSlot> getTimeslots() {
 		return timeslots;
 	}
+
 	
-	public double getOptimizationTime() {
-		return optimizationTime;
+	public String getOptimizationTime() {
+		return String.format("%d min, %d sec",
+				TimeUnit.MILLISECONDS.toMinutes(optimizationTime),
+				TimeUnit.MILLISECONDS.toSeconds(optimizationTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(optimizationTime))
+		);
 	}
 
-	public void setOptimizationTime(double time) {
-		optimizationTime = time;
+	public void setLeagueTS(TabuSearch ts) {
+		leagueTS = ts;
+	}
+
+	public TabuSearch getLeagueTS() {
+		return leagueTS;
+	}
+	
+	public void setOptimizationTime(long optimizationTime) {
+		this.optimizationTime = optimizationTime;
 	}
 
 }
