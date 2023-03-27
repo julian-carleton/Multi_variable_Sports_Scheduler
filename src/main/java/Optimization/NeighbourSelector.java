@@ -43,15 +43,11 @@ public class NeighbourSelector {
 	
 	
 	
-	/**
-	 * 
-	 */
-	public NeighbourSelector() {
-		
-	}
+	
 	
 	/**
-	 * 
+	 * Constructor 
+	 *  
 	 * @param timeSlots
 	 * @param games
 	 * @author Quinn Sondermeyer, Julian Obando
@@ -87,22 +83,7 @@ public class NeighbourSelector {
 	 */
 	public ArrayList<Move> makeNeighbourScheduleSecond() {
 		ArrayList<Move> moves = new ArrayList<Move>(); // pair of moves
-
-		/**
-		Move tempMove = newMove(UnschduledGames, timeSlots); // create new move from unscheduled games and list of ALL timeslots
-		if (!(tempMove == null)) { // If Move was created (unscheduled game matched with a timeslot)
-			moves.add(tempMove); // add Move to pair of moves
-			if (!move.getTimeSlot().isAvailable()) { // check if the timeslot has a Game assigned to it already
-				for (Game g: games) { // iterate over full list of games
-					if (g.getTimeSlot().equals(move.getTimeSlot())) { // find game that already has the timeslot now being used by Move for different game
-						tempMove = new Move(g,availalbeTimeslots.get(selectRandom(availalbeTimeslots.size()))); // create second move using the Game originally in first timeslot and a timeslot from available timeslots
-						moves.add(tempMove); // add second move to the pair of moves
-					}
-				}
-			}
-		}
-		**/
-
+		
 		// Create Move from full list of games and timeslots
 		Move move1 = newMove(games, timeSlots);
 		Game game1 = move1.getGame();
@@ -170,9 +151,7 @@ public class NeighbourSelector {
 										  !tempMove.getTimeSlot().getDivisions().contains(tempMove.getGame().getHomeTeam().getDivision()) || // Checks timeSlot is the right division
 										  !tempMove.getGame().getHomeTeam().isHomeArena(tempMove.getTimeSlot().getArena())) {	
 			tempMove = new Move(games.get(selectRandom(games.size())), timeslotList.get(selectRandom(timeslotList.size()))); // 
-			newMoveLimit = 1000;
-			if (count > newMoveLimit) {
-				//System.out.println("No more possible moves");
+			if (count > 1000) {
 				tempMove = null;
 				break;
 			}
@@ -218,10 +197,7 @@ public class NeighbourSelector {
 		}
 		return tempTimeSlot;
 	}
-
-
-
-
+	
 	
 	/**
      * Returns a random object from the a list of objects
@@ -237,9 +213,6 @@ public class NeighbourSelector {
     	}
         return 0;
     }
-	
-    
-    
     
     /*
      * Getters and Setters

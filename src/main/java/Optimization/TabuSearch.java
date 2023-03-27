@@ -20,7 +20,7 @@ import static org.apache.commons.math3.util.Precision.round;
  */
 public class TabuSearch {
     // Stop Conditions
-	private static final int iterationLimit = 100000;
+	private static final int iterationLimit = 10000;
 	private static final float quialityLimit = 100;
 
     // Tabu Search Variables
@@ -134,9 +134,7 @@ public class TabuSearch {
                     }
 	        		
 	        	}else {
-	        		//System.out.println();
                     // Store these moves for stats
-                    //Move tmp = new Move(m.getGame(), m.getTimeSlot());
                     acceptedMoves.addAll(tempMoves);
 
                     for (Move m: tempMoves) {

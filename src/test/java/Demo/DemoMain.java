@@ -1,5 +1,6 @@
 package Demo;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.ArrayList;
@@ -11,28 +12,29 @@ import Scheduler.Exception;
 import Demo.DemoMain;
 
 public class DemoMain {
+	
+	private static final String inputFile = "/Input_Proposal.xlsx";
+	
+	
     public static void main(String[] args) {
-        ExcelImport excelImport = new ExcelImport(ExcelImport.class.getResourceAsStream("Input_Proposal.xlsx"));
+    	InputStream schedulingData = ExcelImport.class.getResourceAsStream(inputFile);
+		ExcelImport excelImport = new ExcelImport(schedulingData);
 
         /*
          * Import sheets
          */
-        excelImport.importData();
-
-        /*
-         * Create Data Types
-         */
-        CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getTeams(), excelImport.getTimeExceptions(),excelImport.getDateExceptions(), excelImport.getArenas(),excelImport.getTimeSlots(),excelImport.getHomeArenas());
-
+		excelImport.importData();
+		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getSheets());
+		
         printCreateDataStruc(strucs);
 
-        League league = new League("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
-        league.generateSchedules();
+        Runner runner = new Runner("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
+        runner.generateSchedules();
 
 
         int t1 = 0;
         int t2 = 0;
-        for (Schedule s: league.getSchedules()) {
+        for (Schedule s: runner.getSchedules()) {
             if (!s.getTimeSlots().isEmpty()) {
                 s.createSchedule();
                 for (Game g :s.getGames()) {
@@ -42,29 +44,24 @@ public class DemoMain {
                 }
             }
         }
-        printTeamTimeSlotSelect(league);
+        printTeamTimeSlotSelect(runner);
         System.out.println((float)t1/(t1+t2));
     }
-    
-    
-    
-
-
 
 	/**
      * Prints out the objects created from import
      */
     private void demoCreateDataStruc() {
-    	ExcelImport Import = new ExcelImport(ExcelImport.class.getResourceAsStream("Input_Proposal.xlsx"));
-        Import.importData();
-        CreateDataStrucs data = new CreateDataStrucs(Import.getTeams(), Import.getTimeExceptions(),Import.getDateExceptions(), Import.getArenas(),Import.getTimeSlots(),Import.getHomeArenas());
-        
+    	InputStream schedulingData = ExcelImport.class.getResourceAsStream(inputFile);
+		ExcelImport importData = new ExcelImport(schedulingData);
+		importData.importData();
+		CreateDataStrucs data = new CreateDataStrucs(importData.getSheets());
         printCreateDataStruc(data);
         
         
         
-        League league = new League("League", data.getDivisions(),data.getTimeslots(), data.getArenas());
-        league.generateSchedules();
+        Runner runner = new Runner("League", data.getDivisions(),data.getTimeslots(), data.getArenas());
+        runner.generateSchedules();
     }
 
 	private static void printCreateDataStruc(CreateDataStrucs data) {
@@ -145,10 +142,10 @@ public class DemoMain {
 
 	/**
 	 * Prints the Selection of the time slots and teams
-	 * @param league
+	 * @param runner
 	 */
-    private static void printTeamTimeSlotSelect(League league) {
-		for (Schedule s: league.getSchedules()) {
+    private static void printTeamTimeSlotSelect(Runner runner) {
+		for (Schedule s: runner.getSchedules()) {
 			System.out.println();
 			System.out.print("Division: " + s.getTeams().get(0).getDivision().getName());
 			System.out.println("   Tier: " + s.getTeams().get(0).getTier());

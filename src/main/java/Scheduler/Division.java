@@ -47,8 +47,6 @@ public class Division {
 		return teams;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
