@@ -39,7 +39,7 @@ public class NeighbourSelector {
 	private ArrayList<TimeSlot> availalbeTimeslots; // list of available timeslots
 	private Move move;
 	private TabuList tabuList;
-	private int moveCounter;
+	private int newMoveLimit;
 	
 	
 	
@@ -222,7 +222,7 @@ public class NeighbourSelector {
 		return move;
 	}
 	
-	public int getMoveCounter() {
-		return moveCounter;
+	public int getNewMoveLimit() {
+		return newMoveLimit;
 	}
 }
