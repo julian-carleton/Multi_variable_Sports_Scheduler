@@ -196,22 +196,7 @@ public class QualityChecker {
         	}
         	//System.out.println("The team rest days are: "+teamRestDays);
         	
-//            //Standard Deviation Method
-//        	double averageRestDay = 0;
-//        	for (int j = 0; j < teamRestDays.size(); j++) {
-//        		averageRestDay += teamRestDays.get(j);
-//        	}
-//        	averageRestDay = averageRestDay / (teamRestDays.size());
-//        	teamsAverageDays.add(averageRestDay);
-//        	
-//        	double stdDevRestDay = 0;
-//        	for (int j = 0; j < teamRestDays.size(); j++) {
-//        		stdDevRestDay += Math.pow(teamRestDays.get(j) - averageRestDay,2);
-//        	}
-//        	stdDevRestDay = stdDevRestDay/teamRestDays.size();
-//        	stdDevRestDay = Math.sqrt(stdDevRestDay);
-//        	teamsStdDevRestDays.add(stdDevRestDay);
-        	
+
         	//MSE to desired Method
         	double error = 0;
         	for (int j = 0; j < teamRestDays.size(); j++) {
@@ -225,13 +210,22 @@ public class QualityChecker {
 
         //Adding the penalty of each team (Using MSE)
         for (int k = 0; k < teamsMSE.size(); k++) {
-        	penalty += teamsMSE.get(k);
+        	penalty += teamsMSE.get(k) / teams.size();
+        }
+        
+        if (idealRestDays * 2 < penalty) {
+        	//max out to 
+        	penalty = 1;
+        } else {
+        	penalty = penalty / (idealRestDays * 2);
         }
         
 //        System.out.println("The standard deviation per team are: "+teamsStdDevRestDays);
 //        System.out.println("The MSE per team when compared to a desired value: "+teamsMSE);
 //        System.out.println("The total penalty is: "+penalty);
 //        System.out.print("\n\n");
+        
+        penalty = round(restDaysWeight * (penalty) * 100, 2);
         return penalty;
     }
 
@@ -279,7 +273,7 @@ public class QualityChecker {
         quality += checkTimeslotUsage();
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
-        quality += checkRestDayEquality();
+        //quality += checkRestDayEquality();
 
         return quality;
     }    
