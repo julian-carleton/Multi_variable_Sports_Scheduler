@@ -3,7 +3,8 @@ package Scheduler;
 import java.util.ArrayList;
 
 /**
- * ---------------------Add Description
+ * Stores a round in the round robin algorithm. Including a list of games
+ * 
  * 
  * @author Julian Obando
  *

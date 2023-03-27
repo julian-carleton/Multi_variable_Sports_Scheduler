@@ -51,7 +51,7 @@ public class TabuList {
      *
      * @return the number of moves in the tabu list as an int
      */
-    public int getTabuSize() {
-        return tabuList.size();
+    public ArrayList<Move> getTabuMoves() {
+        return tabuList;
     }
 }

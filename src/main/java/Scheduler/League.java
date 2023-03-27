@@ -1,5 +1,13 @@
 package Scheduler;
 
+import java.io.IOException;
+import java.io.IOException.*;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
 
@@ -16,7 +24,7 @@ public class League {
 	private ArrayList<TimeSlot> timeslots;
 	private ArrayList<Arena> arenas;
 	private ArrayList<Schedule> schedules;
-	private double gamesPerWeek = 1;
+	
 
 	
 	/**
@@ -59,14 +67,6 @@ public class League {
 	public ArrayList<Division> getDivisions() {
 		return divisions;
 	}
-	
-	public void setDivisions(ArrayList<Division> divisions) {
-		this.divisions = divisions;
-	}
-
-	public double getGamesPerWeek() {
-		return gamesPerWeek;
-	}
 
 	public ArrayList<Schedule> getSchedules() {
 		return schedules;
@@ -75,13 +75,5 @@ public class League {
 	public ArrayList<TimeSlot> getTimeslots() {
 		return timeslots;
 	}
-
-
-	public ArrayList<Arena> getArenas() {
-		return arenas;
-	}
-	
-	
-	
 	
 }
