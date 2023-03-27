@@ -79,6 +79,7 @@ public class Game {
 	/*
 	 * Getters and Setters
 	 */
+	
 	public Team getHomeTeam() {
 		return this.homeTeam;
 	}

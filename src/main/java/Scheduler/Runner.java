@@ -314,7 +314,6 @@ public class Runner {
 			System.out.println("Home Team: " + ug.getHomeTeam());
 			System.out.println("Away Team: " + ug.getAwayTeam());
 			System.out.println("Exceptions: " + ug.getExceptionsNumber());
-			//System.out.println("Is game scheduled: " + ug.getTimeSlot().isSelected());
 		}
 		return unscheduledGames;
 	}
