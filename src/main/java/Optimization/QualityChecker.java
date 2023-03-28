@@ -1,10 +1,13 @@
 package Optimization;
 
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import Scheduler.*;
-
+import Scheduler.Exception;
 
 import java.util.ArrayList;
 
@@ -139,7 +142,90 @@ public class QualityChecker {
      */
     public double checkRestDayEquality() {
         double penalty = 0;
+        
+        //double DaysInSchedule = daysInSchedule();
+        //Collections.sort(timeSlots);
+        //double DaysInSchedule = (double) ChronoUnit.DAYS.between(timeSlots.get(0).getStartDateTime(), timeSlots.get(timeSlots.size()-1).getStartDateTime());
+        ///double idealRestDays = Math.floorDiv((int) DaysInSchedule, games.size()/(teams.size()/2));
+        double idealRestDays = 7;   //This value until bug is fixed  
+        
+//        ArrayList<Double> teamsAverageDays = new ArrayList<Double>();
+//        ArrayList<Double> teamsStdDevRestDays = new ArrayList<Double>();
+        ArrayList<Double> teamsMSE = new ArrayList<Double>();
+        //Obtaining average rest day per team
+        for (Team currTeam: teams) {
+        	//Getting the team's timeSlots
+        	ArrayList<TimeSlot> teamTimeSlots= new ArrayList<TimeSlot>();
+        	for (Game currGame: games) {
+        		if(currGame.getAwayTeam().equals(currTeam) || currGame.getHomeTeam().equals(currTeam)) {
+            		TimeSlot currTimeSlot = currGame.getTimeSlot();
+            		if (currTimeSlot != null) {
+            			teamTimeSlots.add(currTimeSlot);
+            		}
+        		}
+        	}
+        	Collections.sort(teamTimeSlots);
+        	
+        	//Getting the days between timeSlots of the team (starting from the first team's timeSlots to the last)
+        	ArrayList<Double> teamRestDays = new ArrayList<Double>();
+        	for (int i = 0; i < teamTimeSlots.size() - 1; i++) {
+        		TimeSlot currTimeSlot = teamTimeSlots.get(i);
+        		TimeSlot nextTimeSlot = teamTimeSlots.get(i + 1);
+        		
+    			double restDay = (double) ChronoUnit.DAYS.between(currTimeSlot.getStartDateTime(), nextTimeSlot.getStartDateTime());
+        		//Checking if there are exceptions in between timeSlots
+        		ArrayList<Exception> teamExceptions = currTeam.getExceptions();
+        		if (teamExceptions.size() > 0) {
+            		for (Exception currException: teamExceptions) {
+            			//Checking if the exception starts and ends in the rest period
+            			if (currException.compareStart(currTimeSlot.getStartDateTime()) > 0 && currException.compareStart(nextTimeSlot.getStartDateTime()) < 0 && 
+            					currException.compareEnd(currTimeSlot.getStartDateTime()) > 0 && currException.compareEnd(nextTimeSlot.getStartDateTime()) < 0) {
+            				//Checking if exception is larger than idealRestDays
+            				double daysInException = (double) ChronoUnit.DAYS.between(currException.getStart(), currException.getEnd());
+            				if (daysInException > idealRestDays) {
+            					//unscheduledDaysPenalization = StartOfcurrTimeSlotToStartOfException + EndOfExceptionToStartOfNextTimeSlot
+            					double unscheduledDaysPenalization = (double)(ChronoUnit.DAYS.between(currTimeSlot.getStartDateTime(), currException.getStart()) + ChronoUnit.DAYS.between(currException.getEnd(), nextTimeSlot.getStartDateTime()));
+            					restDay = idealRestDays + unscheduledDaysPenalization; 
+            					//System.out.println("Exception larger than ideal rest days");
+            					break; //Assume that there are no more exceptions between these timeSlots 
+            				}
+            			} 
+            		}
+        		}
+        		teamRestDays.add(restDay);
+        	}
+        	//System.out.println("The team rest days are: "+teamRestDays);
+        	
 
+        	//MSE to desired Method
+        	double error = 0;
+        	for (int j = 0; j < teamRestDays.size(); j++) {
+        		error += Math.pow((teamRestDays.get(j)-idealRestDays), 2);
+        	}
+        	error = error / (teamRestDays.size());
+        	error = Math.sqrt(error);
+        	teamsMSE.add(error);
+        	
+        }
+
+        //Adding the penalty of each team (Using MSE)
+        for (int k = 0; k < teamsMSE.size(); k++) {
+        	penalty += teamsMSE.get(k) / teams.size();
+        }
+        
+        if (idealRestDays * 2 < penalty) {
+        	//max out to 
+        	penalty = 1;
+        } else {
+        	penalty = penalty / (idealRestDays * 2);
+        }
+        
+//        System.out.println("The standard deviation per team are: "+teamsStdDevRestDays);
+//        System.out.println("The MSE per team when compared to a desired value: "+teamsMSE);
+//        System.out.println("The total penalty is: "+penalty);
+//        System.out.print("\n\n");
+        
+        penalty = round(restDaysWeight * (penalty) * 100, 2);
         return penalty;
     }
 
@@ -187,7 +273,29 @@ public class QualityChecker {
         quality += checkTimeslotUsage();
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
+        //quality += checkRestDayEquality();
 
         return quality;
+    }    
+    
+    
+    private double daysInSchedule() {
+    	
+	   	LocalDateTime startDay = null;
+    	LocalDateTime endDay = null;
+    	if (timeSlots != null) {
+    	   	startDay = timeSlots.get(0).getStartDateTime();
+        	endDay = timeSlots.get(0).getStartDateTime();
+        	for (TimeSlot currTimeSlot: timeSlots) {
+        		if (startDay.compareTo(currTimeSlot.getStartDateTime()) > 0) {
+        			startDay = currTimeSlot.getStartDateTime();
+        		}
+        		if (endDay.compareTo(currTimeSlot.getStartDateTime()) < 0) {
+        			endDay = currTimeSlot.getStartDateTime();
+        		}
+        	}
+    	}
+ 
+    	return (double) ChronoUnit.DAYS.between(startDay, endDay);
     }
 }

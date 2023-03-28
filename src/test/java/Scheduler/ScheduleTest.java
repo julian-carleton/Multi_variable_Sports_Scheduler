@@ -113,8 +113,8 @@ class ScheduleTest {
 		//Second Round
 		curr_round = schedule.getRounds().get(1);
 		//First Match Up
-		assertEquals("Team 2", curr_round.getGame(0).getHomeTeam().getName());
-		assertEquals("Team 6", curr_round.getGame(0).getAwayTeam().getName());
+		assertEquals("Team 6", curr_round.getGame(0).getHomeTeam().getName());
+		assertEquals("Team 2", curr_round.getGame(0).getAwayTeam().getName());
 		//Second Match Up
 		assertEquals("Team 3", curr_round.getGame(1).getHomeTeam().getName());
 		assertEquals("Team 1", curr_round.getGame(1).getAwayTeam().getName());
