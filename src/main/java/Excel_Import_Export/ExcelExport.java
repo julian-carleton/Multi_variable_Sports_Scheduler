@@ -541,6 +541,135 @@ public class ExcelExport {
     }
 
     /**
+     * Shows the improvements in post-optimization stats by highlighting in green
+     *
+     * @param workbook the workbook to be formatted
+     */
+    public void formatOptimizedStats(Workbook workbook) {
+        // Get sheet
+        Sheet sheet = workbook.getSheetAt(0);
+
+        // Create green highlight cell style
+        byte[] greenHighlightRGB = new byte[3];
+        greenHighlightRGB[0] = (byte) 198;
+        greenHighlightRGB[1] = (byte) 224;
+        greenHighlightRGB[2] = (byte) 180;
+        XSSFColor greenHighlightColor = new XSSFColor(greenHighlightRGB);
+
+        CellStyle greenHighlighterStyle = statsBook.createCellStyle();
+        greenHighlighterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        greenHighlighterStyle.setAlignment(HorizontalAlignment.CENTER);
+        greenHighlighterStyle.setFillForegroundColor(greenHighlightColor);
+        greenHighlighterStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Create better green highlight cell style (for larger improvements)
+        byte[] betterGreenHighlightRGB = new byte[3];
+        betterGreenHighlightRGB[0] = (byte) 158;
+        betterGreenHighlightRGB[1] = (byte) 202;
+        betterGreenHighlightRGB[2] = (byte) 128;
+        XSSFColor betterGreenHighlightColor = new XSSFColor(betterGreenHighlightRGB);
+
+        CellStyle betterGreenHighlighterStyle = statsBook.createCellStyle();
+        betterGreenHighlighterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        betterGreenHighlighterStyle.setAlignment(HorizontalAlignment.CENTER);
+        betterGreenHighlighterStyle.setFillForegroundColor(betterGreenHighlightColor);
+        betterGreenHighlighterStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Create yellow highlight cell style
+        byte[] yellowHighlightRGB = new byte[3];
+        yellowHighlightRGB[0] = (byte) 255;
+        yellowHighlightRGB[1] = (byte) 234;
+        yellowHighlightRGB[2] = (byte) 175;
+        XSSFColor yellowHighlightColor = new XSSFColor(yellowHighlightRGB);
+
+        CellStyle yellowHighlighterStyle = statsBook.createCellStyle();
+        yellowHighlighterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        yellowHighlighterStyle.setAlignment(HorizontalAlignment.CENTER);
+        yellowHighlighterStyle.setFillForegroundColor(yellowHighlightColor);
+        yellowHighlighterStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Create better yellow highlight cell style (for larger improvements)
+        byte[] betterYellowHighlightRGB = new byte[3];
+        betterYellowHighlightRGB[0] = (byte) 255;
+        betterYellowHighlightRGB[1] = (byte) 217;
+        betterYellowHighlightRGB[2] = (byte) 109;
+        XSSFColor betterYellowHighlightColor = new XSSFColor(betterYellowHighlightRGB);
+
+        CellStyle betterYellowHighlighterStyle = statsBook.createCellStyle();
+        betterYellowHighlighterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        betterYellowHighlighterStyle.setAlignment(HorizontalAlignment.CENTER);
+        betterYellowHighlighterStyle.setFillForegroundColor(betterYellowHighlightColor);
+        betterYellowHighlighterStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Now loop through the values of each schedule and compare them to the post-optimization values
+        for(int i = 1; i <= 11; ++i) {
+            for(int j = 2; j <= 10; ++j) {
+                // Formatted as percentages
+                if(j == 6 || j == 7){
+                    String preCell = sheet.getRow(i).getCell(j).getStringCellValue().replaceAll("[%]","");
+                    double preDouble = Double.parseDouble(preCell);
+
+                    String postCell = sheet.getRow(i+14).getCell(j).getStringCellValue().replaceAll("[%]","");
+                    double postDouble = Double.parseDouble(postCell);
+
+                    double difference = postDouble - preDouble;
+
+                    if(preDouble < postDouble) {
+                        if(difference < 15) {
+                            sheet.getRow(i).getCell(j).setCellStyle(yellowHighlighterStyle);
+                            sheet.getRow(i+14).getCell(j).setCellStyle(greenHighlighterStyle);
+                        }
+                        else {
+                            sheet.getRow(i).getCell(j).setCellStyle(betterYellowHighlighterStyle);
+                            sheet.getRow(i+14).getCell(j).setCellStyle(betterGreenHighlighterStyle);
+                        }
+                    }
+                }
+                // Represent improvement as decrease in value
+                else if(j == 3 || j == 5 || j == 10) {
+                    // Get pre- & post-cell numbers
+                    double preDouble = sheet.getRow(i).getCell(j).getNumericCellValue();
+                    double postDouble = sheet.getRow(i+14).getCell(j).getNumericCellValue();
+                    double difference = preDouble - postDouble;
+
+                    if(postDouble < preDouble) {
+                        if(difference < 5.00) {
+                            // Highlight the improved stat
+                            sheet.getRow(i).getCell(j).setCellStyle(yellowHighlighterStyle);
+                            sheet.getRow(i+14).getCell(j).setCellStyle(greenHighlighterStyle);
+                        }
+                        else {
+                            // Highlight the improved stat
+                            sheet.getRow(i).getCell(j).setCellStyle(betterYellowHighlighterStyle);
+                            sheet.getRow(i+14).getCell(j).setCellStyle(betterGreenHighlighterStyle);
+                        }
+                    }
+                }
+                // Improvement is an increase in value
+                else {
+                    // Get pre- & post-cell numbers
+                    double preDouble = sheet.getRow(i).getCell(j).getNumericCellValue();
+                    double postDouble = sheet.getRow(i+14).getCell(j).getNumericCellValue();
+                    double difference = postDouble - preDouble;
+
+                    if(preDouble < postDouble){
+                        if(difference < 5.00) {
+                            // Highlight the improved stat
+                            sheet.getRow(i).getCell(j).setCellStyle(yellowHighlighterStyle);
+                            sheet.getRow(i+14).getCell(j).setCellStyle(greenHighlighterStyle);
+                        }
+                        else {
+                            // Highlight the improved stat
+                            sheet.getRow(i).getCell(j).setCellStyle(betterYellowHighlighterStyle);
+                            sheet.getRow(i+14).getCell(j).setCellStyle(betterGreenHighlighterStyle);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Prints the total games, scheduled games, allotted timeslots, remaining timeslots, and scheduling success rate
      * for each division/tier schedule
      */
@@ -648,6 +777,7 @@ public class ExcelExport {
 
         // Format Workbook
         formatSheet(statsBook);
+        formatOptimizedStats(statsBook);
 
         // Export Workbook to Excel file
         String fp = exportLocation + "Optimization_Stats.xlsx";
