@@ -159,7 +159,7 @@ public class ExcelExport {
         row.createCell(7).setCellValue("Scheduling Success %");
         row.createCell(8).setCellValue("Teams");
         row.createCell(9).setCellValue("Games per Team");
-        row.createCell(10).setCellValue("Quality");
+        row.createCell(10).setCellValue("Penalty");
 
         // Add Stats
         for(int i = 1; i < runner.getSchedules().size(); ++i) {
@@ -186,7 +186,6 @@ public class ExcelExport {
             double ssr = (tsg / tg) * 100; // scheduling success rate
             double tsTotal = s.getTimeSlots().size(); // total allotted timeslots
             double atsTotal = unusedTimeslots.size(); // total available timeslots (unused remaining timeslots)
-
             double tps = 1.0 * scheduledGames.size() / s.getTeams().size();
             double timeslotMaximization = (tsTotal - atsTotal) / tsTotal;
 
@@ -229,7 +228,7 @@ public class ExcelExport {
         row.createCell(7).setCellValue("Scheduling Success %");
         row.createCell(8).setCellValue("Teams");
         row.createCell(9).setCellValue("Games per Team");
-        row.createCell(10).setCellValue("Quality");
+        row.createCell(10).setCellValue("Penalty");
 
         // Add Stats
         for(int i = 1; i < runner.getSchedules().size(); ++i) {
@@ -259,7 +258,6 @@ public class ExcelExport {
 
             double tps = 1.0 * scheduledGames.size() / s.getTeams().size();
             double timeslotMaximization = (tsTotal - atsTotal) / tsTotal;
-
             QualityChecker qc = new QualityChecker(s.getGames(), s.getTimeSlots(), s.getTeams());
 
             // Create Row for Schedule stats
@@ -294,7 +292,7 @@ public class ExcelExport {
         // Create sheet headers
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("Schedule");
-        row.createCell(1).setCellValue("Quality");
+        row.createCell(1).setCellValue("Penalty");
         row.createCell(2).setCellValue("Attempted Moves");
         row.createCell(3).setCellValue("Accepted Moves");
         row.createCell(4).setCellValue("Tabu Moves");
@@ -493,8 +491,16 @@ public class ExcelExport {
             sheet.autoSizeColumn(i);
             for(Row r: sheet){
                 for(Cell c: r){
-                    if(r.getRowNum() == 0 || r.getRowNum() == 14 || r.getRowNum() == 28) {
+                    if(r.getRowNum() == 0) {
                         c.setCellStyle(headers);
+                    }
+                    else if(r.getRowNum() == 14 || r.getRowNum() == 28) {
+                        if(sheet.getSheetName().equals("Tabu Stats") || sheet.getSheetName().equals("Optimization Statistics")) {
+                            c.setCellStyle(headers);
+                        }
+                        else{
+                            c.setCellStyle(style);
+                        }
                     }
                     else if(r.getRowNum() == 12 && sheet.getSheetName().equals("Tabu Stats")) {
                         if(c.getColumnIndex() == 0) {
@@ -626,7 +632,7 @@ public class ExcelExport {
                     }
                 }
                 // Represent improvement as decrease in value
-                else if(j == 3 || j == 5 || j == 10) {
+                else if(j == 3 || j == 5) {
                     // Get pre- & post-cell numbers
                     double preDouble = sheet.getRow(i).getCell(j).getNumericCellValue();
                     double postDouble = sheet.getRow(i+14).getCell(j).getNumericCellValue();
@@ -643,6 +649,22 @@ public class ExcelExport {
                             sheet.getRow(i).getCell(j).setCellStyle(betterYellowHighlighterStyle);
                             sheet.getRow(i+14).getCell(j).setCellStyle(betterGreenHighlighterStyle);
                         }
+                    }
+                }
+                else if(j == 10) {
+                    double preDouble = sheet.getRow(i).getCell(j).getNumericCellValue();
+                    double postDouble = sheet.getRow(i+14).getCell(j).getNumericCellValue();
+                    double difference = preDouble - postDouble;
+
+                    if(difference < 30) {
+                        // Highlight the improved stat
+                        sheet.getRow(i).getCell(j).setCellStyle(yellowHighlighterStyle);
+                        sheet.getRow(i+14).getCell(j).setCellStyle(greenHighlighterStyle);
+                    }
+                    else {
+                        // Highlight the improved stat
+                        sheet.getRow(i).getCell(j).setCellStyle(betterYellowHighlighterStyle);
+                        sheet.getRow(i+14).getCell(j).setCellStyle(betterGreenHighlighterStyle);
                     }
                 }
                 // Improvement is an increase in value
