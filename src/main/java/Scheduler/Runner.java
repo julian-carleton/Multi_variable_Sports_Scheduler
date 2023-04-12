@@ -32,6 +32,8 @@ public class Runner {
 	private TimeSlot emptySlot;
 	private long optimizationTime;
 	private TabuSearch leagueTS;
+	
+	
 
 	
 	/**
@@ -63,10 +65,11 @@ public class Runner {
 	 * 
 	 */
 	public void generateSchedules() {
-		ArrayList<Team> tempTeam = new ArrayList<Team>();
+		
 		ArrayList<Arena> arenas = new ArrayList<Arena>();
 		
 		for (Division d: divisions) {
+			ArrayList<Team> tempTeam = new ArrayList<Team>();
 			int numTiers = 0;
 			for (Team t: d.getTeams()) {		// Get total tier for each division
 				if (Tier.fromEnum(t.getTier())> numTiers ) {
@@ -88,10 +91,37 @@ public class Runner {
 					}
 				}
 
-				if (!tempTeam.isEmpty()) {
+				if (!tempTeam.isEmpty() && !tempTeam.get(0).getDivision().getName().equals("ALL")) {
 					ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);// Select subset time slots from full list
 					this.schedules.add(new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek))); // call schedule
 				}
+			}
+		}
+	}
+	
+	/**
+	 * Calls Schedule to generate Schedules for each of the tier division pairs
+	 * 
+	 */
+	public void generateRankedSchedules() {
+		
+		ArrayList<Arena> arenas = new ArrayList<Arena>();
+		for (Division d: divisions) {
+		
+			arenas = new ArrayList<Arena>();
+			ArrayList<Team> tempTeam = new ArrayList<Team>();
+			for (Team t: d.getTeams()) {
+				tempTeam.add(t);						//add team to list for Schedule object
+				for (Arena a: t.getHomeArenas()) {
+					if (!a.equals(null)) {
+						arenas.add(a);				// add home arena to maximize the ability to schedule all time slots
+					}
+				}
+			}
+
+			if (!tempTeam.isEmpty() && !tempTeam.get(0).getDivision().getName().equals("ALL")) {
+				ArrayList<TimeSlot> tempTimeSlots = seletTimeslot(tempTeam,arenas);// Select subset time slots from full list
+				this.schedules.add(new Schedule(tempTeam, tempTimeSlots, (int)(getNumberWeeks()*this.gamesPerWeek))); // call schedule
 			}
 		}
 	}
@@ -392,6 +422,7 @@ public class Runner {
 		System.out.println("Available TimeSlots remaining: " + timeslots.size());
 	}
 	
+	
 
 	/**
 	 * Main Funtion to of Scheduling Program
@@ -412,24 +443,35 @@ public class Runner {
 		 * Create Data Types
 		 */
 		CreateDataStrucs strucs = new CreateDataStrucs(excelImport.getSheets());
-		
 
 		Runner runner = new Runner("League", strucs.getDivisions(),strucs.getTimeslots(), strucs.getArenas());
-		runner.generateSchedules();
+		
 		ExcelExport export = new ExcelExport(runner);
 
 		ArrayList<TabuSearch> tabuSearches = new ArrayList<TabuSearch>();
 
 		long start = System.currentTimeMillis();
-
+		boolean system;
+		double temp = (double) strucs.getModes().get(3).get(1);
+		int tierRank = (int) temp;
+		if ( tierRank == 0 ) {
+			runner.generateRankedSchedules();	
+			system = false;
+		}
+		else {
+			runner.generateSchedules();
+			system = true;
+		}
+		
 		for (Schedule s: runner.getSchedules()) {
 			if (!s.getTimeSlots().isEmpty()) {
 				System.out.println("\n--------------------------------------------------------");
 				System.out.println("\nCreating Schedule for: " + s.getScheduleName());
-				s.createSchedule();
+				s.createSchedule(system);
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
-				System.out.println("\nOptimizing: " + tempTabuSearch.getScheduleName());
+				System.out.println("\nOptimizing: " + s.getName());
 				tempTabuSearch.optimize();
+				tempTabuSearch.setScheduleName(s.getName());
 				tabuSearches.add(tempTabuSearch);
 			}
 		}
@@ -438,6 +480,7 @@ public class Runner {
 			System.out.println("Index: " + count + " & Schedule: " + ts.getScheduleName());
 			count++;
 		}
+		
 
 		// Optimization for entire League
 		TabuSearch entireLeague = new TabuSearch(runner.getGames(),runner.getTimeslots(), runner.getTeams());
@@ -448,6 +491,7 @@ public class Runner {
 		System.out.println("Optimizing League");
 		System.out.println("--------------------------------------------------------");
 		entireLeague.optimize();
+		entireLeague.setScheduleName("Entire League");
 
 		long end = System.currentTimeMillis();
 		long total = (end - start);
@@ -458,8 +502,10 @@ public class Runner {
 		int tsCount = 0;
 		for(TabuSearch ts : tabuSearches) {
 			// use schedule name to find division/tier
-			String divName = ts.getScheduleName().substring(9,11);
-			String tierName = ts.getScheduleName().substring(8,20);
+			String divName = runner.getSchedules().get(tsCount).getTeams().get(0).getDivision().getName();
+			
+			if ( tierRank == 1 ) { String tierName = ts.getScheduleName().substring(8,20); }
+			
 
 			boolean divLocated = false;
 			int divIndex = 0;
@@ -470,8 +516,6 @@ public class Runner {
 					divIndex = i;
 				}
 			}
-			Division tmpDiv = runner.getDivisions().get(divIndex);
-			Tier tmpTier = tmpDiv.getTeams().get(tmpDiv.getTeams().size() - 1).getTier();
 
 			// Iterate over all Attempted Moves
 			for(Move m : entireLeague.getAttemptedMoves()) {
@@ -573,5 +617,9 @@ public class Runner {
 	public void setOptimizationTime(long optimizationTime) {
 		this.optimizationTime = optimizationTime;
 	}
+
+	
+	
+	
 
 }
