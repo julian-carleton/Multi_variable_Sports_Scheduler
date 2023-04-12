@@ -261,7 +261,7 @@ public class QualityChecker {
         quality += checkTimeslotUsage();
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
-        quality += checkRestDayEquality();
+        //quality += checkRestDayEquality();
 
         return quality;
     }    

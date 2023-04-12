@@ -20,7 +20,7 @@ import static org.apache.commons.math3.util.Precision.round;
  */
 public class TabuSearch {
     // Stop Conditions
-	private static final int iterationLimit = 10000;
+	private static final int iterationLimit = 5000;
 	private static final float quialityLimit = 100;
 
     // Tabu Search Variables
