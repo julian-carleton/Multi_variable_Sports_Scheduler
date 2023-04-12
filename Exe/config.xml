@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\Brady\Desktop\Year 4\Fall Semester\Capstone\Git Projects\Iteration 2.2\out\artifacts\MultiVariableSportsScheduler_jar\MultiVariableSportsScheduler.jar</jar>
+  <outfile>C:\Users\Brady\Desktop\Year 4\Fall Semester\Capstone\Git Projects\Iteration 2.2\out\artifacts\MultiVariableSportsScheduler_jar\MultiVariableSportsScheduler.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>true</restartOnCrash>
+  <manifest></manifest>
+  <icon></icon>
+  <classPath>
+    <mainClass>Scheduler.Runner</mainClass>
+  </classPath>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>true</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion>16.0.2</minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+</launch4jConfig>
