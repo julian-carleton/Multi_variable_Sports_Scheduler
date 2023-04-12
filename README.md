@@ -74,10 +74,37 @@ The striking difference of our scheduler is allowing for more dynamic schedules.
 ## Iterations
 <details>
   <summary>Iteration 1</summary>
+  1. Creating initial scheduler. This consisted of: <br />
+	- Importing from excel, <br />
+	- Creating the data structures,<br />
+	- Choosing timeslots for each Schedule,<br />
+	- Creating matchups with Round Robin and<br />
+	- Assiging matchups to timeslots<br />
+  2. Class Diagram for Iteration 1 is below<br />
+	<img src="./Resources/UML Iteration 1.png" alt="Alt text" title = "Class Diagram for Iteration 1"> <br />
+  3. SeQuence Diagraom for Iteration 1
+  <img src="./Resources/Iteration1SequenceDiagram.png" alt="Alt text" title = "Sequence Diagram for Iteration 1"> <br />
 </details>
 <details>
   <summary>Iteration 2</summary>
+   Creating Optimization System. This consisted of:<br />
+		1. Creating the data structures<br />
+			- TabuList,<br />
+			- NeighborScheduler,<br />
+			- Move and<br />
+			- QualityChecker<br />
+		2. Creating Swaps<br />
+		3. Comparing Schedules<br />
+		4. Flow Chart for Iteration 2 is below<br />
+		<img src="./Resources/FlowChart Iteration 2.png" alt="Alt text" title = "Class Diagram for Iteration 1"> <br />
+		5. Class Diagraom for Iteration 2
+		<img src="./Resources/OptimizationUML.drawio.png" alt="Alt text" title = "Sequence Diagram for Iteration 1"> <br />
 </details>
 <details>
   <summary>Iteration 3</summary>
+  1. Code clean up <br />
+  2. Testing <br />
+  3. Ranked Implemnetation <br />
+  4. UML for Iteration 3<br />
+  <img src="./Resources/UML Iteration 3.png" alt="Alt text" title = "Sequence Diagram for Iteration 1"> <br />
 </details>
