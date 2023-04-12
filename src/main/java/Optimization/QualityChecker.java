@@ -144,61 +144,70 @@ public class QualityChecker {
         //Collections.sort(timeSlots);
         //double DaysInSchedule = (double) ChronoUnit.DAYS.between(timeSlots.get(0).getStartDateTime(), timeSlots.get(timeSlots.size()-1).getStartDateTime());
         ///double idealRestDays = Math.floorDiv((int) DaysInSchedule, games.size()/(teams.size()/2));
-        double idealRestDays = 7;   //This value until bug is fixed  
-        
+        double idealRestDays = 7;   //This value until bug is fixed
         ArrayList<Double> teamsMSE = new ArrayList<Double>();
+
+        // Separating exhibition games
+        ArrayList<Game> nonExhibitionGames = new ArrayList<>();
+        for(Game g : games) {
+            if(!g.getAwayTeam().getName().equals("Exhibition")) {
+                nonExhibitionGames.add(g);
+            }
+        }
+
         //Obtaining average rest day per team
         for (Team currTeam: teams) {
-        	//Getting the team's timeSlots
-        	ArrayList<TimeSlot> teamTimeSlots= new ArrayList<TimeSlot>();
-        	for (Game currGame: games) {
-        		if(currGame.getAwayTeam().equals(currTeam) || currGame.getHomeTeam().equals(currTeam)) {
-            		TimeSlot currTimeSlot = currGame.getTimeSlot();
-            		if (currTimeSlot != null) {
-            			teamTimeSlots.add(currTimeSlot);
-            		}
-        		}
-        	}
-        	Collections.sort(teamTimeSlots);
-        	
-        	//Getting the days between timeSlots of the team (starting from the first team's timeSlots to the last)
-        	ArrayList<Double> teamRestDays = new ArrayList<Double>();
-        	for (int i = 0; i < teamTimeSlots.size() - 1; i++) {
-        		TimeSlot currTimeSlot = teamTimeSlots.get(i);
-        		TimeSlot nextTimeSlot = teamTimeSlots.get(i + 1);
-        		
-    			double restDay = (double) ChronoUnit.DAYS.between(currTimeSlot.getStartDateTime(), nextTimeSlot.getStartDateTime());
-        		//Checking if there are exceptions in between timeSlots
-        		ArrayList<Exception> teamExceptions = currTeam.getExceptions();
-        		if (teamExceptions.size() > 0) {
-            		for (Exception currException: teamExceptions) {
-            			//Checking if the exception starts and ends in the rest period
-            			if (currException.compareStart(currTimeSlot.getStartDateTime()) > 0 && currException.compareStart(nextTimeSlot.getStartDateTime()) < 0 && 
-            					currException.compareEnd(currTimeSlot.getStartDateTime()) > 0 && currException.compareEnd(nextTimeSlot.getStartDateTime()) < 0) {
-            				//Checking if exception is larger than idealRestDays
-            				double daysInException = (double) ChronoUnit.DAYS.between(currException.getStart(), currException.getEnd());
-            				if (daysInException > idealRestDays) {
-            					//unscheduledDaysPenalization = StartOfcurrTimeSlotToStartOfException + EndOfExceptionToStartOfNextTimeSlot
-            					double unscheduledDaysPenalization = (double)(ChronoUnit.DAYS.between(currTimeSlot.getStartDateTime(), currException.getStart()) + ChronoUnit.DAYS.between(currException.getEnd(), nextTimeSlot.getStartDateTime()));
-            					restDay = idealRestDays + unscheduledDaysPenalization; 
-            					//System.out.println("Exception larger than ideal rest days");
-            					break; //Assume that there are no more exceptions between these timeSlots 
-            				}
-            			} 
-            		}
-        		}
-        		teamRestDays.add(restDay);
-        	}
-        	
-        	//MSE to desired Method
-        	double error = 0;
-        	for (int j = 0; j < teamRestDays.size(); j++) {
-        		error += Math.pow((teamRestDays.get(j)-idealRestDays), 2);
-        	}
-        	error = error / (teamRestDays.size());
-        	error = Math.sqrt(error);
-        	teamsMSE.add(error);
-        	
+            if (currTeam.getName().equals("Exhibition")) {
+                //Getting the team's timeSlots
+                ArrayList<TimeSlot> teamTimeSlots = new ArrayList<TimeSlot>();
+                for (Game currGame : nonExhibitionGames) {
+                    if (currGame.getAwayTeam().equals(currTeam) || currGame.getHomeTeam().equals(currTeam)) {
+                        TimeSlot currTimeSlot = currGame.getTimeSlot();
+                        if (currTimeSlot != null) {
+                            teamTimeSlots.add(currTimeSlot);
+                        }
+                    }
+                }
+                Collections.sort(teamTimeSlots);
+
+                //Getting the days between timeSlots of the team (starting from the first team's timeSlots to the last)
+                ArrayList<Double> teamRestDays = new ArrayList<Double>();
+                for (int i = 0; i < teamTimeSlots.size() - 1; i++) {
+                    TimeSlot currTimeSlot = teamTimeSlots.get(i);
+                    TimeSlot nextTimeSlot = teamTimeSlots.get(i + 1);
+
+                    double restDay = (double) ChronoUnit.DAYS.between(currTimeSlot.getStartDateTime(), nextTimeSlot.getStartDateTime());
+                    //Checking if there are exceptions in between timeSlots
+                    ArrayList<Exception> teamExceptions = currTeam.getExceptions();
+                    if (teamExceptions.size() > 0) {
+                        for (Exception currException : teamExceptions) {
+                            //Checking if the exception starts and ends in the rest period
+                            if (currException.compareStart(currTimeSlot.getStartDateTime()) > 0 && currException.compareStart(nextTimeSlot.getStartDateTime()) < 0 &&
+                                    currException.compareEnd(currTimeSlot.getStartDateTime()) > 0 && currException.compareEnd(nextTimeSlot.getStartDateTime()) < 0) {
+                                //Checking if exception is larger than idealRestDays
+                                double daysInException = (double) ChronoUnit.DAYS.between(currException.getStart(), currException.getEnd());
+                                if (daysInException > idealRestDays) {
+                                    //unscheduledDaysPenalization = StartOfcurrTimeSlotToStartOfException + EndOfExceptionToStartOfNextTimeSlot
+                                    double unscheduledDaysPenalization = (double) (ChronoUnit.DAYS.between(currTimeSlot.getStartDateTime(), currException.getStart()) + ChronoUnit.DAYS.between(currException.getEnd(), nextTimeSlot.getStartDateTime()));
+                                    restDay = idealRestDays + unscheduledDaysPenalization;
+                                    //System.out.println("Exception larger than ideal rest days");
+                                    break; //Assume that there are no more exceptions between these timeSlots
+                                }
+                            }
+                        }
+                    }
+                    teamRestDays.add(restDay);
+                }
+
+                //MSE to desired Method
+                double error = 0.0;
+                for (int j = 0; j < teamRestDays.size(); j++) {
+                    error += Math.pow((teamRestDays.get(j) - idealRestDays), 2);
+                }
+                error = error / (teamRestDays.size());
+                error = Math.sqrt(error);
+                teamsMSE.add(error);
+            }
         }
 
         //Adding the penalty of each team (Using MSE)
@@ -261,7 +270,7 @@ public class QualityChecker {
         quality += checkTimeslotUsage();
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
-        //quality += checkRestDayEquality();
+        quality += checkRestDayEquality();
 
         return quality;
     }    
