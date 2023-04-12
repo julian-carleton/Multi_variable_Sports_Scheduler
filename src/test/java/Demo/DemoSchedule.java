@@ -7,27 +7,6 @@ import Scheduler.*;
 import Scheduler.Exception;
 
 public class DemoSchedule {
-	
-	/*
-	 * Print Functions
-	 */
-	public static void printTeams(Schedule schedule) {
-		ArrayList<Team> teams = schedule.getTeams();
-		Team currTeam;
-		System.out.print("The teams in this schedule are:\n");
-		for (int j = 0; j < teams.size(); j++) {
-			currTeam = teams.get(j);
-			ArrayList<Arena> homeArenas = currTeam.getHomeArenas();
-			System.out.print("Team Name: ");
-			System.out.print(currTeam.getName());
-			System.out.print("  Team Home Arenas: ");
-			for (int i = 0; i < homeArenas.size(); i++) {
-				System.out.print(homeArenas.get(i).getName());
-			}
-			System.out.print("	This team has (# exceptions):" +currTeam.getExceptions().size());
-			System.out.print("\n");
-		}
-	}
 
 	/*
 	 * Print Functions
@@ -78,15 +57,29 @@ public class DemoSchedule {
 	 */
 	public static void printSchedule(Schedule schedule) {
 		
+		//Round Robin 
+		schedule.matchRR();
+		printRounds(schedule);		
+		schedule.shuffleRounds();
+		//Duplicating for even number of teams
+		if (schedule.getTeams().size() % 2 == 0) {
+			schedule.doubleRounds();
+		}
+		//orderExceptionNumber();			//Ordering rounds based on the number of exceptions
+		System.out.print("After ordering...\n");
+		printRounds(schedule);
+		
+		//Getting the list of games in schedule
+		schedule.makeListGames();	
 		System.out.print("Before scheduling...\n");
-		printTeams(schedule);
+		printGames(schedule);
 		
 		System.out.print("\n");
 		System.out.print("The timeSlots BEFORE scheduling are as follows: \n");
 		printTimeSlots(schedule.getTimeSlots());
 		
-		schedule.createSchedule();
-		printRounds(schedule);		
+		//Assigning the Games
+		schedule.assignGames();
 		
 		//Showing the assigning of games to timeSlots
 		System.out.print("After scheduling...\n");

@@ -59,7 +59,7 @@ public class Schedule {
 	 *
 	 * @author Julian Obando
 	 **/
-	private void matchRR() {
+	public void matchRR() {
 		//Determine if even or odd # teams
 		boolean even = false;
 		int numTeams = this.teams.size();
@@ -105,7 +105,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 * */
-	private void shuffleRounds() {
+	public void shuffleRounds() {
 		ArrayList<Round> tempRounds = new ArrayList<Round>();
 		
 		int halfOffset = Math.floorDiv(this.rounds.size(), 2) + 1;
@@ -123,7 +123,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 * */
-	private void doubleRounds() {
+	public void doubleRounds() {
 
 		int initialRoundsNum = this.rounds.size(); 
 		for (int i = initialRoundsNum - 1; i >= 0; i--) {    //Reverse loop to double from bottom to top
@@ -147,7 +147,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 * */
-	private void orderExceptionNumber() {
+	public void orderExceptionNumber() {
 		ArrayList<Round> newRounds = new ArrayList<Round>();
 		
 		//Iterating through the rounds
@@ -184,7 +184,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 */
-	private void makeListGames() {
+	public void makeListGames() {
 		int currRoundIndex = 0;
 		for (int roundIndex = 0; roundIndex < this.actualNumRounds; roundIndex++) {
 			ArrayList<Game> currRoundGames = this.getRounds().get(currRoundIndex).getMatchups();
@@ -206,7 +206,7 @@ public class Schedule {
 	 * 
 	 * @author Julian Obando
 	 */
-	private void assignGames() {
+	public void assignGames() {
 		Game currGame;
 		TimeSlot currTimeSlot;
 		for (int i = 0; i < this.games.size(); i++) {
@@ -253,10 +253,6 @@ public class Schedule {
 
 	public int getActualNumRounds() {
 		return actualNumRounds;
-	}
-	
-	public int getNumRounds() {
-		return numRounds;
 	}
 
 	public String getScheduleName() {
