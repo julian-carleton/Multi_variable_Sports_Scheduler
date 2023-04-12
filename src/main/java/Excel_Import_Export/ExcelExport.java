@@ -77,7 +77,7 @@ public class ExcelExport {
         System.out.println("Total rounds scheduled: " + rounds);
 
         // Iterate over each schedule (starts at 1 since schedule @ index 0 is an empty test schedule)
-        for(int i = 1; i < scheduleNum; ++i) {
+        for(int i = 0; i < scheduleNum; ++i) {
             // Current schedule info
             Schedule schedule = runner.getSchedules().get(i);
 
@@ -162,7 +162,7 @@ public class ExcelExport {
         row.createCell(10).setCellValue("Quality");
 
         // Add Stats
-        for(int i = 1; i < runner.getSchedules().size(); ++i) {
+        for(int i = 0; i < runner.getSchedules().size(); ++i) {
             Schedule s = runner.getSchedules().get(i);
             ArrayList<Game> scheduledGames = new ArrayList<>();
             ArrayList<TimeSlot> unusedTimeslots = new ArrayList<>();
@@ -193,7 +193,7 @@ public class ExcelExport {
             QualityChecker qc = new QualityChecker(s.getGames(), s.getTimeSlots(), s.getTeams());
 
             // Create Row for Schedule stats
-            Row statsRow = sheet.createRow(i);
+            Row statsRow = sheet.createRow(i+1);
 
             // Add cell data
             statsRow.createCell(0).setCellValue(s.getScheduleName());
@@ -216,7 +216,6 @@ public class ExcelExport {
      */
     public void updateLeagueStats() throws IOException {
         Sheet sheet = statsBook.getSheetAt(0);
-
         // Re-create sheet headers
         Row row = sheet.createRow(14);
         row.createCell(0).setCellValue("Schedule (Post-Optimization)");
@@ -232,7 +231,7 @@ public class ExcelExport {
         row.createCell(10).setCellValue("Quality");
 
         // Add Stats
-        for(int i = 1; i < runner.getSchedules().size(); ++i) {
+        for(int i = 0; i < runner.getSchedules().size(); ++i) {
             Schedule s = runner.getSchedules().get(i);
 
             // Finding all games with an assigned timeslot
@@ -263,7 +262,7 @@ public class ExcelExport {
             QualityChecker qc = new QualityChecker(s.getGames(), s.getTimeSlots(), s.getTeams());
 
             // Create Row for Schedule stats
-            Row statsRow = sheet.createRow(i+14); // offset 14 to give 2 row spacing between prev. stats (ended @ row 12)
+            Row statsRow = sheet.createRow(i+15); // offset 14 to give 2 row spacing between prev. stats (ended @ row 12)
 
             // Add cell data
             statsRow.createCell(0).setCellValue(s.getScheduleName());
@@ -290,7 +289,6 @@ public class ExcelExport {
         // Initialize Workbook and Sheet
         tsBook = new XSSFWorkbook();
         Sheet sheet = tsBook.createSheet("Tabu Stats");
-
         // Create sheet headers
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("Schedule");
@@ -339,9 +337,9 @@ public class ExcelExport {
         leagueHeaders.createCell(3).setCellValue("Accepted Moves");
         leagueHeaders.createCell(4).setCellValue("Tabu Moves");
 
-        for(int i = 1; i < 12; ++i) {
-            TabuSearch tmpTS = tabuSearches.get(i-1);
-            Row tmpRow = sheet.createRow(14+i);
+        for(int i = 0; i < this.runner.getSchedules().size(); ++i) {
+            TabuSearch tmpTS = tabuSearches.get(i);
+            Row tmpRow = sheet.createRow(15+i);
             Division tmpDiv = tmpTS.getTeams().get(tmpTS.getTeams().size() - 1).getDivision();
             Tier tmpTier = tmpTS.getTeams().get(tmpTS.getTeams().size() - 1).getTier();
             QualityChecker tmpQC = new QualityChecker(tmpTS.getCurrentSchedule(), tmpTS.getTimeSlots(), tmpTS.getTeams());
@@ -549,7 +547,7 @@ public class ExcelExport {
         double leagueTimeslots = 0;
         double leagueUsedTimeslots = 0;
 
-        for(int i = 1; i < schedules.size(); ++i) {
+        for(int i = 0; i < schedules.size(); ++i) {
             Schedule s = schedules.get(i);
             ArrayList<Game> scheduledGames = new ArrayList<>();
             ArrayList<TimeSlot> unusedTimeslots = new ArrayList<>();

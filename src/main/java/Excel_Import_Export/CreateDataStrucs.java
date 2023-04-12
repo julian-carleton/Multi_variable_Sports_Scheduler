@@ -18,7 +18,10 @@ public class CreateDataStrucs {
 	private ArrayList<Team> teams;
 	private ArrayList<Arena> arenas;
 	private ArrayList<TimeSlot> timeslots;
-	private boolean schedulingType;
+	
+	private ArrayList<ArrayList<Object>> modes;
+	private ArrayList<ArrayList<Object>> matchups;
+	
 	
 	
 	/**
@@ -46,7 +49,7 @@ public class CreateDataStrucs {
 		homeArena.remove(0);
 		ArrayList<ArrayList<Object>> matchups = sheets.get(6);
 		matchups.remove(0);
-		ArrayList<ArrayList<Object>> format = sheets.get(6);
+		modes = sheets.get(7);
 		
 		
 		
@@ -55,9 +58,8 @@ public class CreateDataStrucs {
 		createArenas(arenasStr);
 		createTimeSlots(timeSlotsStr);
 		addHomeArenas(homeArena);
-		if (format.get(3).get(1).equals(0)) {
-			teamSetMatchups(matchups);
-		}
+		this.matchups = new ArrayList<ArrayList<Object>>();
+		teamSetMatchups(matchups);
 		teamSetCenterPoint();
 		
 	}
@@ -284,6 +286,16 @@ public class CreateDataStrucs {
 				}
 			}
 		}
+		for (int i = 0; i < matchups.size() ; i++) {
+			this.matchups.add(new ArrayList<Object>());
+			for (int j = 0; j < matchups.get(i).size() ; j++) {
+				if (1 <= j && j <= 2) {
+					this.matchups.get(i).add( getTeamFromStr( (String) matchups.get(i).get(0), (String) matchups.get(i).get(j)));
+				}else {
+					this.matchups.get(i).add(j);
+				}
+			}
+		}
 	}
 
 
@@ -433,6 +445,16 @@ public class CreateDataStrucs {
 	public ArrayList<TimeSlot> getTimeslots() {
 		return timeslots;
 	}
+	
+	public ArrayList<ArrayList<Object>> getModes() {
+		return modes;
+	}
+
+	public ArrayList<ArrayList<Object>> getMatchups() {
+		return matchups;
+	}
+
+	
 	
 
 }

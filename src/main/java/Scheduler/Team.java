@@ -2,6 +2,7 @@ package Scheduler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data Type for teams stores their name, division, tier, league, location, radius of travel, home arenas, and exceptions
@@ -174,6 +175,10 @@ public class Team {
 
 	public ArrayList<Arena> getHomeArenas() { 
 		return homeArenas; 
+	}
+
+	public Map<Team, Integer> getRankMatchups() {
+		return matchups;
 	}
 
 	

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Creates a set of matchups and a schedule for a set of teams provided
@@ -20,6 +22,7 @@ public class Schedule {
 	private int numRounds;				//Number of different rounds possible
 	private int actualNumRounds; 		//Number of rounds in the schedule
 	private ArrayList<TimeSlot> timeSlots;
+	private String name;
 
 
 	/**
@@ -42,17 +45,43 @@ public class Schedule {
 	 *
 	 * @author Julian Obando
 	 **/
-	public void createSchedule() {
-		matchRR();
-		shuffleRounds();
-		//Duplicating for even number of teams
-		if (this.teams.size() % 2 == 0) {
-			doubleRounds();
-		}
-		orderExceptionNumber();	//Ordering rounds based on the number of exceptions
-		makeListGames();   		//Concatenates the rounds that will be used
-		assignGames();
-	}
+	public void createSchedule(boolean system) {
+        if (system) {
+            matchRR();
+            shuffleRounds();
+            //Duplicating for even number of teams
+            if (this.teams.size() % 2 == 0) {
+                doubleRounds();
+            }
+            orderExceptionNumber();    //Ordering rounds based on the number of exceptions
+            makeListGames();           //Concatenates the rounds that will be used
+            assignGames();
+            this.name = this.getScheduleName();
+        }else {// Teams -> Map<Team, int> rankMatchups
+        	this.name = this.teams.get(0).getDivision().getName();
+            ArrayList<Game> tempGames = new ArrayList<Game>();
+            for (Team t: this.teams){
+                Map<Team, Integer> temprankMatchups = t.getRankMatchups();
+                int highestValue = 0;
+                for (Entry<Team, Integer> entry : temprankMatchups.entrySet()) {        // get the highest rank value
+                    if (highestValue < entry.getValue()) {
+                        highestValue = entry.getValue();
+                    }
+                }
+                for (Entry<Team, Integer> entry : temprankMatchups.entrySet()) {        // create list of games and assign to this.games
+                    int repeat = highestValue - entry.getValue()+ 1;
+                    for (int i = 0; i < repeat; i++) {
+                        Game tempGame = new Game(t, entry.getKey());
+                        tempGames.add(tempGame);
+                    }
+                }
+                this.games = tempGames;
+
+            }
+            assignGames();
+        }
+
+    }
 	
 	/**
 	 * Makes matchups using round robin
@@ -262,6 +291,10 @@ public class Schedule {
 			return "Division " + division + " (Tier: " + tier + ")";
 		}
 		return "All Schedules in League";
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 
 	
