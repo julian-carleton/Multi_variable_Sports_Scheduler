@@ -19,6 +19,10 @@ public class CreateDataStrucs {
 	private ArrayList<Arena> arenas;
 	private ArrayList<TimeSlot> timeslots;
 	
+	private ArrayList<ArrayList<Object>> modes;
+	private ArrayList<ArrayList<Object>> matchups;
+	
+	
 	
 	/**
 	 * @author Faris Abo-Mazeed & Quinn Sondermeyer
@@ -43,6 +47,9 @@ public class CreateDataStrucs {
 		timeSlotsStr.remove(0);
 		ArrayList<ArrayList<Object>> homeArena = sheets.get(5);
 		homeArena.remove(0);
+		ArrayList<ArrayList<Object>> matchups = sheets.get(6);
+		matchups.remove(0);
+		modes = sheets.get(7);
 		
 		
 		
@@ -51,10 +58,11 @@ public class CreateDataStrucs {
 		createArenas(arenasStr);
 		createTimeSlots(timeSlotsStr);
 		addHomeArenas(homeArena);
+		this.matchups = new ArrayList<ArrayList<Object>>();
+		teamSetMatchups(matchups);
 		teamSetCenterPoint();
+		
 	}
-
-	
 
 	/**
 	 * Creates list of teams, division, league types 
@@ -231,38 +239,6 @@ public class CreateDataStrucs {
 	}
 	
 
-
-
-
-	/*
-	 *  Helper Functions
-	 */
-	/**
-	 * Searches for a Team with the name and division
-	 * 
-	 * @author Faris Abo-Mazeed & Quinn Sondermeyer
-	 * @param division
-	 * @param teamStr
-	 * @return Team from given division with given name
-	 */
-	private Team getTeamFromStr(String division, String teamStr) {
-		Team team = null;
-		//for (League l : leagues) {// one league change
-			for (Division d : divisions) { 
-				if (d.getName().equals(division)) {
-					for (Team t : d.getTeams()) {
-						if (t.getName().equals(teamStr)){
-							team = t;
-
-							} 
-					}
-				}
-			}
-			
-		return team;
-	}
-	
-	
 	/**
 	 * Generate LocalDateTime Type given String
 	 * 
@@ -277,6 +253,113 @@ public class CreateDataStrucs {
 		return LocalDateTime.of((Integer.parseInt(dateStr[2])), (Integer.parseInt(dateStr[0])), (Integer.parseInt(dateStr[1])), (Integer.parseInt(timeStr[0])),(Integer.parseInt(timeStr[1]))) ;  
 		
 	}
+
+	/**
+	 * @author Quinn Sondermeyer
+	 * 
+	 * @param homeArenas
+	 */
+	private void addHomeArenas(ArrayList<ArrayList<Object>> homeArenas) {
+		for (int i = 0; i < homeArenas.size(); i++) {
+			Arena tempArena = getArena((String) homeArenas.get(i).get(2));
+			for (Team t : teams) {
+				Team tempTeam = getTeamFromStr((String) homeArenas.get(i).get(1), (String) homeArenas.get(i).get(0));
+				if (tempTeam.equals(t)) {
+					t.addArena(tempArena);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Adds a Hash map of matchups of teams and their rank to each team object
+	 * @param matchups
+	 */
+	private void teamSetMatchups(ArrayList<ArrayList<Object>> matchups) {
+		for (Team t: this.teams) {							// Make List for each team
+			for (int i = 0; i < matchups.size();i++) {		//Go through matchup list and find suitable matchups
+				if (t.equals(getTeamFromStr( (String) matchups.get(i).get(0), (String) matchups.get(i).get(1) ))) {
+					Team temp = getTeamFromStr( (String) matchups.get(i).get(0), (String) matchups.get(i).get(2) );
+					double rank = (double) matchups.get(i).get(3);
+					int rankInt = (int) rank;						// convert double to int as double is default number import type for apachie
+					t.addMatchup(getTeamFromStr( (String) matchups.get(i).get(0), (String) matchups.get(i).get(2) ), rankInt);
+				}
+			}
+		}
+		for (int i = 0; i < matchups.size() ; i++) {
+			this.matchups.add(new ArrayList<Object>());
+			for (int j = 0; j < matchups.get(i).size() ; j++) {
+				if (1 <= j && j <= 2) {
+					this.matchups.get(i).add( getTeamFromStr( (String) matchups.get(i).get(0), (String) matchups.get(i).get(j)));
+				}else {
+					this.matchups.get(i).add(j);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Method to set location radius for a team that's defined by their given home arenas
+	 *
+	 * @author Brady Norton
+	 * @param teamArenas list of home arenas a team can play at
+	 */
+	private void teamSetCenterPoint() {
+		
+		for(Team t: teams) {
+			double lat = 0;
+			double lon = 0;
+			for (Arena a: t.getHomeArenas()) {
+				lat = lat + a.getLatitude();
+				lon = lon + a.getLongitude();
+			}
+			lat = lat/t.getHomeArenas().size();		//get average value
+			lon = lon/t.getHomeArenas().size();
+			
+			t.setLatitude( lat);
+			t.setLongitude( lon);
+			
+			t.generateRad();		// generate rad in teams
+		}
+	}
+	
+
+	/*
+	 *  Helper Functions
+	 */
+	
+	/**
+	 * Searches for a Team with the name and division
+	 * 
+	 * @author Faris Abo-Mazeed & Quinn Sondermeyer
+	 * @param division
+	 * @param teamStr
+	 * @return Team from given division with given name
+	 */
+	private Team getTeamFromStr(String division, String teamStr) {
+		Team team = null;
+		//for (League l : leagues) {// one league change
+		if (teamStr.equals("Exhibition")) {
+			return this.divisions.get(0).getTeams().get(0);
+		}
+		
+		for (Division d : divisions) { 
+			if (d.getName().equals(division)) {
+				for (Team t : d.getTeams()) {
+					if (t.getName().equals(teamStr)){
+						team = t;
+
+						} 
+				}
+			}
+		}
+			
+		return team;
+	}
+	
+	
+	
 	
 	/**
 	 * Gets The Arena from the given name
@@ -315,51 +398,7 @@ public class CreateDataStrucs {
 		return temp;
 	}
 	
-	/**
-	 * @author Quinn Sondermeyer
-	 * 
-	 * @param homeArenas
-	 */
-	private void addHomeArenas(ArrayList<ArrayList<Object>> homeArenas) {
-		for (int i = 0; i < homeArenas.size(); i++) {
-			Arena tempArena = getArena((String) homeArenas.get(i).get(2));
-			for (Team t : teams) {
-				Team tempTeam = getTeamFromStr((String) homeArenas.get(i).get(1), (String) homeArenas.get(i).get(0));
-				if (tempTeam.equals(t)) {
-					t.addArena(tempArena);
-				}
-			}
-			
-		}
-		
-		
-	}
-
-
-	/**
-	 * Method to set location radius for a team that's defined by their given home arenas
-	 *
-	 * @author Brady Norton
-	 * @param teamArenas list of home arenas a team can play at
-	 */
-	private void teamSetCenterPoint() {
-		
-		for(Team t: teams) {
-			double lat = 0;
-			double lon = 0;
-			for (Arena a: t.getHomeArenas()) {
-				lat = lat + a.getLatitude();
-				lon = lon + a.getLongitude();
-			}
-			lat = lat/t.getHomeArenas().size();		//get average value
-			lon = lon/t.getHomeArenas().size();
-			
-			t.setLatitude( lat);
-			t.setLongitude( lon);
-			
-			t.generateRad();		// generate rad in teams
-		}
-	}
+	
 
 	/**
 	 * Temporary method to check if team can play at an arena as a home team
@@ -406,6 +445,16 @@ public class CreateDataStrucs {
 	public ArrayList<TimeSlot> getTimeslots() {
 		return timeslots;
 	}
+	
+	public ArrayList<ArrayList<Object>> getModes() {
+		return modes;
+	}
+
+	public ArrayList<ArrayList<Object>> getMatchups() {
+		return matchups;
+	}
+
+	
 	
 
 }

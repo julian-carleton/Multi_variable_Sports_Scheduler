@@ -66,7 +66,6 @@ public class TabuSearch {
         this.teams = teams;
         acceptedMoves = new ArrayList<>();
         attemptedMoves = new ArrayList<>();
-        setScheduleName();
     }
 
     /**
@@ -304,19 +303,7 @@ public class TabuSearch {
     /*
     Getters and Setters
      */
-    public void setScheduleName() {
-        String division = teams.get(0).getDivision().getName();
-        int tier = teams.get(0).getTier().ordinal();
-
-        // Sets Schedule name if all teams in Schedule have same div/tier
-        boolean allSameDivision = teams.stream().allMatch(x -> x.getDivision().getName().equals(division));
-        boolean allSameTier = teams.stream().allMatch(x -> x.getTier().ordinal() == tier);
-
-        if(allSameDivision && allSameTier) {
-            scheduleName = "Division " + division + " (tier: " + tier + ")";
-        }
-    }
-
+    
     public String getScheduleName() {
         return scheduleName;
     }
@@ -460,4 +447,9 @@ public class TabuSearch {
     public int getNewMoveLimit() {
         return neighbourSelector.getNewMoveLimit();
     }
+
+	public void setScheduleName(String name) {
+		this.scheduleName = name;
+		
+	}
 }

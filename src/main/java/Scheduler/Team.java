@@ -1,6 +1,8 @@
 package Scheduler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data Type for teams stores their name, division, tier, league, location, radius of travel, home arenas, and exceptions
@@ -18,6 +20,7 @@ public class Team {
 	private ArrayList<Exception> exceptions;
 	private double radius;
 	private ArrayList<Arena> homeArenas;
+	private HashMap<Team,Integer> matchups;
 	
 	
 	/**
@@ -33,6 +36,7 @@ public class Team {
 		this.tier = tier;
 		exceptions = new ArrayList<Exception>();
 		homeArenas = new ArrayList<Arena>();
+		matchups = new HashMap<Team,Integer>();
 	}
 	
 	/**
@@ -119,6 +123,12 @@ public class Team {
         return true;
 
     }
+    
+    public void addMatchup(Team team, int object) {
+		this.matchups.put(team, object);
+		
+	}
+    
 	
 	/*
 	 * Getters and setters
@@ -166,5 +176,11 @@ public class Team {
 	public ArrayList<Arena> getHomeArenas() { 
 		return homeArenas; 
 	}
+
+	public Map<Team, Integer> getRankMatchups() {
+		return matchups;
+	}
+
+	
 	
 }
