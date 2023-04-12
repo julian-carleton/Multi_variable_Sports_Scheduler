@@ -20,6 +20,7 @@ public class Team {
 	private ArrayList<Arena> homeArenas;
 	
 	
+	
 	/**
 	 * Default Constructor
 	 * 
