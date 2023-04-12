@@ -70,10 +70,18 @@ The striking difference of our scheduler is allowing for more dynamic schedules.
   16. Navigate to Multi_variable_Sports_Scheduler/src/main/ and select resource. And click Ok
   17. Click Apply and Close
 </details>
+<details>
+  <summary>Downloading the Jar</summary>
+  1. Download the Asset: Multi_variable_Sports_Scheduler.zip<br />
+  2. Unzip the File<br />
+  3. Update the Input Folder<br />
+  4. Run the Multi_variable_Sports_Scheduler.exe wait for the program to finish<br />
+  5. open Output Excel Files<br />
+ </details>
 
 ## Iterations
 <details>
-  <summary>Iteration 1</summary>
+  <summary>Iteration 1 <br /></summary>
   1. Creating initial scheduler. This consisted of: <br />
 	- Importing from excel, <br />
 	- Creating the data structures,<br />
