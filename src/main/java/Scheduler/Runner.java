@@ -1,5 +1,8 @@
 package Scheduler;
 
+import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -10,6 +13,7 @@ import Excel_Import_Export.*;
 import Optimization.*;
 import Scheduler.Exception;
 
+import javax.swing.*;
 
 
 /**
@@ -431,6 +435,40 @@ public class Runner {
 	 * @param args
 	 */
 	public static void main(String[] args) throws IOException {
+		// UI
+		JFrame frame = new JFrame("Multivariable Sport Scheduler");
+		frame.setPreferredSize(new Dimension(600, 400));
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		Container contentPane = frame.getContentPane();
+
+		JOptionPane jOptionPane = new JOptionPane();
+
+		// Create the text area for displaying program output
+		JTextArea textArea = new JTextArea();
+		textArea.setLineWrap(true); // enable text wrapping
+		textArea.setWrapStyleWord(true); // wrap at word boundaries
+		textArea.setEditable(false);
+
+		// Scroll pane
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		contentPane.add(scrollPane, BorderLayout.CENTER);
+		// Create an AdjustmentListener to listen for changes in the scroll bar's value
+		AdjustmentListener adjustmentListener = new AdjustmentListener() {
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				// Set the scroll bar's value to its maximum value
+				e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+			}
+		};
+
+// Add the AdjustmentListener to the vertical scroll bar of the JScrollPane
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(adjustmentListener);
+
+		// Display the window
+		frame.pack();
+		frame.setVisible(true);
+
+
 		InputStream is = League.class.getResourceAsStream(inputFile);
 		ExcelImport excelImport = new ExcelImport(League.class.getResourceAsStream(inputFile));
 
@@ -467,9 +505,14 @@ public class Runner {
 			if (!s.getTimeSlots().isEmpty()) {
 				System.out.println("\n--------------------------------------------------------");
 				System.out.println("\nCreating Schedule for: " + s.getScheduleName());
+				System.out.println("--------------------------------------------------------");
+
+				textArea.append("\nCreating Schedule: " + s.getScheduleName()+"\n");
+				textArea.append("--------------------------------------------------------\n");
 				s.createSchedule(system);
 				TabuSearch tempTabuSearch = new TabuSearch(s.getGames(),s.getTimeSlots(), s.getTeams());
 				System.out.println("\nOptimizing: " + s.getName());
+				textArea.append("Optimizing: " + s.getName() + "\n");
 				tempTabuSearch.optimize();
 				tempTabuSearch.setScheduleName(s.getName());
 				tabuSearches.add(tempTabuSearch);
@@ -478,6 +521,7 @@ public class Runner {
 		int count = 0;
 		for(TabuSearch ts : tabuSearches) {
 			System.out.println("Index: " + count + " & Schedule: " + ts.getScheduleName());
+			textArea.append("Index: " + count + " & Schedule: " + ts.getScheduleName() + "\n");
 			count++;
 		}
 		
@@ -485,11 +529,15 @@ public class Runner {
 		// Optimization for entire League
 		TabuSearch entireLeague = new TabuSearch(runner.getGames(),runner.getTimeslots(), runner.getTeams());
 		System.out.println("\nLeague Stats: Pre-Optimization");
+		textArea.append("\nLeague Stats: Pre-Optimization");
 		export.initializeLeagueStats();
 
 		System.out.println("--------------------------------------------------------");
 		System.out.println("Optimizing League");
 		System.out.println("--------------------------------------------------------");
+
+		textArea.append("Optimizing League...\n");
+
 		entireLeague.optimize();
 		entireLeague.setScheduleName("Entire League");
 
@@ -531,6 +579,7 @@ public class Runner {
 		}
 
 		System.out.println("League Stats: Post-Optimization");
+		textArea.append("\nLeague Stats: Post-Optimization");
 		export.updateLeagueStats();
 
 		// Export Schedules and update Stats
@@ -538,6 +587,8 @@ public class Runner {
 		export.exportStats(outputFile);
 		runner.setLeagueTS(entireLeague);
 		export.exportTabuStats(tabuSearches, outputFile);
+
+		textArea.append("\nScheduler Complete! Please check output folder!");
 	}
 
 	

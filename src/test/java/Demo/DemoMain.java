@@ -36,7 +36,7 @@ public class DemoMain {
         int t2 = 0;
         for (Schedule s: runner.getSchedules()) {
             if (!s.getTimeSlots().isEmpty()) {
-                s.createSchedule();
+                s.createSchedule(true);
                 for (Game g :s.getGames()) {
                 	if(g.getTimeSlot() == null) {
                 		t2++;
