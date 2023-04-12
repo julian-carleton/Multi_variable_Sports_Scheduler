@@ -561,7 +561,9 @@ public class Runner {
 		ArrayList<Team> tempTeams = new ArrayList<Team>();
 		for (Division d: this.divisions) {
 			for (Team t: d.getTeams()) {
-				tempTeams.add(t);
+				if (!(t.getName().equals("Exhibition"))) {
+					tempTeams.add(t);
+				}
 			}
 		}
 		return tempTeams;

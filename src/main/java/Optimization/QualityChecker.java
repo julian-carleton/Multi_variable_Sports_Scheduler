@@ -135,10 +135,7 @@ public class QualityChecker {
 
     /**
      * Checks the quality of a schedule based on:
-     *  1. Teams avg. rest days between games for season
-     *  2. Teams avg. rest days between away games for season
-     *  3. Teams avg. rest days (total) compared to other teams in Schedule
-     *  4. Teams avg. rest days (away games) compared to other teams in Schedule
+     *  1. Teams MSE of the rest days between games for season per team
      */
     public double checkRestDayEquality() {
         double penalty = 0;
@@ -149,8 +146,6 @@ public class QualityChecker {
         ///double idealRestDays = Math.floorDiv((int) DaysInSchedule, games.size()/(teams.size()/2));
         double idealRestDays = 7;   //This value until bug is fixed  
         
-//        ArrayList<Double> teamsAverageDays = new ArrayList<Double>();
-//        ArrayList<Double> teamsStdDevRestDays = new ArrayList<Double>();
         ArrayList<Double> teamsMSE = new ArrayList<Double>();
         //Obtaining average rest day per team
         for (Team currTeam: teams) {
@@ -194,9 +189,7 @@ public class QualityChecker {
         		}
         		teamRestDays.add(restDay);
         	}
-        	//System.out.println("The team rest days are: "+teamRestDays);
         	
-
         	//MSE to desired Method
         	double error = 0;
         	for (int j = 0; j < teamRestDays.size(); j++) {
@@ -219,11 +212,6 @@ public class QualityChecker {
         } else {
         	penalty = penalty / (idealRestDays * 2);
         }
-        
-//        System.out.println("The standard deviation per team are: "+teamsStdDevRestDays);
-//        System.out.println("The MSE per team when compared to a desired value: "+teamsMSE);
-//        System.out.println("The total penalty is: "+penalty);
-//        System.out.print("\n\n");
         
         penalty = round(restDaysWeight * (penalty) * 100, 2);
         return penalty;
@@ -273,12 +261,16 @@ public class QualityChecker {
         quality += checkTimeslotUsage();
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
-        //quality += checkRestDayEquality();
+        quality += checkRestDayEquality();
 
         return quality;
     }    
     
-    
+    /**
+     * Get the total number of days for the time slots
+     *  
+     * @return number of days in for the time slots
+     */
     private double daysInSchedule() {
     	
 	   	LocalDateTime startDay = null;
