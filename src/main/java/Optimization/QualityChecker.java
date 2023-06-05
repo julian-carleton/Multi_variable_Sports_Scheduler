@@ -41,6 +41,7 @@ public class QualityChecker {
     private double travelDifferenceWeight = 1.0;
     private double restDaysWeight = 2.0;
     private double gameCountWeight = 3.0;
+    private double evenGamesWeight = 3.0;
 
 
     /**
@@ -271,6 +272,7 @@ public class QualityChecker {
         quality += checkHomeAwayEquality();
         quality += checkScheduledMatchEquality();
         quality += checkRestDayEquality();
+        quality += checkGameEquality();
 
         return quality;
     }    
@@ -298,5 +300,40 @@ public class QualityChecker {
     	}
  
     	return (double) ChronoUnit.DAYS.between(startDay, endDay);
+    }
+
+    /**
+     * Method to get the penalty value based on whether all teams in a Schedule have
+     * an equal amount of games scheduled
+     *
+     * @return
+     */
+    private double checkGameEquality() {
+        int gamesPerTeam = 0;
+        double penalty = 0.0;
+
+        // Total number of games each team should have in theory (based off RR-schedule)
+        int expectedGames = games.size() / teams.size();
+
+        // Check each teams number of scheduled games
+        for(Team t: teams) {
+            int scheduledGames = 0;
+
+            // Count their scheduled game total
+            for(Game g: games) {
+                if(g.getTimeSlot() != null) {
+                    if(g.getHomeTeam() == t || g.getAwayTeam() == t) {
+                        scheduledGames++;
+                    }
+                }
+            }
+            // Calculate difference between the exp number of games and actual number
+            int gameDifference = Math.abs(scheduledGames - expectedGames);
+
+            // Calculate penalty
+            penalty += gameDifference * evenGamesWeight;
+        }
+
+        return penalty;
     }
 }
